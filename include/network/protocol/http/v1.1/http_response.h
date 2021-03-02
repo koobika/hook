@@ -249,6 +249,7 @@ class HttpResponse : public base::Serializable {
   base::Stream Serialize() const override {
     base::Stream stream;
     HttpHeaders headers{Headers};
+    auto body_length = Body.Length();
     // [status-line] setup
     stream.Write(HttpConstants::Strings::kHttpVersion)
         .Write(HttpConstants::Strings::kSpace)
@@ -257,11 +258,13 @@ class HttpResponse : public base::Serializable {
         .Write(ReasonPhrase)
         .Write(HttpConstants::Strings::kCrLf);
     // [headers] <empty-body-considerations>
-    if (!Body.Length()) headers.Set(HttpConstants::Headers::kContentLength, 0);
+    headers.Set(HttpConstants::Headers::kContentLength, body_length);
     // [headers] <setup>
     stream.Write(headers.Serialize()).Write(HttpConstants::Strings::kCrLf);
     // [body] setup
-    if (Body.Length()) stream.Write(Body);
+    if (body_length) {
+      stream.Write(Body);
+    }
     // We're done! Let's return our stream!
     return stream;
   }

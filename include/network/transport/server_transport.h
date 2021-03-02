@@ -57,7 +57,7 @@ class ServerTransport {
   // |stops transport activity.
   virtual void Stop() = 0;
   // Tries to sends the specified buffer through the transport connection.
-  virtual void Send(const HDty&, const base::Stream&) = 0;
+  virtual bool Send(const HDty&, const base::Stream&) = 0;
 };
 }  // namespace koobika::hook::network::transport
 

@@ -143,23 +143,26 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     }
   }
   // |tries to send the specified buffer through the transport connection
-  void Send(const SOCKET& id, const base::Stream& stream) override {
+  bool Send(const SOCKET& id, const base::Stream& stream) override {
     char buffer[ServerTransportConstants::kDefaultWriteBufferSize];
-    std::size_t length;
-    while (length = stream.ReadSome(
+    while (std::size_t length = stream.ReadSome(
                buffer, ServerTransportConstants::kDefaultWriteBufferSize)) {
       std::size_t offset = 0;
       while (offset < length) {
         std::size_t len = std::min<std::size_t>(INT_MAX, length - offset);
         auto res = ::send(id, &((const char*)buffer)[offset], (int)len, 0x0);
         if (res == SOCKET_ERROR) {
-          // [error] -> while trying to send information to socket!
-          // [to-do] -> inform user back?
-          return;
+          if (WSAGetLastError() != WSAEWOULDBLOCK) {
+            // [error] -> while trying to send information to socket!
+            // [to-do] -> inform user back?
+            return false;
+          } 
+        } else {
+          offset += res;
         }
-        offset += res;
       }
     }
+    return true;
   }
 
  private:
@@ -291,10 +294,12 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
                   [context]() {
                     // connection closed! let's free the associated resources!
                     closesocket(context->socket);
-                    delete context;
                   },
-                  [this, socket = context->socket](const base::Stream& stream) {
-                    Send(socket, stream);
+                  [this, context](const base::Stream& stream) {
+                    if (!Send(context->socket, stream)) {
+                      // connection closed! let's free the associated resources!
+                      closesocket(context->socket);
+                    }
                   });
             }
           }
