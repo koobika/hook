@@ -49,15 +49,11 @@ template <typename HDty, typename DEty>
 class ServerTransport {
  public:
   // ---------------------------------------------------------------------------
-  // Usings                                                           [ public ]
-  // ---------------------------------------------------------------------------
-  using Sender = std::function<void(const base::Stream&)>;
-  using ErrorHandler = std::function<void()>;
-  // ---------------------------------------------------------------------------
   // Methods                                                          [ public ]
   // ---------------------------------------------------------------------------
   // |starts current transport activity using the provided (json) configuration.
-  virtual void Start(const structured::json::JsonObject&) = 0;
+  virtual void Start(const structured::json::JsonObject&,
+                     const typename DEty::RequestHandler&) = 0;
   // |stops transport activity.
   virtual void Stop() = 0;
   // Tries to sends the specified buffer through the transport connection.

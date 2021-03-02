@@ -34,6 +34,8 @@
 #include <memory>
 #include <functional>
 
+#include "base/stream.h"
+
 namespace koobika::hook::network::transport {
   // =============================================================================
   // ServerTransportDecoder                                          [ interface ]
@@ -49,14 +51,18 @@ namespace koobika::hook::network::transport {
     // ---------------------------------------------------------------------------
     // Usings                                                           [ public ]
     // ---------------------------------------------------------------------------
-    using OnErrorHandler = std::function<void()>;
+   using Sender = std::function<void(const base::Stream&)>;
+   using RequestHandler = std::function<void(const RQty&, const Sender&)>;
+   using ErrorHandler = std::function<void()>;
+
     // ---------------------------------------------------------------------------
     // Methods                                                          [ public ]
     // ---------------------------------------------------------------------------
     // Adds (opaque) content to the decoder.
     virtual bool Add(void*, const std::size_t&) = 0;
     // Tries to decode internal content.
-    virtual bool Decode(const OnErrorHandler&) = 0;
+    virtual void Decode(const RequestHandler&, const ErrorHandler&,
+                        const Sender&) = 0;
   };
 }  // namespace koobika::hook::network::transport
 

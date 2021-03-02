@@ -77,7 +77,9 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
   // Methods                                                          [ public ]
   // ---------------------------------------------------------------------------
   // |starts current transport activity using the provided (json) configuration.
-  void Start(const structured::json::JsonObject& configuration) override {
+  void Start(const structured::json::JsonObject& configuration,
+             const typename DEty::RequestHandler& request_handler)
+      override {
     if (io_port_ != INVALID_HANDLE_VALUE) {
       // [error] -> transport already initialized!
       throw std::logic_error("Already initialized transport!");
@@ -89,6 +91,8 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
         configuration[transport::ServerTransportConstants::kNumberOfWorkersKey];
     auto const& max_connections = (const structured::json::JsonNumber&)
         configuration[transport::ServerTransportConstants::kMaxConnectionsKey];
+    // let's assign the user-specified request handler function..
+    request_handler_ = request_handler;
     // let's setup all the required resources..
     SetupWinsock_();
     SetupListener_(port.Get(), number_of_workers.Get<int>());
@@ -263,6 +267,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
                                          (PULONG_PTR)&completion_key,
                                          &overlapped, INFINITE)) {
             // ok, this is fine, we're shutting down our completion port..
+            // at this point, we need to perform a controlled shutdown.
             break;
           }
           Context* context = (Context*)completion_key;
@@ -281,16 +286,16 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
           }
           if (bytes_returned) {
             if (context->decoder->Add(context->data.buf, bytes_returned)) {
-              base::Stream response;
-              static constexpr char content[] =
-                  "HTTP/1.1 200 OK\r\n"
-                  "Content-Length: 15\r\n"
-                  "Content-Type: text/plain; charset=UTF-8\r\n"
-                  "Server: Example\r\n"
-                  "Date: Wed, 17 Apr 2013 12:00:00 GMT\r\n\r\n"
-                  "Hello, World!\r\n";
-              response.Write(content);
-              Send(context->socket, response);
+              context->decoder->Decode(
+                  request_handler_,
+                  [context]() {
+                    // connection closed! let's free the associated resources!
+                    closesocket(context->socket);
+                    delete context;
+                  },
+                  [this, socket = context->socket](const base::Stream& stream) {
+                    Send(socket, stream);
+                  });
             }
           }
           DWORD recv_flags = 0;
@@ -304,7 +309,6 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
               closesocket(context->socket);
               delete context;
             }
-            continue;
           }
         }
       }));
@@ -316,6 +320,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
   HANDLE io_port_ = INVALID_HANDLE_VALUE;
   SOCKET accept_socket_ = INVALID_SOCKET;
   std::queue<std::shared_ptr<std::thread>> threads_;
+  typename DEty::RequestHandler request_handler_;
 };
 }  // namespace koobika::hook::network::transport::tcpip
 

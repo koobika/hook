@@ -31,15 +31,15 @@
 #ifndef koobika_hook_network_protocol_http_v11_httpserverbase_h
 #define koobika_hook_network_protocol_http_v11_httpserverbase_h
 
-#include <iostream>
 #include <chrono>
 #include <functional>
+#include <iostream>
 #include <stdexcept>
 
-#include "network/transport/server_transport_constants.h"
-#include "structured/json/json_value.h"
 #include "auth/basic.h"
 #include "http_router.h"
+#include "network/transport/server_transport_constants.h"
+#include "structured/json/json_value.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
@@ -96,8 +96,28 @@ class HttpServerBase : public HttpRoutesManager<RQty, RSty> {
     transport_ = std::make_unique<TRty>();
     // let' start transport activity on a separate thread!
     transport_thread_ = std::make_shared<std::thread>(
-        [&transport = transport_, &configuration = configuration_]() {
-          transport->Start(configuration);
+        [&router = router_, &auth = auth_, &transport = transport_,
+         &configuration = configuration_]() {
+          transport->Start(configuration, [&router, &auth](auto const& req,
+                                                           auto const& sender) {
+            RSty res;
+            try {
+              if (!router.Perform(req.Uri.GetPath(), req, res, auth)) {
+                // [error] -> route is not registered!
+                // [to-do] -> inform user back?
+                res.NotFound_404();
+              }
+            } catch (std::exception& e) {
+              // [error] -> an exception was thrown!
+              // [to-do] -> inform user back!
+              res.InternalServerError_500(e.what());
+            } catch (...) {
+              // [error] -> an exception was thrown!
+              // [to-do] -> inform user back!
+              res.InternalServerError_500("Unknown server exception!");
+            }
+            sender(res.Serialize());
+          });
         });
   }
   // stops server activity!
