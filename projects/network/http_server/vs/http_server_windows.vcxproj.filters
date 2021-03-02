@@ -188,16 +188,7 @@
     <ClInclude Include="..\..\..\..\include\base\builder_property.h">
       <Filter>include\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\base\key_value_store.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\base\platform.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\base\repository.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\base\repository_memory.h">
       <Filter>include\base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\base\serializable.h">
@@ -217,6 +208,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\base\variant.h">
       <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\transport\server_transport_decoder.h">
+      <Filter>include\network\transport</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

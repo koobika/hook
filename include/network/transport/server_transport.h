@@ -33,7 +33,6 @@
 
 #include <functional>
 
-#include "base/key_value_store.h"
 #include "base/stream.h"
 
 namespace koobika::hook::network::transport {
@@ -44,7 +43,7 @@ namespace koobika::hook::network::transport {
 // -----------------------------------------------------------------------------
 // Template parameters:
 //    HDty - server transport handler (native) type being used
-//    DEty - server transport decoder type being used
+//    DEty - server transport request decoder type being used
 // =============================================================================
 template <typename HDty, typename DEty>
 class ServerTransport {
@@ -52,36 +51,17 @@ class ServerTransport {
   // ---------------------------------------------------------------------------
   // Usings                                                           [ public ]
   // ---------------------------------------------------------------------------
-  using Handle = HDty;
-  using Decoder = DEty;
   using Sender = std::function<void(const base::Stream&)>;
-  using OnError = std::function<void()>;
-  using OnAcceptConnection = std::function<bool(const Handle&)>;
-  using OnConnectionAccepted = std::function<void(const Handle&)>;
-  using OnConnectionRejected = std::function<void(const Handle&)>;
-  using OnData =
-      std::function<void(DEty&, const Handle&, const Sender&, const OnError&)>;
+  using ErrorHandler = std::function<void()>;
   // ---------------------------------------------------------------------------
   // Methods                                                          [ public ]
   // ---------------------------------------------------------------------------
-  // Sets up current transport object
-  virtual void Setup(const base::KeyValueStore<std::string>&) = 0;
-  // Cleans up current transport object
-  virtual void Cleanup(void) = 0;
-  // Tries to sends the specified buffer through the transport connection
-  virtual void Send(const Handle&, const base::Stream&) = 0;
-  // This method will be used to set the function in charge of accepting (or
-  //  not an incoming connection attempt within the transport (callback)
-  virtual void SetOnAcceptConnectionCallback(const OnAcceptConnection&) = 0;
-  // This method will be used to set the function in charge of notifying for
-  //  every accepted connection within the transport (callback)
-  virtual void SetOnConnectionAcceptedCallback(const OnConnectionAccepted&) = 0;
-  // This method will be used to set the function in charge of notifying for
-  //  every rejected connection within the transport (callback)
-  virtual void SetOnConnectionRejectedCallback(const OnConnectionRejected&) = 0;
-  // This method will be used to set the function in charge of notifying for
-  //  incoming data within the provided connection (callback)
-  virtual void SetOnDataCallback(const OnData&) = 0;
+  // |starts current transport activity using the provided (json) configuration.
+  virtual void Start(const structured::json::JsonObject&) = 0;
+  // |stops transport activity.
+  virtual void Stop() = 0;
+  // Tries to sends the specified buffer through the transport connection.
+  virtual void Send(const HDty&, const base::Stream&) = 0;
 };
 }  // namespace koobika::hook::network::transport
 

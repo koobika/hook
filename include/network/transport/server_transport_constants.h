@@ -43,18 +43,18 @@ struct ServerTransportConstants {
   // ---------------------------------------------------------------------------
   // Constants                                                        [ public ]
   // ---------------------------------------------------------------------------
-  // Port
-  static constexpr char kKeyPort[] = "port";
-  static constexpr char kDefPort[] = "8542";
-  // Number of connection workers within a transport
-  static constexpr char kKeyNumberOfWorkers[] = "numberOfWorkers";
-  static constexpr int kDefNumberOfWorkers = 3;
-  // Maximum number of simultaneous connections within a transport
-  static constexpr char kKeyMaxConnections[] = "maxConnections";
-  static constexpr int kDefMaxConnections = 256;
-  // Buffering capacity
+  // Buffering capacity.
   static constexpr std::size_t kDefaultReadBufferSize = 8192;
   static constexpr std::size_t kDefaultWriteBufferSize = 8192;
+  // Port.
+  static constexpr char kPortKey[] = "port";
+  static constexpr char kPortValue[] = "8542";
+  // Number of workers.
+  static constexpr char kNumberOfWorkersKey[] = "number_of_workers";
+  static constexpr int kNumberOfWorkersValue = 3;
+  // Maximum number of simultaneous connections.
+  static constexpr char kMaxConnectionsKey[] = "max_connections";
+  static constexpr int kMaxConnectionsValue = 256;
 };
 }  // namespace koobika::hook::network::transport
 

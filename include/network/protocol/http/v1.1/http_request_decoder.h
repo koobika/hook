@@ -38,57 +38,9 @@
 #include "http_constants.h"
 #include "http_encoding_type.h"
 #include "http_request.h"
+#include "network/transport/server_transport_decoder.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
-// =============================================================================
-// PERFORM_ERROR_HANDLING                                              [ macro ]
-// =============================================================================
-#define PERFORM_ERROR_HANDLING \
-  {                            \
-    onError();                 \
-    Reset_();                  \
-    return;                    \
-  }
-// =============================================================================
-// GET_REQUEST_LINE_FIELD                                              [ macro ]
-// =============================================================================
-#define GET_REQUEST_LINE_FIELD(field, delimiter, delimiter_length)   \
-  {                                                                  \
-    auto ptr = SearchFor_(&buffer_[cursor], end - cursor, delimiter, \
-                          delimiter_length);                         \
-    if (ptr == nullptr) PERFORM_ERROR_HANDLING                       \
-    auto length = ptr - &buffer_[cursor];                            \
-    field.assign(&buffer_[cursor], length);                          \
-    cursor += length + delimiter_length;                             \
-  }
-// =============================================================================
-// GET_HEADER_FIELD_NAME                                               [ macro ]
-// =============================================================================
-#define GET_HEADER_FIELD_NAME(name)                            \
-  {                                                            \
-    auto ptr = SearchFor_(&buffer_[cursor], end - cursor,      \
-                          HttpConstants::Strings::kColon,      \
-                          HttpConstants::Strings::kColonLen);  \
-    if (ptr == nullptr) PERFORM_ERROR_HANDLING                 \
-    name = {cursor, ptr - &buffer_[cursor]};                   \
-    cursor += name.second + HttpConstants::Strings::kColonLen; \
-  }
-// =============================================================================
-// GET_HEADER_FIELD_VALUES                                             [ macro ]
-// =============================================================================
-#define GET_HEADER_FIELD_VALUES(values)                              \
-  values.clear();                                                    \
-  while (cursor < end) {                                             \
-    auto ptr = SearchFor_(&buffer_[cursor], end - cursor,            \
-                          HttpConstants::Strings::kCrLf,             \
-                          HttpConstants::Strings::kCrLfLen);         \
-    if (ptr == nullptr) PERFORM_ERROR_HANDLING                       \
-    Indices field_value = {cursor, ptr - &buffer_[cursor]};          \
-    cursor += field_value.second + HttpConstants::Strings::kCrLfLen; \
-    Trim_(field_value);                                              \
-    values.push_back(field_value);                                   \
-    if (!HttpUtil::SkipLWS(&buffer_[cursor], end - cursor)) break;   \
-  }
 // =============================================================================
 // HttpRequestDecoder                                                  [ class ]
 // -----------------------------------------------------------------------------
@@ -98,12 +50,7 @@ namespace koobika::hook::network::protocol::http::v11 {
 //    RQty - http request type being used
 // =============================================================================
 template <typename RQty>
-class HttpRequestDecoder {
-  // ---------------------------------------------------------------------------
-  // Usings                                                          [ private ]
-  // ---------------------------------------------------------------------------
-  using Indices = std::pair<std::size_t, std::size_t>;
-
+class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
  public:
   // ---------------------------------------------------------------------------
   // Constructors/Destructors                                         [ public ]
@@ -121,106 +68,51 @@ class HttpRequestDecoder {
   // Methods                                                          [ public ]
   // ---------------------------------------------------------------------------
   // Adds the specified buffer fragment to the internal decoder data.
-  bool Add(void* buffer, const std::size_t& length) {
+  bool Add(void* buffer, const std::size_t& length) override {
     if (!decoding_body_part_) {
-      // if required buffer size is greater than the maximum supported let's
-      // return false in order to notify caller for error!
+      // If required buffer size is greater than the maximum supported let's
+      // return false in order to let the caller know for this error!
       if ((used_ + length) >= HttpConstants::Limits::kMaxHttpMessageLength) {
         return false;
       }
       memcpy(&buffer_[used_], buffer, length);
       used_ += length;
+
+      /*
+      pepe
+      */
+
+      used_ = 0;
+
+      /*
+      pepe fin
+      */
+
     } else {
-      body_.Write(buffer, length);
     }
     return true;
   }
   // Decodes currently stored data.
-  void Decode(const std::function<void(const RQty& req)>& onSuccess,
-              const std::function<void()>& onError) {
-    bool dispatch_request = false;
+  bool Decode(
+      const transport::ServerTransportDecoder<RQty>::OnErrorHandler& on_error)
+      override {
+    bool content_decoded = false;
     // first, let's check for <basic> message content decoding!
     if (!decoding_body_part_) {
-      std::size_t cursor = 0, end = 0;
-      auto empty_line_ptr = SearchFor_(&buffer_[cursor], used_ - cursor,
-                                       HttpConstants::Strings::kEmptyLine,
-                                       HttpConstants::Strings::kEmptyLineLen);
-      // if empty-line sequence (\r\n\r\n) was not found, let's
-      // return control and wait for more data to arrive!
-      if (empty_line_ptr == nullptr) return;
-      // update main section limtis (request-line + headers)!
-      end += (empty_line_ptr - &buffer_[cursor]) +
-             HttpConstants::Strings::kEmptyLineLen;
-      // let's decode the <request-line> section!
-      GET_REQUEST_LINE_FIELD(method_, HttpConstants::Strings::kSpace,
-                             HttpConstants::Strings::kSpaceLen)
-      GET_REQUEST_LINE_FIELD(request_uri_, HttpConstants::Strings::kSpace,
-                             HttpConstants::Strings::kSpaceLen)
-      GET_REQUEST_LINE_FIELD(http_version_, HttpConstants::Strings::kCrLf,
-                             HttpConstants::Strings::kCrLfLen)
-      // let's decode the <headers> section!
-      headers_.assign(&buffer_[cursor], end - cursor);
-      Indices field_name;
-      std::vector<Indices> field_values;
-      while (cursor < end) {
-        GET_HEADER_FIELD_NAME(field_name)
-        GET_HEADER_FIELD_VALUES(field_values)
-        for (auto const& value : field_values) {
-          if (IsHeaderFieldName_(field_name,
-                                 HttpConstants::Headers::kContentLength,
-                                 HttpConstants::Headers::kContentLengthLen)) {
-            // [content-length]
-            encoding_type_ = HttpEncodingType::kContentLength;
-            auto val = std::string(&buffer_[value.first], value.second);
-            content_length_ = atol(val.data());
-          } else if (IsHeaderFieldName_(
-                         field_name, HttpConstants::Headers::kContentType,
-                         HttpConstants::Headers::kContentTypeLen)) {
-            // [content-type]
-            // [to-do] implement it!
-          }
-        }
-      }
-      // we're ready with all <basic> message information!
-      auto pending = used_ - end;
-      if (pending > 0) {
-        if (content_length_) {
-          body_.Write((void*)&buffer_[end], pending);
-          used_ = 0;
-        } else {
-          memmove(buffer_, &buffer_[end], pending);
-          used_ = pending;
-        }
-      } else {
+      do {
+        std::size_t cursor = 0, end = 0;
+        auto empty_line_ptr =
+            SearchFor_(buffer_, used_, HttpConstants::Strings::kEmptyLine,
+                       HttpConstants::Strings::kEmptyLineLen);
+        // if empty-line sequence (\r\n\r\n) was not found, let's
+        // return control and wait for more data to arrive!
+        if (empty_line_ptr == nullptr) break;
+        // let's reset all internal parameters!
+        content_decoded = true;
         used_ = 0;
-      }
-      // if we've reach this point then body decoding should be on!
-      decoding_body_part_ = true;
+      } while (false);
     }
-    // second, process the body section (if present)..
-    if (decoding_body_part_) {
-      switch (encoding_type_) {
-        case HttpEncodingType::kContentLength:
-          dispatch_request = body_.Length() == content_length_;
-          break;
-        case HttpEncodingType::kMultipart:
-          // [to-do] -> to be implemented!
-          break;
-        case HttpEncodingType::kTransferEncoding:
-          // [to-do] -> to be implemented!
-          break;
-        case HttpEncodingType::kNone:
-          dispatch_request = true;
-          break;
-      }
-    }
-    // third, prepare request..
-    if (dispatch_request) {
-      onSuccess(RQty(std::move(base::Uri(request_uri_)),
-                     std::move(HttpMethod(method_)),
-                     std::move(HttpHeaders(headers_)), std::move(body_)));
-      Reset_();
-    }
+    return content_decoded;
   }
 
  private:
@@ -245,53 +137,6 @@ class HttpRequestDecoder {
     }
     return nullptr;
   }
-  // Checks if the specified sub-string is a header field name
-  bool IsHeaderFieldName_(const Indices& delimiters, const char* buffer,
-                          const std::size_t& length) {
-    if (delimiters.second != length) return false;
-    for (std::size_t i = 0; i < length; i++) {
-      if (tolower(buffer[i]) != tolower(buffer_[delimiters.first + i])) {
-        return false;
-      }
-    }
-    return true;
-  }
-  // Checks if the specified sub-string is a header field name
-  void Trim_(Indices& delimiters) {
-    bool perform_ltrim = true, perform_rtrim = true;
-    auto original_offset = delimiters.first;
-    auto original_length = delimiters.second;
-    // perform [left && right] trim..
-    std::size_t i = 0;
-    while (i < original_length && (perform_ltrim || perform_rtrim)) {
-      if (perform_ltrim) {
-        if (buffer_[original_offset + i] != HttpConstants::Characters::kSpace &&
-            buffer_[original_offset + i] != HttpConstants::Characters::kHt) {
-          perform_ltrim = false;
-        } else {
-          delimiters.first++;
-          delimiters.second--;
-        }
-      }
-      if (perform_rtrim) {
-        if (buffer_[original_offset + (original_length - 1 - i)] !=
-                HttpConstants::Characters::kSpace &&
-            buffer_[original_offset + (original_length - 1 - i)] !=
-                HttpConstants::Characters::kHt) {
-          perform_rtrim = false;
-        } else {
-          delimiters.second--;
-        }
-      }
-      i++;
-    }
-  }
-  // Resets all the internal decoder variables to the initial state.
-  void Reset_() {
-    encoding_type_ = HttpEncodingType::kNone;
-    decoding_body_part_ = false;
-    content_length_ = 0;
-  }
   // ---------------------------------------------------------------------------
   // Attributes                                                      [ private ]
   // ---------------------------------------------------------------------------
@@ -299,22 +144,8 @@ class HttpRequestDecoder {
   char buffer_[HttpConstants::Limits::kMaxHttpMessageLength] = {0};
   // internal buffer used size
   std::size_t used_ = 0;
-  // content-length
-  std::size_t content_length_ = 0;
-  // body encoding type
-  HttpEncodingType encoding_type_ = HttpEncodingType::kNone;
-  // body content
-  base::Stream body_;
   // flag used to determine if we're decoding the body segment
   bool decoding_body_part_ = false;
-  // http-method
-  std::string method_;
-  // http-request-uri
-  std::string request_uri_;
-  // http-version
-  std::string http_version_;
-  // http-headers
-  std::string headers_;
 };
 }  // namespace koobika::hook::network::protocol::http::v11
 

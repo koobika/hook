@@ -36,11 +36,10 @@
 #include <functional>
 #include <stdexcept>
 
-#include "auth/basic.h"
-#include "base/key_value_store.h"
-#include "base/repository_memory.h"
-#include "http_router.h"
 #include "network/transport/server_transport_constants.h"
+#include "structured/json/json_value.h"
+#include "auth/basic.h"
+#include "http_router.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
@@ -63,20 +62,17 @@ class HttpServerBase : public HttpRoutesManager<RQty, RSty> {
   // ---------------------------------------------------------------------------
   // Constructors/Destructors                                         [ public ]
   // ---------------------------------------------------------------------------
-  HttpServerBase() {
-    configuration_[transport::ServerTransportConstants::kKeyNumberOfWorkers] =
-        transport::ServerTransportConstants::kDefNumberOfWorkers;
-    configuration_[transport::ServerTransportConstants::kKeyMaxConnections] =
-        transport::ServerTransportConstants::kDefMaxConnections;
-  }
-  HttpServerBase(const int& workers_number,
-                 const int& maximum_number_of_connections) {
-    configuration_[transport::ServerTransportConstants::kKeyNumberOfWorkers] =
+  HttpServerBase(
+      const int& workers_number =
+          transport::ServerTransportConstants::kNumberOfWorkersValue,
+      const int& maximum_number_of_connections =
+          transport::ServerTransportConstants::kMaxConnectionsValue) {
+    configuration_[transport::ServerTransportConstants::kNumberOfWorkersKey] =
         workers_number;
-    configuration_[transport::ServerTransportConstants::kKeyMaxConnections] =
+    configuration_[transport::ServerTransportConstants::kMaxConnectionsKey] =
         maximum_number_of_connections;
   }
-  HttpServerBase(const base::KeyValueStore<std::string>& configuration)
+  HttpServerBase(const structured::json::JsonObject& configuration)
       : configuration_{configuration} {}
   HttpServerBase(const HttpServerBase&) = delete;
   HttpServerBase(HttpServerBase&&) noexcept = delete;
@@ -89,83 +85,53 @@ class HttpServerBase : public HttpRoutesManager<RQty, RSty> {
   // ---------------------------------------------------------------------------
   // Methods                                                          [ public ]
   // ---------------------------------------------------------------------------
-  // Starts server activity
+  // starts server activity uwing the provided port!
   void Start(const std::string& port) {
     if (transport_ != nullptr) {
       // [error] -> server is already running!
       throw std::logic_error("server is already running!");
     }
-    // let's fill the configuration repository with the incoming port!
-    configuration_[transport::ServerTransportConstants::kKeyPort] = port;
-    on_accept_connection_ = [](const typename TRty::Handle& id) -> bool {
-      return true;
-    };
-    on_connection_accepted_ = [](const typename TRty::Handle& id) -> void {};
-    on_connection_rejected_ = [](const typename TRty::Handle& id) -> void {};
-    on_data_ = [this](typename TRty::Decoder& decoder,
-                      const typename TRty::Handle& id,
-                      const typename TRty::Sender& sender,
-                      const typename TRty::OnError onError) {
-      decoder.Decode(
-          // OnSuccess handler! Here goes our code!
-          [this, sender](const RQty& req) {
-            RSty res;
-            try {
-              if (!router_.Perform(req.Uri.GetPath(), req, res, auth_)) {
-                // [error] -> route is not registered!
-                // [to-do] -> inform user back?
-                res.NotFound_404();
-              }
-            } catch (std::exception& e) {
-              // [error] -> an exception was thrown!
-              // [to-do] -> inform user back!
-              res.InternalServerError_500(e.what());
-            } catch (...) {
-              // [error] -> an exception was thrown!
-              // [to-do] -> inform user back!
-              res.InternalServerError_500("Unknown server exception!");
-            }
-
-            /*
-            pepe
-            */
-
-            auto start = std::chrono::steady_clock::now();
-            sender(res.Serialize());
-            auto end = std::chrono::steady_clock::now();
-
-            /*
-            pepe fin
-            */
-          },
-          // OnError handler! Here goes our error handling routine
-          [id, onError]() { onError(); });
-    };
+    configuration_[transport::ServerTransportConstants::kPortKey] = port;
     // let's setup the required transport!
     transport_ = std::make_unique<TRty>();
-    transport_->SetOnAcceptConnectionCallback(on_accept_connection_);
-    transport_->SetOnConnectionAcceptedCallback(on_connection_accepted_);
-    transport_->SetOnConnectionRejectedCallback(on_connection_rejected_);
-    transport_->SetOnDataCallback(on_data_);
-    transport_->Setup(configuration_);
+    // let' start transport activity on a separate thread!
+    transport_thread_ = std::make_shared<std::thread>(
+        [&transport = transport_, &configuration = configuration_]() {
+          transport->Start(configuration);
+        });
   }
-  // Stops server activity
+  // stops server activity!
   void Stop() {
     if (transport_ != nullptr) {
-      transport_->Cleanup();
+      transport_->Stop();
+    }
+    if (transport_thread_->joinable()) {
+      transport_thread_->join();
     }
   }
+
+  /*
+  pepe
+  */
+
+  /*
   // Sets the authorization module for this server
   template <template <typename RQ, typename RS,
-                      template <typename KE, typename VA> typename RP>
+                      template <typename KE> typename RP>
             typename AUty,
-            template <typename KEty, typename VAty>
+            template <typename KEty>
             typename RPty = base::RepositoryMemory,
             typename... PAty>
   void Authorization(PAty&&... args) {
     auth_ = std::make_shared<AUty<RQty, RSty, RPty>>(args...);
     router_.handle(*auth_);
   }
+  */
+
+  /*
+  pepe fin
+  */
+
   // Adds a new <generic> handler to 'nominal' router structures
   void Handle(
       const std::string& route,
@@ -291,13 +257,10 @@ class HttpServerBase : public HttpRoutesManager<RQty, RSty> {
   // Attributes                                                      [ private ]
   // ---------------------------------------------------------------------------
   ROty<RQty, RSty> router_;
-  std::unique_ptr<TRty> transport_;
-  typename TRty::OnAcceptConnection on_accept_connection_;
-  typename TRty::OnConnectionAccepted on_connection_accepted_;
-  typename TRty::OnConnectionRejected on_connection_rejected_;
-  typename TRty::OnData on_data_;
-  base::KeyValueStore<std::string> configuration_;
+  std::shared_ptr<TRty> transport_;
   std::shared_ptr<HttpAuthModule<RQty, RSty>> auth_;
+  std::shared_ptr<std::thread> transport_thread_;
+  structured::json::JsonObject configuration_;
 };
 }  // namespace koobika::hook::network::protocol::http::v11
 

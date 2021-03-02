@@ -64,13 +64,10 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
   // ---------------------------------------------------------------------------
   // Constructors/Destructors                                         [ public ]
   // ---------------------------------------------------------------------------
-  ServerTransportTcpIp()
-      : io_port_{INVALID_HANDLE_VALUE},
-        listen_socket_{INVALID_SOCKET},
-        fn_accept_ex_{nullptr} {}
+  ServerTransportTcpIp() = default;
   ServerTransportTcpIp(const ServerTransportTcpIp&) = delete;
   ServerTransportTcpIp(ServerTransportTcpIp&&) noexcept = delete;
-  ~ServerTransportTcpIp() { Cleanup(); };
+  ~ServerTransportTcpIp() { Stop(); };
   // ---------------------------------------------------------------------------
   // Operators                                                        [ public ]
   // ---------------------------------------------------------------------------
@@ -79,37 +76,69 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
   // ---------------------------------------------------------------------------
   // Methods                                                          [ public ]
   // ---------------------------------------------------------------------------
-  // Sets up current transport object
-  void Setup(const base::KeyValueStore<std::string>& configuration) override {
+  // |starts current transport activity using the provided (json) configuration.
+  void Start(const structured::json::JsonObject& configuration) override {
     if (io_port_ != INVALID_HANDLE_VALUE) {
       // [error] -> transport already initialized!
-      throw std::logic_error("already initialized transport!");
+      throw std::logic_error("Already initialized transport!");
     }
+    // let's retrieve all needed parameters for this transport..
+    auto const& port = (const structured::json::JsonString&)
+        configuration[transport::ServerTransportConstants::kPortKey];
+    auto const& number_of_workers = (const structured::json::JsonNumber&)
+        configuration[transport::ServerTransportConstants::kNumberOfWorkersKey];
+    auto const& max_connections = (const structured::json::JsonNumber&)
+        configuration[transport::ServerTransportConstants::kMaxConnectionsKey];
+    // let's setup all the required resources..
     SetupWinsock_();
-    SetupListener_(configuration);
-    SetupWorkers_(configuration);
+    SetupListener_(port.Get(), number_of_workers.Get<int>());
+    SetupWorkers_(number_of_workers.Get<int>());
+    // let's start incoming connections loop!
+    while (true) {
+      SOCKET client = WSAAccept(accept_socket_, NULL, NULL, NULL, NULL);
+      if (client == INVALID_SOCKET) {
+        // [error] -> trying to accept a new connection: shutting down?
+        break;
+      }
+      // set the socket i/o mode: In this case FIONBIO enables or disables the
+      // blocking mode for the socket based on the numerical value of iMode.
+      // iMode = 0, blocking mode; iMode != 0, non-blocking mode.
+      ULONG i_mode = 1;
+      auto ioctl_socket_res = ioctlsocket(client, FIONBIO, &i_mode);
+      if (ioctl_socket_res != NO_ERROR) {
+        // [error] -> could not change blocking mode on socket!
+        // [to-do] -> raise an exception?
+      }
+      // let's associate the accept socket with the i/o port!
+      ULONG_PTR key = (ULONG_PTR) new Context(client);
+      if (!CreateIoCompletionPort((HANDLE)client, io_port_, key, 0)) {
+        // [error] -> trying to associate socket to the i/o port!
+        // [to-do] -> raise an exception?
+      }
+      // let's notify waiting thread for the new connection!
+      if (!PostQueuedCompletionStatus(io_port_, 0, key, NULL)) {
+        // [error] -> trying to notify waiting thread!
+        // [to-do] -> raise an exception?
+      }
+    }
   }
-  // Cleans up current transport object
-  void Cleanup(void) override {
+  // |stops current transport activity.
+  void Stop(void) override {
     if (io_port_ != INVALID_HANDLE_VALUE) {
       CloseHandle(io_port_);
-      closesocket(listen_socket_);
-    }
-    while (!threads_.empty()) {
-      auto& thread = threads_.front();
-      if (thread->joinable()) {
-        thread->join();
+      closesocket(accept_socket_);
+      io_port_ = INVALID_HANDLE_VALUE;
+      accept_socket_ = INVALID_SOCKET;
+      while (threads_.size()) {
+        auto& thread = threads_.front();
+        if (thread->joinable()) {
+          thread->join();
+        }
+        threads_.pop();
       }
-      threads_.pop();
     }
-    while (!contexts_.empty()) {
-      delete contexts_.front();
-      contexts_.pop();
-    }
-    io_port_ = INVALID_HANDLE_VALUE;
-    listen_socket_ = INVALID_SOCKET;
   }
-  // Tries to send the specified buffer through the transport connection
+  // |tries to send the specified buffer through the transport connection
   void Send(const SOCKET& id, const base::Stream& stream) override {
     char buffer[ServerTransportConstants::kDefaultWriteBufferSize];
     std::size_t length;
@@ -128,64 +157,33 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
       }
     }
   }
-  // This method will be used to set the function in charge of accepting (or
-  // not an incoming connection attempt within the transport (callback)
-  void SetOnAcceptConnectionCallback(
-      const typename Interface::OnAcceptConnection& fn) override {
-    on_accept_connection_ = fn;
-  }
-  // This method will be used to set the function in charge of notifying for
-  // every accepted connection within the transport (callback)
-  void SetOnConnectionAcceptedCallback(
-      const typename Interface::OnConnectionAccepted& fn) override {
-    on_connection_accepted_ = fn;
-  }
-  // This method will be used to set the function in charge of notifying for
-  // every rejected connection within the transport (callback)
-  void SetOnConnectionRejectedCallback(
-      const typename Interface::OnConnectionRejected& fn) override {
-    on_connection_rejected_ = fn;
-  }
-  // This method will be used to set the function in charge of notifying for
-  // incoming data within the provided connection (callback)
-  void SetOnDataCallback(const typename Interface::OnData& fn) override {
-    on_data_ = fn;
-  }
 
  private:
   // ---------------------------------------------------------------------------
   // Types                                                           [ private ]
   // ---------------------------------------------------------------------------
-  struct Context_ : public WSAOVERLAPPED {
-    Context_() {
-      ZeroMemory(&Internal, sizeof(Internal));
-      ZeroMemory(&InternalHigh, sizeof(InternalHigh));
-      ZeroMemory(&Offset, sizeof(Offset));
-      ZeroMemory(&OffsetHigh, sizeof(OffsetHigh));
-      ZeroMemory(&hEvent, sizeof(hEvent));
-      wsa_recv_data.buf =
-          new char[transport::ServerTransportConstants::kDefaultReadBufferSize];
-      wsa_recv_data.len =
-          transport::ServerTransportConstants::kDefaultReadBufferSize;
-      sock = INVALID_SOCKET;
-      status = 0;
+  struct Context {
+    WSAOVERLAPPED overlapped;
+    WSABUF data;
+    SOCKET socket;
+    std::shared_ptr<DEty> decoder;
+    Context(const SOCKET& in = INVALID_SOCKET) {
+      decoder = std::make_shared<DEty>();
+      ZeroMemory(&overlapped, sizeof(WSAOVERLAPPED));
+      data.buf = new CHAR[ServerTransportConstants::kDefaultReadBufferSize];
+      data.len = ServerTransportConstants::kDefaultReadBufferSize;
+      socket = in;
     }
-    ~Context_() { delete[] wsa_recv_data.buf; }
-    WSABUF wsa_recv_data;
-    DEty decoder;
-    SOCKET sock;
-    char status;
+    ~Context() { delete[] data.buf; }
   };
   // ---------------------------------------------------------------------------
   // Methods                                                         [ private ]
   // ---------------------------------------------------------------------------
-  // Sets up winsock resources
+  // |sets-up winsock resources.
   void SetupWinsock_() {
     struct WsaInitializer_ {
       WsaInitializer_() {
-        // try to initialize Winsock static resources..
-        auto wsa_startup_result = WSAStartup(MAKEWORD(2, 2), &wsa_data);
-        if (wsa_startup_result != 0) {
+        if (WSAStartup(MAKEWORD(2, 2), &wsa_data)) {
           // [error] -> winsock could not be initialized!
           throw std::runtime_error("could not initialize winsock!");
         }
@@ -198,25 +196,11 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
       wsa_initializer_ptr_ = std::make_shared<WsaInitializer_>();
     }
   }
-  // Sets up listener resources
-  void SetupListener_(const base::KeyValueStore<std::string>& configuration) {
-    // let's extract needed parameters from configuration!
-    auto port_itr =
-        configuration.find(transport::ServerTransportConstants::kKeyPort);
-    if (port_itr == configuration.end()) {
-      // [error] -> needed configuration parameter not found!
-      throw std::logic_error(
-          "needed configuration parameter 'port' not specified!");
-    }
-    auto port_number = port_itr->second.Get<std::string>();
-    if (!port_number.has_value()) {
-      // [error] -> needed configuration parameter not found!
-      throw std::logic_error(
-          "needed configuration parameter 'port' not specified as "
-          "'std::string'!");
-    }
+  // |sets-up listener socket resources.
+  void SetupListener_(const std::string& port, const int& number_of_workers) {
     // let's create our main i/o completion port!
-    auto io_port = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
+    auto io_port = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL,
+                                          number_of_workers);
     if (io_port == nullptr) {
       // [error] -> while setting up the i/o completion port!
       throw std::runtime_error("could not setup i/o completion port!");
@@ -250,7 +234,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     sockaddr_in address = {0};
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_family = PF_INET;
-    address.sin_port = htons(atoi(port_number->data()));
+    address.sin_port = htons(atoi(port.c_str()));
     auto bind_res = bind(sock, (const sockaddr*)&address, sizeof(address));
     if (bind_res == SOCKET_ERROR) {
       // [error] -> could not bind socket!
@@ -264,206 +248,74 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
       closesocket(sock);
       throw std::runtime_error("could not bind to listening socket!");
     }
-    // load the AcceptEx function into memory using WSAIoctl. The WSAIoctl
-    // function is an extension of the ioctlsocket()function that can use
-    // overlapped I/O. The function's 3rd through 6th parameters are input
-    // and output buffers where we pass the pointer to our AcceptEx function.
-    // This is used so that we can call the AcceptEx function directly, rather
-    // than refer to the Mswsock.lib library.
-    DWORD dw_chars;
-    LPFN_ACCEPTEX fn_accept_ex = nullptr;
-    GUID guid_accept_ex = WSAID_ACCEPTEX;
-    auto ioctl_res =
-        WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid_accept_ex,
-                 sizeof(guid_accept_ex), &fn_accept_ex, sizeof(fn_accept_ex),
-                 &dw_chars, NULL, NULL);
-    if (ioctl_res == SOCKET_ERROR) {
-      // [error] -> could not call ioctl for accepting socket!
-      CloseHandle(io_port);
-      closesocket(sock);
-      throw std::runtime_error("could not perform WSAIoctl!");
-    }
-    // ok!, if we reach this point means that everything went fine!
-    fn_accept_ex_ = fn_accept_ex;
-    listen_socket_ = sock;
+    accept_socket_ = sock;
     io_port_ = io_port;
   }
-  // Sets up workers resources
-  void SetupWorkers_(const base::KeyValueStore<std::string>& configuration) {
-    // let's extract [kMaximumNumberOfSimultaneousConnections]!
-    auto max_connections_itr = configuration.find(
-        transport::ServerTransportConstants::kKeyMaxConnections);
-    if (max_connections_itr == configuration.end()) {
-      // [error] -> needed configuration parameter not found!
-      throw std::logic_error(
-          "needed configuration parameter 'maxConnections' not specified!");
-    }
-    auto number_of_contexts = max_connections_itr->second.Get<int>();
-    if (!number_of_contexts.has_value()) {
-      // [error] -> needed configuration parameter not found!
-      throw std::logic_error(
-          "needed configuration parameter 'maxConnections' not specified as "
-          "'int'!");
-    }
-    // let's extract [kNumberOfWorkers]!
-    auto number_of_workers_itr = configuration.find(
-        transport::ServerTransportConstants::kKeyNumberOfWorkers);
-    if (number_of_workers_itr == configuration.end()) {
-      // [error] -> needed configuration parameter not found!
-      throw std::logic_error(
-          "needed configuration parameter 'numberOfWorkers' not specified!");
-    }
-    auto number_of_workers = number_of_workers_itr->second.Get<int>();
-    if (!number_of_workers.has_value()) {
-      // [error] -> needed configuration parameter not found!
-      throw std::logic_error(
-          "needed configuration parameter 'numberOfWorkers' not specified as "
-          "'int'!");
-    }
-    // first, let's create all available contexts (including sockets)!
-    auto contexts = *number_of_contexts;
-    auto workers = *number_of_workers;
-    for (auto i = 0; i < contexts; i++) {
-      auto new_context = new Context_();
-      new_context->sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-      if (new_context->sock == INVALID_SOCKET) {
-        // [error] -> trying to create new socket resource!
-        delete new_context;
-        throw std::runtime_error("could not create accept socket!");
-      }
-      if (PrepareContextForUse_(new_context)) {
-        contexts_.push(new_context);
-      } else {
-        // [error] -> trying to prepare context for use!
-        delete new_context;
-        throw std::runtime_error("could not prepare context for use!");
-      }
-    }
-    // second, let's create all working threads!
-    auto number_of_entries = contexts / workers;
-    for (auto i = 0; i < workers; i++) {
-      threads_.push(std::make_shared<std::thread>([this, number_of_entries]() {
-        OVERLAPPED_ENTRY* entries = new OVERLAPPED_ENTRY[number_of_entries];
+  // |sets-up all needed workers within this transport.
+  void SetupWorkers_(const int& number_of_workers) {
+    for (int i = 0; i < number_of_workers; i++) {
+      threads_.push(std::make_shared<std::thread>([this]() {
+        ULONG_PTR completion_key = NULL;
+        LPOVERLAPPED overlapped = NULL;
+        DWORD bytes_returned = 0;
         while (true) {
-          ULONG entries_removed;
-          auto status =
-              GetQueuedCompletionStatusEx(io_port_, entries, number_of_entries,
-                                          &entries_removed, INFINITE, FALSE);
-          if (!status) {
-            // ok, this is fine, we're shutting down..
+          if (!GetQueuedCompletionStatus(io_port_, &bytes_returned,
+                                         (PULONG_PTR)&completion_key,
+                                         &overlapped, INFINITE)) {
+            // ok, this is fine, we're shutting down our completion port..
             break;
           }
-          for (ULONG i = 0; i < entries_removed; i++) {
-            Context_* ctx = (Context_*)entries[i].lpOverlapped;
-            if (!ctx) {
-              // [error] -> this should never happen! anyway let's skip it!
+          Context* context = (Context*)completion_key;
+          if (overlapped) {
+            if (!bytes_returned) {
+              // connection closed! let's free the associated resources!
+              closesocket(context->socket);
+              delete context;
               continue;
             }
-            // let's us our callback to ask for socket acceptance..
-            if (!ctx->status) {
-              bool accepted = (on_accept_connection_ == nullptr) ||
-                              (on_accept_connection_(ctx->sock));
-              if (accepted) {
-                if (on_connection_accepted_ != nullptr) {
-                  on_connection_accepted_(ctx->sock);
-                }
-              } else {
-                if (!PrepareContextForUse_(ctx, true)) {
-                  // [error] -> trying to reuse socket!
-                }
-                if (on_connection_rejected_ != nullptr) {
-                  on_connection_rejected_(ctx->sock);
-                }
-              }
-              ctx->status = ~ctx->status;
-            }
-            if (!entries[i].dwNumberOfBytesTransferred) {
-              // [error] -> disconnected! let's recycle it for later use!
-              if (!PrepareContextForUse_(ctx, true)) {
-                // [error] -> trying to reuse socket!
-              }
-              continue;
-            }
-            if (!ctx->decoder.Add(ctx->wsa_recv_data.buf,
-                                  entries[i].dwNumberOfBytesTransferred)) {
-              if (!PrepareContextForUse_(ctx, true)) {
-                // [error] -> trying to reuse socket!
-              }
-            }
-            auto sock = ctx->sock;
-            if (on_data_ != nullptr) {
-              on_data_(
-                  ctx->decoder, sock,
-                  [this, sock](const base::Stream& stream) {
-                    Send(sock, stream);
-                  },
-                  [this, ctx]() {
-                    if (!PrepareContextForUse_(ctx, true)) {
-                      // [error] -> trying to reuse socket!
-                    }
-                  });
-            }
-            DWORD recv_flags = 0;
-            DWORD chars_returned;
-            auto res = WSARecv(ctx->sock, &ctx->wsa_recv_data, 1,
-                               &chars_returned, &recv_flags, ctx, nullptr);
-            if (res == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING) {
-              // [error] -> the socket has been closed!
-              closesocket(ctx->sock);
+          } else if (bytes_returned) {
+            // connection closed! let's free the associated resources!
+            closesocket(context->socket);
+            delete context;
+            continue;
+          }
+          if (bytes_returned) {
+            if (context->decoder->Add(context->data.buf, bytes_returned)) {
+              base::Stream response;
+              static constexpr char content[] =
+                  "HTTP/1.1 200 OK\r\n"
+                  "Content-Length: 15\r\n"
+                  "Content-Type: text/plain; charset=UTF-8\r\n"
+                  "Server: Example\r\n"
+                  "Date: Wed, 17 Apr 2013 12:00:00 GMT\r\n\r\n"
+                  "Hello, World!\r\n";
+              response.Write(content);
+              Send(context->socket, response);
             }
           }
+          DWORD recv_flags = 0;
+          DWORD bytes_transmitted = 0;
+          int wsarecv_result = WSARecv(
+              context->socket, &context->data, 0x1, &bytes_transmitted,
+              &recv_flags, (LPWSAOVERLAPPED)&context->overlapped, nullptr);
+          if (wsarecv_result == SOCKET_ERROR) {
+            if (WSAGetLastError() != WSA_IO_PENDING) {
+              // connection closed! let's free the associated resources!
+              closesocket(context->socket);
+              delete context;
+            }
+            continue;
+          }
         }
-        delete[] entries;
       }));
     }
-  }
-  // Prepares context data for later use
-  bool PrepareContextForUse_(Context_* context, const bool& close_it = false) {
-    DWORD dw_chars;
-    do {
-      // let's close the socket resources (if needed)..
-      if (close_it) {
-        if (TransmitFile(context->sock, NULL, 0, 0, nullptr, nullptr,
-                         TF_DISCONNECT | TF_REUSE_SOCKET) != TRUE) {
-          // [error] -> trying to close socket!
-          break;
-        }
-      }
-      // we reset the 'status' flag to indicate that this connection is not
-      // a valid (accepted) one, then we start the 'accept' procedure..
-      context->status = 0;
-      auto accept_res = fn_accept_ex_(
-          listen_socket_, context->sock, context->wsa_recv_data.buf,
-          transport::ServerTransportConstants::kDefaultReadBufferSize -
-              ((sizeof(sockaddr_in) + 16) * 2),
-          sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, &dw_chars,
-          context);
-      if (accept_res == FALSE && WSAGetLastError() != WSA_IO_PENDING) {
-        // [error] -> trying to add socket to the accept list!
-        break;
-      }
-      // ok, let's associate the accept socket with the i/o port!
-      if (CreateIoCompletionPort((HANDLE)context->sock, io_port_,
-                                 (ULONG_PTR)context->sock, 0) == nullptr) {
-        // [error] -> trying to associate socket to the i/o port!
-        break;
-      }
-      return true;
-    } while (false);
-    return false;
   }
   // ---------------------------------------------------------------------------
   // Attributes                                                      [ private ]
   // ---------------------------------------------------------------------------
-  HANDLE io_port_;
-  SOCKET listen_socket_;
+  HANDLE io_port_ = INVALID_HANDLE_VALUE;
+  SOCKET accept_socket_ = INVALID_SOCKET;
   std::queue<std::shared_ptr<std::thread>> threads_;
-  std::queue<Context_*> contexts_;
-  LPFN_ACCEPTEX fn_accept_ex_;
-  typename Interface::OnAcceptConnection on_accept_connection_;
-  typename Interface::OnConnectionAccepted on_connection_accepted_;
-  typename Interface::OnConnectionRejected on_connection_rejected_;
-  typename Interface::OnData on_data_;
 };
 }  // namespace koobika::hook::network::transport::tcpip
 

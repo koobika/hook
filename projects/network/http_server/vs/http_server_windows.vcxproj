@@ -21,10 +21,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\include\base\builder.h" />
     <ClInclude Include="..\..\..\..\include\base\builder_property.h" />
-    <ClInclude Include="..\..\..\..\include\base\key_value_store.h" />
     <ClInclude Include="..\..\..\..\include\base\platform.h" />
-    <ClInclude Include="..\..\..\..\include\base\repository.h" />
-    <ClInclude Include="..\..\..\..\include\base\repository_memory.h" />
     <ClInclude Include="..\..\..\..\include\base\serializable.h" />
     <ClInclude Include="..\..\..\..\include\base\stream.h" />
     <ClInclude Include="..\..\..\..\include\base\uri.h" />
@@ -61,6 +58,7 @@
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_util.h" />
     <ClInclude Include="..\..\..\..\include\network\transport\server_transport_constants.h" />
     <ClInclude Include="..\..\..\..\include\network\transport\server_transport.h" />
+    <ClInclude Include="..\..\..\..\include\network\transport\server_transport_decoder.h" />
     <ClInclude Include="..\..\..\..\include\network\transport\tcpip\server_transport_tcp_ip.h" />
     <ClInclude Include="..\..\..\..\include\network\transport\tcpip\server_transport_tcp_ip_win.h" />
     <ClInclude Include="..\..\..\..\include\structured\json\json_array.h" />

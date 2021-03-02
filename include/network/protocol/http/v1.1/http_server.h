@@ -55,7 +55,7 @@ class HttpServer
   HttpServer(const int& workers_number,
              const int& maximum_number_of_connections)
       : HttpServerBase(workers_number, maximum_number_of_connections) {}
-  HttpServer(const base::KeyValueStore<std::string>& configuration)
+  HttpServer(const structured::json::JsonValue& configuration)
       : HttpServerBase(configuration) {}
   HttpServer(const HttpServer&) = delete;
   HttpServer(HttpServer&&) noexcept = delete;

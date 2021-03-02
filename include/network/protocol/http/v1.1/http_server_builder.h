@@ -33,8 +33,8 @@
 
 #include "base/builder.h"
 #include "base/builder_property.h"
-#include "http_server.h"
 #include "network/transport/server_transport_constants.h"
+#include "http_server.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
@@ -56,9 +56,9 @@ class HttpServerBuilder : public base::Builder<HttpServer> {
   // Properties                                                       [ public ]
   // ---------------------------------------------------------------------------
   base::BuilderProperty<int, HttpServerBuilder> NumberOfWorkers{
-      this, transport::ServerTransportConstants::kDefNumberOfWorkers};
+      this, transport::ServerTransportConstants::kNumberOfWorkersValue};
   base::BuilderProperty<int, HttpServerBuilder> MaximumNumberOfConnections{
-      this, transport::ServerTransportConstants::kDefMaxConnections};
+      this, transport::ServerTransportConstants::kMaxConnectionsValue};
 };
 }  // namespace koobika::hook::network::protocol::http::v11
 

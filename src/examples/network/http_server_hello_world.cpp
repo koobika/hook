@@ -47,9 +47,9 @@ int main() {
         res.Headers.Set("Server", "Example");
         res.Headers.Set("Date", "Wed, 17 Apr 2013 12:00:00 GMT");
         res.Headers.Set("Content-Type", "text/plain; charset=UTF-8");
-        res.Headers.Set("Content-Length", 13);
+        res.Headers.Set("Content-Length", 15);
         // Set the response body using the provided stream writer..
-        res.Body.Write("Hello, World!");
+        res.Body.Write("Hello, World!\n\n");
         // Set the response code and.. that's all!
         res.Ok_200();
       } else {

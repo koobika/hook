@@ -28,24 +28,36 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_base_keyvaluestore_h
-#define koobika_hook_base_keyvaluestore_h
+#ifndef koobika_hook_network_transport_servertransportdecoder_h
+#define koobika_hook_network_transport_servertransportdecoder_h
 
-#include <unordered_map>
+#include <memory>
+#include <functional>
 
-#include "variant.h"
-
-namespace koobika::hook::base {
-// =============================================================================
-// KeyValueStore                                                       [ class ]
-// -----------------------------------------------------------------------------
-// This specification holds for the key-value store helper class.
-// -----------------------------------------------------------------------------
-// Ttemplate parameters:
-//    KYty - key type being used.
-// =============================================================================
-template <typename KYty>
-using KeyValueStore = std::unordered_map<KYty, Variant>;
-}  // namespace koobika::hook::base
+namespace koobika::hook::network::transport {
+  // =============================================================================
+  // ServerTransportDecoder                                          [ interface ]
+  // -----------------------------------------------------------------------------
+  // This specification holds for server transport decoder interface
+  // -----------------------------------------------------------------------------
+  // Template parameters:
+  //    RQty - server transport request type being generated
+  // =============================================================================
+  template <typename RQty>
+  class ServerTransportDecoder {
+  public:
+    // ---------------------------------------------------------------------------
+    // Usings                                                           [ public ]
+    // ---------------------------------------------------------------------------
+    using OnErrorHandler = std::function<void()>;
+    // ---------------------------------------------------------------------------
+    // Methods                                                          [ public ]
+    // ---------------------------------------------------------------------------
+    // Adds (opaque) content to the decoder.
+    virtual bool Add(void*, const std::size_t&) = 0;
+    // Tries to decode internal content.
+    virtual bool Decode(const OnErrorHandler&) = 0;
+  };
+}  // namespace koobika::hook::network::transport
 
 #endif
