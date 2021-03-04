@@ -167,9 +167,6 @@
     <ClInclude Include="..\..\..\..\include\structured\json\json_value_type.h">
       <Filter>include\structured\json</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_auth_module.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes.h">
       <Filter>include\network\protocol\http\v1.1</Filter>
     </ClInclude>
@@ -211,6 +208,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\network\transport\server_transport_decoder.h">
       <Filter>include\network\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_auth_module.h">
+      <Filter>include\network\protocol\http\v1.1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

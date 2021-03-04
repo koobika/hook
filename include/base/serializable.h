@@ -39,14 +39,14 @@
 
 namespace koobika::hook::base {
 // =============================================================================
-// Serializable                                                    [ interface ]
+// Serializable                                                    ( interface )
 // -----------------------------------------------------------------------------
 // This specification holds for serializable interface.
 // =============================================================================
 class Serializable {
  public:
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
   // Returns the string serialized version of an object.
   virtual Stream Serialize() const = 0;

@@ -35,23 +35,23 @@
 
 namespace koobika::hook::structured::json {
 // =============================================================================
-// JsonTrue                                                            [ class ]
+// JsonTrue                                                            ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON true default class
+// This specification holds for JSON true default class.
 // =============================================================================
 class JsonTrue : public base::Serializable {
  public:
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value
+  // Gets the stored json-value.
   bool Get() const { return true; }
-  // Dumps the current content to string
+  // Dumps the current content to string.
   base::Stream Serialize() const override { return kTrueStr; }
 
  private:
   // ---------------------------------------------------------------------------
-  // Constants                                                       [ private ]
+  // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
   static constexpr char kTrueStr[] = "true";
 };

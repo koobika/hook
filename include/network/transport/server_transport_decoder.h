@@ -31,39 +31,38 @@
 #ifndef koobika_hook_network_transport_servertransportdecoder_h
 #define koobika_hook_network_transport_servertransportdecoder_h
 
-#include <memory>
 #include <functional>
+#include <memory>
 
 #include "base/stream.h"
 
 namespace koobika::hook::network::transport {
-  // =============================================================================
-  // ServerTransportDecoder                                          [ interface ]
-  // -----------------------------------------------------------------------------
-  // This specification holds for server transport decoder interface
-  // -----------------------------------------------------------------------------
-  // Template parameters:
-  //    RQty - server transport request type being generated
-  // =============================================================================
-  template <typename RQty>
-  class ServerTransportDecoder {
-  public:
-    // ---------------------------------------------------------------------------
-    // Usings                                                           [ public ]
-    // ---------------------------------------------------------------------------
-   using Sender = std::function<void(const base::Stream&)>;
-   using RequestHandler = std::function<void(const RQty&, const Sender&)>;
-   using ErrorHandler = std::function<void()>;
-
-    // ---------------------------------------------------------------------------
-    // Methods                                                          [ public ]
-    // ---------------------------------------------------------------------------
-    // Adds (opaque) content to the decoder.
-    virtual bool Add(void*, const std::size_t&) = 0;
-    // Tries to decode internal content.
-    virtual void Decode(const RequestHandler&, const ErrorHandler&,
-                        const Sender&) = 0;
-  };
+// =============================================================================
+// ServerTransportDecoder                                          ( interface )
+// -----------------------------------------------------------------------------
+// This specification holds for server transport decoder interface.
+// -----------------------------------------------------------------------------
+// Template parameters:
+//    RQty - server transport request type being generated
+// =============================================================================
+template <typename RQty>
+class ServerTransportDecoder {
+ public:
+  // ---------------------------------------------------------------------------
+  // USINGs                                                           ( public )
+  // ---------------------------------------------------------------------------
+  using Sender = std::function<void(const base::Stream&)>;
+  using RequestHandler = std::function<void(const RQty&, const Sender&)>;
+  using ErrorHandler = std::function<void()>;
+  // ---------------------------------------------------------------------------
+  // METHODs                                                          ( public )
+  // ---------------------------------------------------------------------------
+  // Adds (opaque) content to the decoder.
+  virtual bool Add(void*, const std::size_t&) = 0;
+  // Tries to decode internal content.
+  virtual void Decode(const RequestHandler&, const ErrorHandler&,
+                      const Sender&) = 0;
+};
 }  // namespace koobika::hook::network::transport
 
 #endif

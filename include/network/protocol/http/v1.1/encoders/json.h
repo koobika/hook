@@ -33,24 +33,24 @@
 
 #include <memory>
 
-#include "base/buffer.h"
+#include "base/stream.h"
 #include "structured/json/json_value.h"
 
 namespace koobika::hook::network::protocol::http::v11::encoders {
 // =============================================================================
-// Json                                                                [ class ]
+// Json                                                                ( class )
 // -----------------------------------------------------------------------------
 // This class is in charge of providing the default json body decoding
 // =============================================================================
 class Json {
  public:
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Encodes content stored within the provided data
-  static std::shared_ptr<base::BufferInterface> Encode(
+  // Encodes content stored within the provided data.
+  static std::shared_ptr<base::Stream> Encode(
       const structured::json::JsonValue& json) {
-    return std::make_shared<base::Buffer>(json.Serialize());
+    return std::make_shared<base::Stream>(json.Serialize());
   }
 };
 }  // namespace koobika::hook::network::protocol::http::v11::encoders

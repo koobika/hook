@@ -42,7 +42,7 @@
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// PERFORM_ERROR_HANDLING                                              [ macro ]
+// PERFORM_ERROR_HANDLING                                              ( macro )
 // =============================================================================
 #define PERFORM_ERROR_HANDLING \
   {                            \
@@ -51,7 +51,7 @@ namespace koobika::hook::network::protocol::http::v11 {
     return;                    \
   }
 // =============================================================================
-// GET_REQUEST_LINE_FIELD                                              [ macro ]
+// GET_REQUEST_LINE_FIELD                                              ( macro )
 // =============================================================================
 #define GET_REQUEST_LINE_FIELD(field, delimiter, delimiter_length)   \
   {                                                                  \
@@ -63,7 +63,7 @@ namespace koobika::hook::network::protocol::http::v11 {
     cursor += length + delimiter_length;                             \
   }
 // =============================================================================
-// GET_HEADER_FIELD_NAME                                               [ macro ]
+// GET_HEADER_FIELD_NAME                                               ( macro )
 // =============================================================================
 #define GET_HEADER_FIELD_NAME(name)                            \
   {                                                            \
@@ -75,7 +75,7 @@ namespace koobika::hook::network::protocol::http::v11 {
     cursor += name.second + HttpConstants::Strings::kColonLen; \
   }
 // =============================================================================
-// GET_HEADER_FIELD_VALUES                                             [ macro ]
+// GET_HEADER_FIELD_VALUES                                             ( macro )
 // =============================================================================
 #define GET_HEADER_FIELD_VALUES(values)                              \
   values.clear();                                                    \
@@ -91,9 +91,9 @@ namespace koobika::hook::network::protocol::http::v11 {
     if (!HttpUtil::SkipLWS(&buffer_[cursor], end - cursor)) break;   \
   }
 // =============================================================================
-// HttpRequestDecoder                                                  [ class ]
+// HttpRequestDecoder                                                  ( class )
 // -----------------------------------------------------------------------------
-// This class is in charge of providing the default http request decoder class
+// This class is in charge of providing the default http request decoder class.
 // -----------------------------------------------------------------------------
 // Template parameters:
 //    RQty - http request type being used
@@ -101,25 +101,25 @@ namespace koobika::hook::network::protocol::http::v11 {
 template <typename RQty>
 class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
   // ---------------------------------------------------------------------------
-  // Usings                                                          [ private ]
+  // USINGs                                                          ( private )
   // ---------------------------------------------------------------------------
   using Indices = std::pair<std::size_t, std::size_t>;
 
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   HttpRequestDecoder() = default;
   HttpRequestDecoder(const HttpRequestDecoder&) = delete;
   HttpRequestDecoder(HttpRequestDecoder&&) noexcept = delete;
   ~HttpRequestDecoder() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   HttpRequestDecoder& operator=(const HttpRequestDecoder&) = delete;
   HttpRequestDecoder& operator=(HttpRequestDecoder&&) noexcept = delete;
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
   // Adds the specified buffer fragment to the internal decoder data.
   bool Add(void* buffer, const std::size_t& length) override {
@@ -230,7 +230,7 @@ class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
 
  private:
   // ---------------------------------------------------------------------------
-  // Methods                                                         [ private ]
+  // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
   // Searchs for the required string content within the provided buffer.
   const char* SearchFor_(const char* buffer, const std::size_t& length,
@@ -250,7 +250,7 @@ class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
     }
     return nullptr;
   }
-  // Checks if the specified sub-string is a header field name
+  // Checks if the specified sub-string is a header field name.
   bool IsHeaderFieldName_(const Indices& delimiters, const char* buffer,
                           const std::size_t& length) {
     if (delimiters.second != length) return false;
@@ -261,7 +261,7 @@ class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
     }
     return true;
   }
-  // Checks if the specified sub-string is a header field name
+  // Checks if the specified sub-string is a header field name.
   void Trim_(Indices& delimiters) {
     bool perform_ltrim = true, perform_rtrim = true;
     auto original_offset = delimiters.first;
@@ -298,7 +298,7 @@ class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
     content_length_ = 0;
   }
   // ---------------------------------------------------------------------------
-  // Attributes                                                      [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   // internal buffer
   char buffer_[HttpConstants::Limits::kMaxHttpMessageLength] = {0};

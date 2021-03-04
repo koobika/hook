@@ -39,14 +39,14 @@
 
 namespace koobika::hook::base {
 // =============================================================================
-// Stream                                                              [ class ]
-// --------------------------------------------------------------
-// --------------- This specification holds for the stream class.
+// Stream                                                              ( class )
+// -----------------------------------------------------------------------------
+// This specification holds for the stream class.
 // =============================================================================
 class Stream {
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   Stream() = default;
   Stream(const std::string& str) { Write(str); }
@@ -58,7 +58,7 @@ class Stream {
   Stream(Stream&& stream) noexcept { operator=(std::move(stream)); }
   ~Stream() { Close(); }
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   Stream& operator=(const Stream& stream) {
     data_.read_cursor = 0;
@@ -82,7 +82,7 @@ class Stream {
     return *this;
   }
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
   // Writes the specified Stream to the internal buffer.
   Stream& Write(const Stream& stream) {
@@ -187,7 +187,7 @@ class Stream {
 
  private:
   // ---------------------------------------------------------------------------
-  // Constants                                                       [ private ]
+  // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
   static constexpr std::size_t kDefaultMemoryBufferLimit = 65536;
   static constexpr std::size_t kReadSomeBufferSize = 4096;
@@ -195,11 +195,11 @@ class Stream {
   static constexpr char kFilenameBase_[] = "stream_tmp_";
   static constexpr char kFilenameExt_[] = "dat";
   // ---------------------------------------------------------------------------
-  // Static Attributes                                               [ private ]
+  // STATIC-ATTRIBUTEs                                               ( private )
   // ---------------------------------------------------------------------------
   static inline int32_t counter_ = 0;
   // ---------------------------------------------------------------------------
-  // Types                                                           [ private ]
+  // TYPEs                                                           ( private )
   // ---------------------------------------------------------------------------
   struct Data {
     // Memory buffer.
@@ -215,7 +215,7 @@ class Stream {
     // Write cursor.
     std::size_t write_cursor = 0;
   };
-  // Gets next buffer filename
+  // Gets next buffer filename.
   static std::string GetNextFilename_() {
     static std::mutex counter_lock_;
     static char filename[kMaxFilenameLength] = {0};
@@ -228,7 +228,7 @@ class Stream {
     }
     return filename;
   }
-  // Allocates the needed space to allow required length
+  // Allocates the needed space to allow required length.
   void Allocate_(const std::size_t& length) {
     constexpr std::size_t kDefaultBufferChunkSize = 4096;
     std::size_t off = data_.write_cursor + length;
@@ -307,7 +307,7 @@ class Stream {
     return *this;
   }
   // ---------------------------------------------------------------------------
-  // Attributes                                                      [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   // Controls the current mode (memory/disk). By default: memory.
   bool memory_mode_ = true;

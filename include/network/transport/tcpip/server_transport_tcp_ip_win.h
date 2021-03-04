@@ -45,9 +45,9 @@
 
 namespace koobika::hook::network::transport::tcpip {
 // =============================================================================
-// ServerTransportTcpIp                                                [ class ]
+// ServerTransportTcpIp                                                ( class )
 // -----------------------------------------------------------------------------
-// This class holds for the server transport implementation (windows)
+// This class holds for the server transport implementation (windows).
 // -----------------------------------------------------------------------------
 // Template parameters:
 //    DEty - server transport decoder type being used
@@ -56,27 +56,27 @@ template <typename DEty>
 class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
  private:
   // ---------------------------------------------------------------------------
-  // Usings                                                          [ private ]
+  // USINGs                                                          ( private )
   // ---------------------------------------------------------------------------
   using Interface = ServerTransport<SOCKET, DEty>;
 
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   ServerTransportTcpIp() = default;
   ServerTransportTcpIp(const ServerTransportTcpIp&) = delete;
   ServerTransportTcpIp(ServerTransportTcpIp&&) noexcept = delete;
   ~ServerTransportTcpIp() { Stop(); };
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   ServerTransportTcpIp& operator=(const ServerTransportTcpIp&) = delete;
   ServerTransportTcpIp& operator=(ServerTransportTcpIp&&) noexcept = delete;
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // |starts current transport activity using the provided (json) configuration.
+  // Starts current transport activity using the provided (json) configuration.
   void Start(const structured::json::JsonObject& configuration,
              const typename DEty::RequestHandler& request_handler)
       override {
@@ -126,7 +126,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
       }
     }
   }
-  // |stops current transport activity.
+  // Stops current transport activity.
   void Stop(void) override {
     if (io_port_ != INVALID_HANDLE_VALUE) {
       CloseHandle(io_port_);
@@ -142,7 +142,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
       }
     }
   }
-  // |tries to send the specified buffer through the transport connection
+  // Tries to send the specified buffer through the transport connection.
   bool Send(const SOCKET& id, const base::Stream& stream) override {
     char buffer[ServerTransportConstants::kDefaultWriteBufferSize];
     while (std::size_t length = stream.ReadSome(
@@ -167,7 +167,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
 
  private:
   // ---------------------------------------------------------------------------
-  // Types                                                           [ private ]
+  // TYPEs                                                           ( private )
   // ---------------------------------------------------------------------------
   struct Context {
     WSAOVERLAPPED overlapped;
@@ -184,9 +184,9 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     ~Context() { delete[] data.buf; }
   };
   // ---------------------------------------------------------------------------
-  // Methods                                                         [ private ]
+  // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
-  // |sets-up winsock resources.
+  // Sets-up winsock resources.
   void SetupWinsock_() {
     struct WsaInitializer_ {
       WsaInitializer_() {
@@ -203,7 +203,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
       wsa_initializer_ptr_ = std::make_shared<WsaInitializer_>();
     }
   }
-  // |sets-up listener socket resources.
+  // Sets-up listener socket resources.
   void SetupListener_(const std::string& port, const int& number_of_workers) {
     // let's create our main i/o completion port!
     auto io_port = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL,
@@ -258,7 +258,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     accept_socket_ = sock;
     io_port_ = io_port;
   }
-  // |sets-up all needed workers within this transport.
+  // Sets-up all needed workers within this transport.
   void SetupWorkers_(const int& number_of_workers) {
     for (int i = 0; i < number_of_workers; i++) {
       threads_.push(std::make_shared<std::thread>([this]() {
@@ -287,21 +287,20 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
             delete context;
             continue;
           }
-          if (bytes_returned) {
-            if (context->decoder->Add(context->data.buf, bytes_returned)) {
-              context->decoder->Decode(
-                  request_handler_,
-                  [context]() {
+          if (bytes_returned &&
+              context->decoder->Add(context->data.buf, bytes_returned)) {
+            context->decoder->Decode(
+                request_handler_,
+                [context]() {
+                  // connection closed! let's free the associated resources!
+                  closesocket(context->socket);
+                },
+                [this, context](const base::Stream& stream) {
+                  if (!Send(context->socket, stream)) {
                     // connection closed! let's free the associated resources!
                     closesocket(context->socket);
-                  },
-                  [this, context](const base::Stream& stream) {
-                    if (!Send(context->socket, stream)) {
-                      // connection closed! let's free the associated resources!
-                      closesocket(context->socket);
-                    }
-                  });
-            }
+                  }
+                });
           }
           DWORD recv_flags = 0;
           DWORD bytes_transmitted = 0;
@@ -320,7 +319,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     }
   }
   // ---------------------------------------------------------------------------
-  // Attributes                                                      [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   HANDLE io_port_ = INVALID_HANDLE_VALUE;
   SOCKET accept_socket_ = INVALID_SOCKET;

@@ -35,7 +35,7 @@
 
 namespace koobika::hook::base {
 // =============================================================================
-// Builder                                                         [ interface ]
+// Builder                                                         ( interface )
 // -----------------------------------------------------------------------------
 // This specification holds for builder interface.
 // -----------------------------------------------------------------------------
@@ -46,7 +46,7 @@ template <typename OBty>
 class Builder {
  public:
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
   // Builds an object of the specified type.
   virtual std::shared_ptr<OBty> Build() const = 0;

@@ -33,7 +33,7 @@
 
 namespace koobika::hook::base {
 // =============================================================================
-// BuilderProperty                                                     [ class ]
+// BuilderProperty                                                     ( class )
 // -----------------------------------------------------------------------------
 // This specification holds for builder property class.
 // -----------------------------------------------------------------------------
@@ -45,7 +45,7 @@ template <typename DAty, typename OBty>
 class BuilderProperty {
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   BuilderProperty(OBty* const parent) : parent_{parent}, data_{DAty()} {}
   BuilderProperty(OBty* const parent, const DAty& default_value)
@@ -53,7 +53,7 @@ class BuilderProperty {
   BuilderProperty(const BuilderProperty&) = default;
   BuilderProperty(BuilderProperty&&) noexcept = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   BuilderProperty& operator=(const BuilderProperty&) = default;
   BuilderProperty& operator=(BuilderProperty&&) noexcept = default;
@@ -65,7 +65,7 @@ class BuilderProperty {
 
  private:
   // ---------------------------------------------------------------------------
-  // Atributes                                                       [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   DAty data_;
   OBty* const parent_;

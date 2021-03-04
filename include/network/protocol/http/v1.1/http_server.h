@@ -40,9 +40,9 @@
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpServer                                                          [ class ]
+// HttpServer                                                          ( class )
 // -----------------------------------------------------------------------------
-// This class is in charge of providing the default http server base class
+// This class is in charge of providing the default http server base class.
 // =============================================================================
 class HttpServer
     : public HttpServerBase<transport::tcpip::ServerTransportTcpIp<
@@ -50,7 +50,7 @@ class HttpServer
                             HttpRouter, HttpRequest, HttpResponse> {
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   HttpServer(const int& workers_number,
              const int& maximum_number_of_connections)
@@ -61,7 +61,7 @@ class HttpServer
   HttpServer(HttpServer&&) noexcept = delete;
   ~HttpServer() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   HttpServer& operator=(const HttpServer&) = delete;
   HttpServer& operator=(HttpServer&&) noexcept = delete;

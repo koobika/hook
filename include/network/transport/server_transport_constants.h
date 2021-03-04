@@ -35,13 +35,13 @@
 
 namespace koobika::hook::network::transport {
 // =============================================================================
-// ServerTransportConstants                                            [ class ]
+// ServerTransportConstants                                            ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for server transport constants
+// This specification holds for server transport constants.
 // =============================================================================
 struct ServerTransportConstants {
   // ---------------------------------------------------------------------------
-  // Constants                                                        [ public ]
+  // CONSTANTs                                                        ( public )
   // ---------------------------------------------------------------------------
   // Buffering capacity.
   static constexpr std::size_t kDefaultReadBufferSize = 8192;

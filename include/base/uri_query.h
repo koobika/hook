@@ -28,23 +28,6 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_encoding_base64_encodertype_h
-#define koobika_hook_encoding_base64_encodertype_h
-
-namespace koobika::hook::encoding::base64 {
-// =============================================================================
-// EncoderType                                                    [ enum class ]
-// -----------------------------------------------------------------------------
-// This specification holds for the base64 encoder types
-// =============================================================================
-enum class EncoderType {
-  Base64,    // Standard <base64> dictionary.
-  Base64Url  // Url <base64> dictionary.
-};
-}  // namespace koobika::hook::encoding::base64
-
-#endif
-
 #ifndef koobika_hook_base_uriquery_h
 #define koobika_hook_base_uriquery_h
 
@@ -53,14 +36,14 @@ enum class EncoderType {
 
 namespace koobika::hook::base {
 // =============================================================================
-// UriQuery                                                            [ class ]
+// UriQuery                                                            ( class )
 // -----------------------------------------------------------------------------
 // This class holds for the default uri query implementation.
 // =============================================================================
 class UriQuery {
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   UriQuery() = default;
   UriQuery(const std::string& content) : content_{content} {}
@@ -69,12 +52,12 @@ class UriQuery {
   UriQuery(UriQuery&&) noexcept = default;
   ~UriQuery() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   UriQuery& operator=(const UriQuery&) = default;
   UriQuery& operator=(UriQuery&&) noexcept = default;
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
   // Sets the stored content.
   void Set(const std::string& content) { content_ = content; }
@@ -103,12 +86,12 @@ class UriQuery {
 
  private:
   // ---------------------------------------------------------------------------
-  // Constants                                                       [ private ]
+  // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
   static constexpr char kAmpersand = '&';
   static constexpr char kEquals = '=';
   // ---------------------------------------------------------------------------
-  // Attributes                                                      [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   std::string content_;
 };

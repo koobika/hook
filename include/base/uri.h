@@ -92,14 +92,14 @@
 
 namespace koobika::hook::base {
 // =============================================================================
-// Uri                                                                 [ class ]
+// Uri                                                                 ( class )
 // -----------------------------------------------------------------------------
 // This class holds for the default uri implementation.
 // =============================================================================
 class Uri : public UriReader {
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   Uri(const std::string& str) { ParseFull_(str.data(), str.length()); }
   Uri(const char* str) { ParseFull_(str, strlen(str)); }
@@ -107,7 +107,7 @@ class Uri : public UriReader {
   Uri(Uri&&) noexcept = default;
   ~Uri() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   Uri& operator=(const Uri&) = default;
   Uri& operator=(Uri&&) noexcept = default;
@@ -129,7 +129,7 @@ class Uri : public UriReader {
 
  private:
   // ---------------------------------------------------------------------------
-  // Methods                                                         [ private ]
+  // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
   // Used to parse the full content of the provided string.
   void ParseFull_(const char* str, const std::size_t length) {
@@ -255,7 +255,7 @@ class Uri : public UriReader {
     return (IsReserved_(ch) || IsUnreserved_(ch) || IsEscaped_(ch));
   }
   // ---------------------------------------------------------------------------
-  // Attributes                                                      [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   std::string scheme_;
   std::string specific_;

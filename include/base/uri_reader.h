@@ -28,23 +28,6 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_encoding_base64_encodertype_h
-#define koobika_hook_encoding_base64_encodertype_h
-
-namespace koobika::hook::encoding::base64 {
-// =============================================================================
-// EncoderType                                                    [ enum class ]
-// -----------------------------------------------------------------------------
-// This specification holds for the base64 encoder types
-// =============================================================================
-enum class EncoderType {
-  Base64,    // Standard <base64> dictionary.
-  Base64Url  // Url <base64> dictionary.
-};
-}  // namespace koobika::hook::encoding::base64
-
-#endif
-
 #ifndef koobika_hook_base_urireader_h
 #define koobika_hook_base_urireader_h
 
@@ -52,14 +35,14 @@ enum class EncoderType {
 
 namespace koobika::hook::base {
 // =============================================================================
-// UriReader                                                       [ interface ]
+// UriReader                                                       ( interface )
 // -----------------------------------------------------------------------------
 // This specification holds for uri reader interface.
 // =============================================================================
 class UriReader {
  public:
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
   // Returns the stored 'scheme' part.
   virtual std::string GetScheme() const = 0;

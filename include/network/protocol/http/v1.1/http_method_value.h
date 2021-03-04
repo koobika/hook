@@ -33,9 +33,9 @@
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpMethodValue                                                      [ type ]
+// HttpMethodValue                                                     ( alias )
 // -----------------------------------------------------------------------------
-// This class is in charge of providing the http method value type
+// This type is in charge of providing the http method value type
 // =============================================================================
 using HttpMethodValue = int;
 }  // namespace koobika::hook::network::protocol::http::v11

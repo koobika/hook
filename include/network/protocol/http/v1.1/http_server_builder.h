@@ -33,27 +33,27 @@
 
 #include "base/builder.h"
 #include "base/builder_property.h"
-#include "network/transport/server_transport_constants.h"
 #include "http_server.h"
+#include "network/transport/server_transport_constants.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpServerBuilder                                                   [ class ]
+// HttpServerBuilder                                                   ( class )
 // -----------------------------------------------------------------------------
 // This class is in charge of providing the http server builder
 // =============================================================================
 class HttpServerBuilder : public base::Builder<HttpServer> {
  public:
   // ---------------------------------------------------------------------------
-  // Build                                                            [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Builds the target httpserver object
+  // Builds the target httpserver object.
   std::shared_ptr<HttpServer> Build() const override {
     return std::make_shared<HttpServer>(NumberOfWorkers,
                                         MaximumNumberOfConnections);
   }
   // ---------------------------------------------------------------------------
-  // Properties                                                       [ public ]
+  // PROPERTIEs                                                       ( public )
   // ---------------------------------------------------------------------------
   base::BuilderProperty<int, HttpServerBuilder> NumberOfWorkers{
       this, transport::ServerTransportConstants::kNumberOfWorkersValue};

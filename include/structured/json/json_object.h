@@ -46,15 +46,15 @@ namespace koobika::hook::structured::json {
 struct ObjectDumper;
 class JsonValue;
 // =============================================================================
-// JsonObjectGenericDumper                                             [ class ]
+// JsonObjectGenericDumper                                             ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON object default class
+// This specification holds for JSON object default class.
 // =============================================================================
 template <typename DUty = ObjectDumper>
 class JsonObjectGenericDumper : public base::Serializable {
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   JsonObjectGenericDumper() = default;
   JsonObjectGenericDumper(const JsonObjectGenericDumper&) = default;
@@ -65,7 +65,7 @@ class JsonObjectGenericDumper : public base::Serializable {
   }
   ~JsonObjectGenericDumper() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   JsonObjectGenericDumper& operator=(const JsonObjectGenericDumper& in) {
     map_ = in.map_;
@@ -97,16 +97,16 @@ class JsonObjectGenericDumper : public base::Serializable {
     return *itr->second;
   }
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Sets the specified object id with the incoming json-value
+  // Sets the specified object id with the incoming json-value.
   JsonObjectGenericDumper& Set(const JsonId& id, const JsonValue& value) {
     map_[id] = std::make_shared<JsonValue>(value);
     return *this;
   }
-  // Gets the json-value stored at the specified id
+  // Gets the json-value stored at the specified id.
   const JsonValue& Get(const JsonId& id) const { return operator[](id); }
-  // Dumps the current content to string
+  // Dumps the current content to string.
   base::Stream Serialize() const override {
     base::Stream stream;
     stream.Write('{');
@@ -120,11 +120,11 @@ class JsonObjectGenericDumper : public base::Serializable {
     stream.Write('}');
     return stream;
   }
-  // Returns if the specified id exists into the current object
+  // Returns if the specified id exists into the current object.
   bool Exist(const JsonId& id) { return map_.find(id) != map_.end(); }
-  // Erase the json-value stored at the specified id
+  // Erase the json-value stored at the specified id.
   void Erase(const JsonId& id) { map_.erase(id); }
-  // Erase the json-values stored at the specified initializer_list
+  // Erase the json-values stored at the specified initializer_list.
   void Erase(const std::initializer_list<JsonId>& ids) {
     for (auto const& id : ids) {
       Erase(id);
@@ -133,9 +133,9 @@ class JsonObjectGenericDumper : public base::Serializable {
 
  private:
   // ---------------------------------------------------------------------------
-  // Methods                                                         [ private ]
+  // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
-  // Copies an initializer list of json-values to the internal data!
+  // Copies an initializer list of json-values to the internal data.
   void Assign_initializer_list_(
       const std::initializer_list<std::pair<JsonString, JsonValue>>& in) {
     for (auto const& element : in) {
@@ -143,7 +143,7 @@ class JsonObjectGenericDumper : public base::Serializable {
     }
   }
   // ---------------------------------------------------------------------------
-  // Attributes                                                      [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   std::unordered_map<JsonId, std::shared_ptr<JsonValue>> map_;
 };

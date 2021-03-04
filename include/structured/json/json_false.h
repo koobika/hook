@@ -35,23 +35,23 @@
 
 namespace koobika::hook::structured::json {
 // =============================================================================
-// JsonFalse                                                           [ class ]
+// JsonFalse                                                           ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON false default class
+// This specification holds for JSON false default class.
 // =============================================================================
 class JsonFalse : public base::Serializable {
  public:
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value
+  // Gets the stored json-value.
   bool Get() const { return false; }
-  // Dumps the current content to string
+  // Dumps the current content to string.
   base::Stream Serialize() const override { return kFalseStr; }
 
  private:
   // ---------------------------------------------------------------------------
-  // Constants                                                       [ private ]
+  // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
   static constexpr char kFalseStr[] = "false";
 };

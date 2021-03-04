@@ -40,14 +40,14 @@
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpResponseWriter                                                  [ class ]
+// HttpResponseWriter                                                  ( class )
 // -----------------------------------------------------------------------------
 // This specification holds for http response writer class
 // =============================================================================
 class HttpResponseWriter {
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   template <typename SEty>
   HttpResponseWriter(const SEty& serializable_object,
@@ -55,17 +55,7 @@ class HttpResponseWriter {
       : content_type_{content_type} {
     auto data = serializable_object.Serialize();
     if (data.has_value()) {
-      /*
-      pepe
-      */
-
-      /*
       writer_.Write(data.value());
-      */
-
-      /*
-      pepe fin
-      */
     }
   }
   HttpResponseWriter(const structured::json::JsonValue& json)
@@ -91,14 +81,14 @@ class HttpResponseWriter {
   HttpResponseWriter(HttpResponseWriter&&) noexcept = delete;
   ~HttpResponseWriter() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   HttpResponseWriter& operator=(const HttpResponseWriter&) = delete;
   HttpResponseWriter& operator=(HttpResponseWriter&&) noexcept = delete;
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Tries to fill-up incoming response object with current configutation
+  // Tries to fill-up incoming response object with current configutation.
   template <typename RSty>
   RSty& Prepare(RSty& res) {
     if (content_type_.has_value()) {
@@ -112,7 +102,7 @@ class HttpResponseWriter {
 
  private:
   // ---------------------------------------------------------------------------
-  // Attributes                                                      [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   base::StreamWriter writer_;
   std::optional<std::string> content_type_;

@@ -28,23 +28,6 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_encoding_base64_encodertype_h
-#define koobika_hook_encoding_base64_encodertype_h
-
-namespace koobika::hook::encoding::base64 {
-// =============================================================================
-// EncoderType                                                    [ enum class ]
-// -----------------------------------------------------------------------------
-// This specification holds for the base64 encoder types
-// =============================================================================
-enum class EncoderType {
-  Base64,    // Standard <base64> dictionary.
-  Base64Url  // Url <base64> dictionary.
-};
-}  // namespace koobika::hook::encoding::base64
-
-#endif
-
 #ifndef koobika_hook_encoding_base64_decoder_h
 #define koobika_hook_encoding_base64_decoder_h
 
@@ -55,16 +38,16 @@ enum class EncoderType {
 
 namespace koobika::hook::encoding::base64 {
 // =============================================================================
-// Decoder                                                             [ class ]
+// Decoder                                                             ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for the base64 decoder delegate
+// This specification holds for the base64 decoder delegate.
 // =============================================================================
 class Decoder {
  public:
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Returns the encoded content
+  // Returns the encoded content.
   static std::string Decode(const std::string& in) {
     static const std::unordered_map<char, char> map = {
         {'A', 0x00}, {'B', 0x01}, {'C', 0x02}, {'D', 0x03}, {'E', 0x04},

@@ -44,7 +44,7 @@
 
 namespace koobika::hook::network::protocol::http::v11::auth {
 // =============================================================================
-// Basic                                                               [ class ]
+// Basic                                                               ( class )
 // -----------------------------------------------------------------------------
 // This specification holds for <basic-authorization> module
 // =============================================================================
@@ -53,7 +53,7 @@ template <typename RQty, typename RSty,
 class Basic : public HttpAuthModule<RQty, RSty> {
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   Basic(const double& session_time_out_in_secs = kDefaultTimeout)
       : timeout_in_seconds_{session_time_out_in_secs} {}
@@ -71,31 +71,31 @@ class Basic : public HttpAuthModule<RQty, RSty> {
       set(element.first, element.second);
     }
   }
-  Basic(const Basic& in) = default;
-  Basic(Basic&& in) noexcept = default;
+  Basic(const Basic&) = default;
+  Basic(Basic&&) noexcept = default;
   ~Basic() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   Basic& operator=(const Basic&) = default;
   Basic& operator=(Basic&&) noexcept = default;
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Sets a new (clean) user/password tuple to the database
+  // Sets a new (clean) user/password tuple to the database.
   void Set(const std::string& user, const std::string& password) {
     std::stringstream dat;
     dat << user << ':' << password;
     repository_.set(encoding::base64::Encoder::Encode(dat.str()),
                     std::chrono::system_clock().now());
   }
-  // Sets a new (encoded) user/password tuple to the database
+  // Sets a new (encoded) user/password tuple to the database.
   void Set(const std::string& user_and_pass_encoded) {
     repository_.set(user_and_pass_encoded, std::chrono::system_clock().now());
   }
-  // Clears user/password database
+  // Clears user/password database.
   void Clear() { repository_.clear(); }
-  // Checks for the incoming request to be an authorized one
+  // Checks for the incoming request to be an authorized one.
   bool Check(typename HttpRoutes<RQty, RSty>::Request req,
              typename HttpRoutes<RQty, RSty>::Response res) override {
     do {
@@ -122,13 +122,13 @@ class Basic : public HttpAuthModule<RQty, RSty> {
 
  private:
   // ---------------------------------------------------------------------------
-  // Constants                                                       [ private ]
+  // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
   static constexpr char kBasic[] = "Basic";
   static constexpr char kAuthorization[] = "Authorization";
   static constexpr double kDefaultTimeout = -1.0;  // disabled by default
   // ---------------------------------------------------------------------------
-  // Attributes                                                      [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   RPty<std::string, std::chrono::system_clock::time_point> repository_;
   double timeout_in_seconds_;

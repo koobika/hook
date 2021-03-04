@@ -35,9 +35,9 @@
 
 namespace koobika::hook::structured::json {
 // =============================================================================
-// JsonNumberType                                                 [ enum class ]
+// JsonNumberType                                                 ( enum class )
 // -----------------------------------------------------------------------------
-// This specification holds for all supported JSON number types
+// This specification holds for all supported JSON number types.
 // =============================================================================
 enum class JsonNumberType {
   kUnsignedChar,

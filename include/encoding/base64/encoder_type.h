@@ -33,9 +33,9 @@
 
 namespace koobika::hook::encoding::base64 {
 // =============================================================================
-// EncoderType                                                    [ enum class ]
+// EncoderType                                                    ( enum class )
 // -----------------------------------------------------------------------------
-// This specification holds for the base64 encoder types
+// This specification holds for the base64 encoder types.
 // =============================================================================
 enum class EncoderType {
   Base64,    // Standard <base64> dictionary.

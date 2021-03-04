@@ -28,23 +28,6 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_encoding_base64_encodertype_h
-#define koobika_hook_encoding_base64_encodertype_h
-
-namespace koobika::hook::encoding::base64 {
-// =============================================================================
-// EncoderType                                                    [ enum class ]
-// -----------------------------------------------------------------------------
-// This specification holds for the base64 encoder types
-// =============================================================================
-enum class EncoderType {
-  Base64,    // Standard <base64> dictionary.
-  Base64Url  // Url <base64> dictionary.
-};
-}  // namespace koobika::hook::encoding::base64
-
-#endif
-
 #ifndef koobika_hook_encoding_base64_constants_h
 #define koobika_hook_encoding_base64_constants_h
 
@@ -52,14 +35,14 @@ enum class EncoderType {
 
 namespace koobika::hook::encoding::base64 {
 // =============================================================================
-// Constants                                                           [ class ]
+// Constants                                                           ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for the base64 (rfc-4648) constants repository
+// This specification holds for the base64 (rfc-4648) constants repository.
 // =============================================================================
 class Constants {
  public:
   // ---------------------------------------------------------------------------
-  // Constants                                                        [ public ]
+  // CONSTANTs                                                        ( public )
   // ---------------------------------------------------------------------------
   static constexpr char kBase64EncodingAlphabet[] = {
       'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',

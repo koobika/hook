@@ -33,14 +33,13 @@
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpAuthSupport                                                [ enum class ]
+// HttpAuthSupport                                                ( enum class )
 // -----------------------------------------------------------------------------
 // This class is in charge of defining all available auth-support modes.
 // =============================================================================
 enum class HttpAuthSupport {
   kEnabled,   // Auth mechanism is enabled for an specific route.
-  kDisabled,  // Auth mechanism is disabled for an specific route.
-  kReserved   // Reserved (not to be used).
+  kDisabled   // Auth mechanism is disabled for an specific route.
 };
 }  // namespace koobika::hook::network::protocol::http::v11
 

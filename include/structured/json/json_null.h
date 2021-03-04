@@ -35,23 +35,23 @@
 
 namespace koobika::hook::structured::json {
 // =============================================================================
-// JsonNull                                                            [ class ]
+// JsonNull                                                            ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class
+// This specification holds for JSON null default class.
 // =============================================================================
 class JsonNull : public base::Serializable {
  public:
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value
+  // Gets the stored json-value.
   auto Get() const { return nullptr; }
-  // Dumps the current content to string
+  // Dumps the current content to string.
   base::Stream Serialize() const override { return kNullStr; }
 
  private:
   // ---------------------------------------------------------------------------
-  // Constants                                                       [ private ]
+  // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
   static constexpr char kNullStr[] = "null";
 };

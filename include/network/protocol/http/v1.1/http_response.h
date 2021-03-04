@@ -42,210 +42,210 @@
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpResponse                                                        [ class ]
+// HttpResponse                                                        ( class )
 // -----------------------------------------------------------------------------
-// This class is in charge of providing the http response class
+// This class is in charge of providing the http response class.
 // =============================================================================
 class HttpResponse : public base::Serializable {
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   HttpResponse() : StatusCode{k000_}, ReasonPhrase{kUnkStr_} {}
   HttpResponse(const HttpResponse&) = delete;
   HttpResponse(HttpResponse&&) noexcept = delete;
   ~HttpResponse() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   HttpResponse& operator=(const HttpResponse&) = delete;
   HttpResponse& operator=(HttpResponse&&) noexcept = delete;
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // 100 - Continue
+  // 100 - Continue.
   void Continue_100(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k100_, reason_phrase);
   }
-  // 101 - Switching Protocols
+  // 101 - Switching Protocols.
   void SwitchingProtocols_101(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k101_, reason_phrase);
   }
-  // 200 - Ok
+  // 200 - Ok.
   void Ok_200(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k200_, reason_phrase);
   }
-  // 201 - Created
+  // 201 - Created.
   void created_201(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k201_, reason_phrase);
   }
-  // 202 - Accepted
+  // 202 - Accepted.
   void Accepted_202(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k202_, reason_phrase);
   }
-  // 203 - Non Authoritative Information
+  // 203 - Non Authoritative Information.
   void NonAuthoritativeInformation_203(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k203_, reason_phrase);
   }
-  // 204 - No Content
+  // 204 - No Content.
   void NoContent_204(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k204_, reason_phrase);
   }
-  // 205 - Reset Content
+  // 205 - Reset Content.
   void ResetContent_205(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k205_, reason_phrase);
   }
-  // 206 - Partial Content
+  // 206 - Partial Content.
   void PartialContent_206(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k206_, reason_phrase);
   }
-  // 300 - Multiple Choices
+  // 300 - Multiple Choices.
   void MultipleChoices_300(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k300_, reason_phrase);
   }
-  // 301 - Moved Permanently
+  // 301 - Moved Permanently.
   void MovedPermanently_301(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k301_, reason_phrase);
   }
-  // 302 - Found
+  // 302 - Found.
   void Found_302(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k302_, reason_phrase);
   }
-  // 303 - See Other
+  // 303 - See Other.
   void SeeOther_303(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k303_, reason_phrase);
   }
-  // 304 - Not Modified
+  // 304 - Not Modified.
   void NotModified_304(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k304_, reason_phrase);
   }
-  // 305 - Use Proxy
+  // 305 - Use Proxy.
   void UseProxy_305(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k305_, reason_phrase);
   }
-  // 307 - Temporary Redirect
+  // 307 - Temporary Redirect.
   void TemporaryRedirect_307(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k307_, reason_phrase);
   }
-  // 400 - Bad Request
+  // 400 - Bad Request.
   void BadRequest_400(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k400_, reason_phrase);
   }
-  // 401 - Unauthorized
+  // 401 - Unauthorized.
   void Unauthorized_401(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k401_, reason_phrase);
   }
-  // 402 - Payment Required
+  // 402 - Payment Required.
   void PaymentRequired_402(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k402_, reason_phrase);
   }
-  // 403 - Forbidden
+  // 403 - Forbidden.
   void Forbidden_403(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k403_, reason_phrase);
   }
-  // 404 - Not Found
+  // 404 - Not Found.
   void NotFound_404(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k404_, reason_phrase);
   }
-  // 405 - Method Not Allowed
+  // 405 - Method Not Allowed.
   void MethodNotAllowed_405(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k405_, reason_phrase);
   }
-  // 406 - Not Acceptable
+  // 406 - Not Acceptable.
   void NotAcceptable_406(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k406_, reason_phrase);
   }
-  // 407 - Proxy Authentication Required
+  // 407 - Proxy Authentication Required.
   void ProxyAuthenticationRequired_407(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k407_, reason_phrase);
   }
-  // 408 - Request Timeout
+  // 408 - Request Timeout.
   void RequestTimeout_408(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k408_, reason_phrase);
   }
-  // 409 - Conflict
+  // 409 - Conflict.
   void Conflict_409(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k409_, reason_phrase);
   }
-  // 410 - Gone
+  // 410 - Gone.
   void Gone_410(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k410_, reason_phrase);
   }
-  // 411 - Length Required
+  // 411 - Length Required.
   void LengthRequired_411(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k411_, reason_phrase);
   }
-  // 412 - Precondition Failed
+  // 412 - Precondition Failed.
   void PreconditionFailed_412(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k412_, reason_phrase);
   }
-  // 413 - Request Entity Too Large
+  // 413 - Request Entity Too Large.
   void RequestEntityTooLarge_413(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k413_, reason_phrase);
   }
-  // 414 - Request Uri Too Large
+  // 414 - Request Uri Too Large.
   void RequestUriTooLarge_414(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k414_, reason_phrase);
   }
-  // 415 - Unsupported Media Type
+  // 415 - Unsupported Media Type.
   void UnsupportedMediaType_415(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k415_, reason_phrase);
   }
-  // 416 - Requested Range Not Satisfiable
+  // 416 - Requested Range Not Satisfiable.
   void RequestedRangeNotSatisfiable_416(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k416_, reason_phrase);
   }
-  // 417 - Expectation Failed
+  // 417 - Expectation Failed.
   void ExpectationFailed_417(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k417_, reason_phrase);
   }
-  // 500 - InternalServerError
+  // 500 - InternalServerError.
   void InternalServerError_500(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k500_, reason_phrase);
   }
-  // 501 - Not Implemented
+  // 501 - Not Implemented.
   void NotImplemented_501(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k501_, reason_phrase);
   }
-  // 502 - Bad Gateway
+  // 502 - Bad Gateway.
   void BadGateway_502(const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k502_, reason_phrase);
   }
-  // 503 - Service Unavailable
+  // 503 - Service Unavailable.
   void ServiceUnavailable_503(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k503_, reason_phrase);
   }
-  // 504 - Gateway Timeout
+  // 504 - Gateway Timeout.
   void GatewayTimeout_504(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k504_, reason_phrase);
   }
-  // 505 - Http Version Not Supported
+  // 505 - Http Version Not Supported.
   void HttpVersionNotSupported_505(
       const std::optional<std::string>& reason_phrase = {}) {
     SetStatusCodeAndReasonPhrase_(k505_, reason_phrase);
   }
-  // Renders current content to string
+  // Renders current content to string.
   base::Stream Serialize() const override {
     base::Stream stream;
     HttpHeaders headers{Headers};
@@ -269,7 +269,7 @@ class HttpResponse : public base::Serializable {
     return stream;
   }
   // ---------------------------------------------------------------------------
-  // Properties                                                       [ public ]
+  // PROPERTIEs                                                       ( public )
   // ---------------------------------------------------------------------------
   unsigned short StatusCode = k000_;
   std::string ReasonPhrase = kUnkStr_;
@@ -278,9 +278,9 @@ class HttpResponse : public base::Serializable {
 
  private:
   // ---------------------------------------------------------------------------
-  // Methods                                                         [ private ]
+  // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
-  // Sets the status code and reason phrase
+  // Sets the status code and reason phrase.
   void SetStatusCodeAndReasonPhrase_(
       const unsigned short& status_code,
       const std::optional<std::string>& reason_phrase) {
@@ -289,7 +289,7 @@ class HttpResponse : public base::Serializable {
                        ? reason_phrase.value()
                        : GetDefaultReasonPhraseFor_(status_code);
   }
-  // Gets the default reason phrase for the specified code
+  // Gets the default reason phrase for the specified code.
   std::string GetDefaultReasonPhraseFor_(const unsigned short& code) {
     static const std::unordered_map<unsigned short, std::string>
         known_reason_phrases = {
@@ -309,9 +309,9 @@ class HttpResponse : public base::Serializable {
     return itr != known_reason_phrases.end() ? itr->second : kUnkStr_;
   }
   // ---------------------------------------------------------------------------
-  // Constants                                                       [ private ]
+  // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
-  // Default status-codes
+  // Default status-codes.
   static constexpr unsigned short k000_ = 000;
   static constexpr unsigned short k100_ = 100;
   static constexpr unsigned short k101_ = 101;
@@ -353,7 +353,7 @@ class HttpResponse : public base::Serializable {
   static constexpr unsigned short k503_ = 503;
   static constexpr unsigned short k504_ = 504;
   static constexpr unsigned short k505_ = 505;
-  // Default reason-phrases
+  // Default reason-phrases.
   static constexpr char k100Str_[] = "Continue";
   static constexpr char k101Str_[] = "Switching protocols";
   static constexpr char k200Str_[] = "Ok";

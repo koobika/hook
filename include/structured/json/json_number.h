@@ -38,14 +38,14 @@
 
 namespace koobika::hook::structured::json {
 // =============================================================================
-// JsonNumber                                                          [ class ]
+// JsonNumber                                                          ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON number default class
+// This specification holds for JSON number default class.
 // =============================================================================
 class JsonNumber : public base::Serializable {
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // Constructors/Destructors                                         ( public )
   // ---------------------------------------------------------------------------
   JsonNumber(const JsonNumber&) = default;
   JsonNumber(JsonNumber&&) noexcept = default;
@@ -61,7 +61,7 @@ class JsonNumber : public base::Serializable {
   JsonNumber(const double& in) : value_{in} {}
   ~JsonNumber() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // Operators                                                        ( public )
   // ---------------------------------------------------------------------------
   JsonNumber& operator=(const JsonNumber& in) {
     value_ = in.value_;
@@ -77,9 +77,9 @@ class JsonNumber : public base::Serializable {
     return *this;
   }
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // Methods                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Returns the subtype of the current number
+  // Returns the subtype of the current number.
   JsonNumberType Type() const {
     switch (value_.index()) {
       case 0:
@@ -105,13 +105,13 @@ class JsonNumber : public base::Serializable {
         return JsonNumberType::kDouble;
     }
   }
-  // Sets the json-value with any of the supported numeric types
+  // Sets the json-value with any of the supported numeric types.
   template <typename VAty>
   JsonNumber& Set(const VAty& in) {
     value_ = in;
     return *this;
   }
-  // Gets the json-value using its numeric container
+  // Gets the json-value using its numeric container.
   template <typename VAty>
   VAty Get() const {
     if (std::holds_alternative<VAty>(value_)) {
@@ -141,7 +141,7 @@ class JsonNumber : public base::Serializable {
         return VAty(std::get<double>(value_));
     }
   }
-  // Dumps the current content to string
+  // Dumps the current content to string.
   base::Stream Serialize() const override {
     switch (value_.index()) {
       case 0:
@@ -170,7 +170,7 @@ class JsonNumber : public base::Serializable {
 
  private:
   // ---------------------------------------------------------------------------
-  // Attributes                                                      [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   std::variant<unsigned char, char, unsigned short, short, unsigned int, int,
                unsigned long, long, float, double>

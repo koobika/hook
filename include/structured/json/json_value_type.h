@@ -35,9 +35,9 @@
 
 namespace koobika::hook::structured::json {
 // =============================================================================
-// JsonValueType                                                  [ enum class ]
+// JsonValueType                                                  ( enum class )
 // -----------------------------------------------------------------------------
-// This specification holds for all supported JSON value types
+// This specification holds for all supported JSON value types.
 // =============================================================================
 enum class JsonValueType {
   kNull,

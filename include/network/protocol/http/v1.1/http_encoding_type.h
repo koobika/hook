@@ -33,7 +33,7 @@
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpEncodingType                                               [ enum class ]
+// HttpEncodingType                                               ( enum class )
 // -----------------------------------------------------------------------------
 // This class is in charge of enumerating the available encoding types
 // =============================================================================

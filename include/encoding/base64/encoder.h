@@ -38,16 +38,16 @@
 
 namespace koobika::hook::encoding::base64 {
 // =============================================================================
-// Encoder                                                             [ class ]
+// Encoder                                                             ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for the base64 encoder delegate
+// This specification holds for the base64 encoder delegate.
 // =============================================================================
 class Encoder {
  public:
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Returns the encoded content (buffer-based)
+  // Returns the encoded content (buffer-based).
   static std::string Encode(
       const std::string& in,
       const EncoderType& encoder_type = EncoderType::Base64) {

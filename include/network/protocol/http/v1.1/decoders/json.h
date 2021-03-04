@@ -39,32 +39,20 @@
 
 namespace koobika::hook::network::protocol::http::v11::decoders {
 // =============================================================================
-// Json                                                                [ class ]
+// Json                                                                ( class )
 // -----------------------------------------------------------------------------
 // This class is in charge of providing the default json body decoding
 // =============================================================================
 class Json {
  public:
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Decodes content stored within the provided body-stream
+  // Decodes content stored within the provided body-stream.
   static std::optional<structured::json::JsonValue> Decode(
       const base::Stream& stream) {
     std::string content;
-
-    /*
-    pepe
-    */
-
-    /*
     stream.ReadAll(content);
-    */
-
-    /*
-    pepe fin
-    */
-
     if (!content.length()) {
       // [error] -> while trying to access buffer!
       throw std::logic_error(
@@ -72,7 +60,7 @@ class Json {
     }
     return koobika::hook::structured::json::JsonValue::From(content);
   }
-  // Decodes content stored within the provided body-stream
+  // Decodes content stored within the provided body-stream.
   static std::optional<structured::json::JsonValue> Decode(
       const std::shared_ptr<base::Stream>& stream) {
     if (stream == nullptr) {

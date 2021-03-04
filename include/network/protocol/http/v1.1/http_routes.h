@@ -36,18 +36,21 @@
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpRoutes                                                      [ interface ]
+// HttpRoutes                                                      ( interface )
 // -----------------------------------------------------------------------------
-// This specification holds for http routes <common> interface
+// This specification holds for http routes <common> interface.
 // =============================================================================
 template <typename RQty, typename RSty>
 class HttpRoutes {
  public:
   // ---------------------------------------------------------------------------
-  // Usings                                                           [ public ]
+  // USINGs                                                           ( public )
   // ---------------------------------------------------------------------------
+  // Request parameter (read-only) type while dispatching route handlers.
   using Request = const RQty&;
+  // Response parameter (read/write) type while dispatching route handlers.
   using Response = RSty&;
+  // Route handler signature (method being called on route hit).
   using RouteHandler = std::function<void(Request, Response)>;
 };
 }  // namespace koobika::hook::network::protocol::http::v11

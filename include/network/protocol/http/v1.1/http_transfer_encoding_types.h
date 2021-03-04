@@ -33,15 +33,15 @@
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpTransferEncodingTypes                                          [ struct ]
+// HttpTransferEncodingTypes                                          ( struct )
 // -----------------------------------------------------------------------------
 // This class is in charge of providing the http transfer encoding types
 // =============================================================================
 struct HttpTransferEncodingTypes {
   // ---------------------------------------------------------------------------
-  // Constants                                                        [ public ]
+  // CONSTANTs                                                        ( public )
   // ---------------------------------------------------------------------------
-  // Numeric values
+  // Numeric values.
   struct Values {
     static constexpr int kIdentity = 0;
     static constexpr int kChunked = 1;
@@ -49,7 +49,7 @@ struct HttpTransferEncodingTypes {
     static constexpr int kDeflate = 4;
     static constexpr int kGzip = 8;
   };
-  // String values
+  // String values.
   struct Strings {
     static constexpr char kIdentity[] = "identity";
     static constexpr char kChunked[] = "chunked";

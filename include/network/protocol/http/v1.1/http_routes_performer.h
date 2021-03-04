@@ -32,28 +32,31 @@
 #define koobika_hook_network_protocol_http_v11_httproutesperformer_h
 
 #include <string>
-#include <unordered_map>
 
 #include "http_auth_module.h"
 #include "http_routes.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpRoutesPerformer                                             [ interface ]
+// HttpRoutesPerformer                                             ( interface )
 // -----------------------------------------------------------------------------
-// This specification holds for http routes performer interface
+// This specification holds for http routes performer interface.
 // =============================================================================
 template <typename RQty, typename RSty>
 class HttpRoutesPerformer {
  public:
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Tries to perform router enabled action
+  // Tries to perform router enabled action.
   virtual bool Perform(
-      const std::string&, typename HttpRoutes<RQty, RSty>::Request,
-      typename HttpRoutes<RQty, RSty>::Response,
-      const std::shared_ptr<HttpAuthModule<RQty, RSty>>&) const = 0;
+      const std::string& route,
+      typename HttpRoutes<RQty, RSty>::Request request,
+      typename HttpRoutes<RQty, RSty>::Response response,
+      const std::shared_ptr<
+          HttpAuthModule<typename HttpRoutes<RQty, RSty>::Request,
+                         typename HttpRoutes<RQty, RSty>::Response>>&
+          auth_module) const = 0;
 };
 }  // namespace koobika::hook::network::protocol::http::v11
 

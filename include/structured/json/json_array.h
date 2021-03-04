@@ -44,15 +44,15 @@ namespace koobika::hook::structured::json {
 struct ArrayDumper;
 class JsonValue;
 // =============================================================================
-// JsonArrayGenericDumper                                              [ class ]
+// JsonArrayGenericDumper                                              ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON array default class
+// This specification holds for JSON array default class.
 // =============================================================================
 template <typename DUty = ArrayDumper>
 class JsonArrayGenericDumper : public base::Serializable {
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   JsonArrayGenericDumper() = default;
   JsonArrayGenericDumper(const JsonArrayGenericDumper&) = default;
@@ -62,7 +62,7 @@ class JsonArrayGenericDumper : public base::Serializable {
   }
   ~JsonArrayGenericDumper() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   JsonArrayGenericDumper& operator=(const JsonArrayGenericDumper&) = default;
   JsonArrayGenericDumper& operator=(JsonArrayGenericDumper&& in) noexcept =
@@ -87,19 +87,19 @@ class JsonArrayGenericDumper : public base::Serializable {
     return *vector_[index];
   }
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Adds a json-value to the current structure
+  // Adds a json-value to the current structure.
   JsonArrayGenericDumper& Add(const JsonValue& value) {
     vector_.push_back(std::make_shared<JsonValue>(value));
     return *this;
   }
-  // Moves a json-value to the current structure
+  // Moves a json-value to the current structure.
   JsonArrayGenericDumper& Add(JsonValue&& value) noexcept {
     vector_.push_back(std::make_shared<JsonValue>(std::move(value)));
     return *this;
   }
-  // Sets the specified array position with the incoming json-value
+  // Sets the specified array position with the incoming json-value.
   JsonArrayGenericDumper& Set(const std::size_t& index,
                               const JsonValue& value) {
     if (index >= vector_.size()) {
@@ -109,11 +109,11 @@ class JsonArrayGenericDumper : public base::Serializable {
     vector_[index] = std::make_shared<JsonValue>(value);
     return *this;
   }
-  // Gets the json-value stored at the specified position
+  // Gets the json-value stored at the specified position.
   const JsonValue& Get(const std::size_t& index) const {
     return operator[](index);
   }
-  // Dumps the current content to string
+  // Dumps the current content to string.
   base::Stream Serialize() const override {
     base::Stream stream;
     stream.Write('[');
@@ -124,7 +124,7 @@ class JsonArrayGenericDumper : public base::Serializable {
     stream.Write(']');
     return stream;
   }
-  // Erase the json-value stored at the specified position
+  // Erase the json-value stored at the specified position.
   void Erase(const std::size_t& index) {
     if (index >= vector_.size()) {
       // [error] -> out of bounds index!
@@ -132,7 +132,7 @@ class JsonArrayGenericDumper : public base::Serializable {
     }
     vector_.erase(vector_.begin() + index);
   }
-  // Erase the json-values stored within the specified range
+  // Erase the json-values stored within the specified range.
   void Erase(const std::size_t& from, const std::size_t& to) {
     if (from >= vector_.size() || (to + 1) >= vector_.size()) {
       // [error] -> out of bounds index!
@@ -143,16 +143,16 @@ class JsonArrayGenericDumper : public base::Serializable {
 
  private:
   // ---------------------------------------------------------------------------
-  // Methods                                                         [ private ]
+  // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
-  // Copies an initializer list of json-values to the internal data!
+  // Copies an initializer list of json-values to the internal data.
   void Assign_initializer_list_(const std::initializer_list<JsonValue>& in) {
     for (auto const& element : in) {
       vector_.push_back(std::make_shared<JsonValue>(element));
     }
   }
   // ---------------------------------------------------------------------------
-  // Attributes                                                      [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   std::vector<std::shared_ptr<JsonValue>> vector_;
 };

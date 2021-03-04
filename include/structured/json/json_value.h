@@ -49,15 +49,15 @@
 namespace koobika::hook::structured::json {
 
 // =============================================================================
-// DefaultNumericParser                                               [ struct ]
+// DefaultNumericParser                                               ( struct )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON default numeric parser module
+// This specification holds for JSON default numeric parser module.
 // =============================================================================
 struct DefaultNumericParser {
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Performs a parsing of the incoming string to return a json-number
+  // Performs a parsing of the incoming string to return a json-number.
   JsonNumber Parse(const std::string& str) const {
     double number = atof(str.data());
     if (str.find(kDotCh) != std::string::npos) {
@@ -87,11 +87,11 @@ struct DefaultNumericParser {
 
  private:
   // ---------------------------------------------------------------------------
-  // Constants                                                       [ private ]
+  // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
-  // structural-characters
+  // Structural-characters.
   static constexpr char kDotCh = 0x2E;
-  // thresholds
+  // Thresholds.
   static constexpr double kUCMin = std::numeric_limits<unsigned char>::min();
   static constexpr double kUCMax = std::numeric_limits<unsigned char>::max();
   static constexpr double kSCMin = std::numeric_limits<char>::min();
@@ -111,21 +111,21 @@ struct DefaultNumericParser {
 };
 
 // =============================================================================
-// JsonValue                                                           [ class ]
+// JsonValue                                                           ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON value default class
+// This specification holds for JSON value default class.
 // =============================================================================
 class JsonValue : public base::Serializable {
  private:
   // ---------------------------------------------------------------------------
-  // Types                                                           [ private ]
+  // TYPEs                                                           ( private )
   // ---------------------------------------------------------------------------
   using InternalType = std::variant<JsonNull, JsonTrue, JsonFalse, JsonNumber,
                                     JsonString, JsonObject, JsonArray>;
 
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   JsonValue(const JsonValue&) = default;
   JsonValue(JsonValue&&) noexcept = default;
@@ -159,7 +159,7 @@ class JsonValue : public base::Serializable {
   JsonValue(const char* in) { Assign_string_(in); }
   ~JsonValue() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   JsonValue& operator=(const JsonValue& in) {
     data_ = in.data_;
@@ -296,9 +296,9 @@ class JsonValue : public base::Serializable {
   operator JsonObject&() { return std::get<JsonObject>(data_); }
   operator JsonArray&() { return std::get<JsonArray>(data_); }
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Returns the type of the json-value
+  // Returns the type of the json-value.
   JsonValueType Type() const {
     switch (data_.index()) {
       case 0:
@@ -318,7 +318,7 @@ class JsonValue : public base::Serializable {
         return JsonValueType::kArray;
     }
   }
-  // Dumps the current content to string
+  // Dumps the current content to string.
   base::Stream Serialize() const override {
     switch (data_.index()) {
       case 0:
@@ -338,14 +338,14 @@ class JsonValue : public base::Serializable {
         return std::get<JsonArray>(data_).Serialize();
     }
   }
-  // Parses the incoming string content to generate a json-value
+  // Parses the incoming string content to generate a json-value.
   template <typename NumericParser = DefaultNumericParser>
   static std::optional<JsonValue> From(
       const char* json_content,
       const NumericParser& numeric_parser = DefaultNumericParser()) {
     return From(std::string(json_content, strlen(json_content)));
   }
-  // Parses the incoming string content to generate a json-value
+  // Parses the incoming string content to generate a json-value.
   template <typename NumericParser = DefaultNumericParser>
   static std::optional<JsonValue> From(
       const std::string& json_content,
@@ -361,10 +361,10 @@ class JsonValue : public base::Serializable {
 
  private:
   // ---------------------------------------------------------------------------
-  // Methods                                                         [ private ]
+  // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
   // Parses (in a recursive way) the incoming string content to
-  // generate a json-value
+  // generate a json-value.
   template <typename NumericParser>
   static std::optional<JsonValue> From_(const std::string& json_content,
                                         std::size_t& idx,
@@ -502,7 +502,7 @@ class JsonValue : public base::Serializable {
     SkipWs_(json_content, idx);
     return json_value;
   }
-  // Skips all ws (white-space) characters
+  // Skips all ws (white-space) characters.
   static void SkipWs_(const std::string& json_content, std::size_t& index) {
     while (index < json_content.length()) {
       auto const& ch = json_content[index];
@@ -511,7 +511,7 @@ class JsonValue : public base::Serializable {
     }
   }
   // Gets the next character position (within the provided) string that is
-  // an structural one
+  // an structural one.
   static std::size_t GetNextStructuralCharacter_(
       const std::string& json_content, const std::size_t& index) {
     auto i = index;
@@ -525,7 +525,7 @@ class JsonValue : public base::Serializable {
     }
     return i;
   }
-  // Checks for the next element type (returns no value if unknown)
+  // Checks for the next element type (returns no value if unknown).
   static std::optional<JsonValueType> CheckValueType_(
       const std::string& json_content, const std::size_t& index) {
     if (json_content[index] == kLeftCurlyBracketCh) {
@@ -549,9 +549,9 @@ class JsonValue : public base::Serializable {
     }
     return {};
   }
-  // Assigns a <nullptr> value to the current json_value
+  // Assigns a <nullptr> value to the current json_value.
   void Assign_null_(const std::nullptr_t& in) { data_ = JsonNull(); }
-  // Assigns a <bool> value to the current json_value
+  // Assigns a <bool> value to the current json_value.
   void Assign_bool_(const bool& in) {
     if (in) {
       data_ = JsonTrue();
@@ -559,29 +559,29 @@ class JsonValue : public base::Serializable {
       data_ = JsonFalse();
     }
   }
-  // Assigns a <numeric> value to the current json_value
+  // Assigns a <numeric> value to the current json_value.
   template <typename DAty>
   void Assign_number_(const DAty& in) {
     data_ = JsonNumber(in);
   }
-  // Assigns an <string> value to the current json_value
+  // Assigns an <string> value to the current json_value.
   void Assign_string_(const std::string& in) { data_ = JsonString(in); }
-  // Assigns an <string> value to the current json_value
+  // Assigns an <string> value to the current json_value.
   void Assign_string_(const char* in) { data_ = JsonString(in); }
-  // Copies the incoming value to the internal data
+  // Copies the incoming value to the internal data.
   template <typename VAty>
   void Assign_value_(const VAty& in) {
     data_ = in;
   }
-  // Moves the incoming value to the internal data
+  // Moves the incoming value to the internal data.
   template <typename VAty>
   void Assign_value_(VAty&& in) noexcept {
     data_ = std::move(in);
   }
   // ---------------------------------------------------------------------------
-  // Constants                                                       [ private ]
+  // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
-  // Structural-characters
+  // Structural-characters.
   static constexpr char kLeftSquareBracketCh = 0x5B;
   static constexpr char kLeftCurlyBracketCh = 0x7B;
   static constexpr char kRightSquareBracketCh = 0x5D;
@@ -590,24 +590,24 @@ class JsonValue : public base::Serializable {
   static constexpr char kCommaCh = 0x2C;
   static constexpr char kQuotationMarkCh = 0x22;
   static constexpr char kMinusCh = 0x2D;
-  // Ws-characters
+  // Ws-characters.
   static constexpr char kSpaceCh = 0x20;
   static constexpr char kHtCh = 0x09;
   static constexpr char kLfCh = 0x0A;
   static constexpr char kCrCh = 0x0D;
-  // Others
+  // Others.
   static constexpr char kReverseSolidusCh = 0x5C;
   static constexpr char kSolidusCh = 0x2F;
   static constexpr char kBackspaceCh = 0x62;
   static constexpr char kFormFeedCh = 0x66;
   static constexpr char kUCh = 0x75;
   static constexpr char kZeroCh = 0x00;
-  // Strings
+  // Strings.
   static constexpr char kNullStr[] = "null";
   static constexpr char kTrueStr[] = "true";
   static constexpr char kFalseStr[] = "false";
   // ---------------------------------------------------------------------------
-  // Attributes                                                      [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   InternalType data_;
 };

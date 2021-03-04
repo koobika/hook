@@ -37,14 +37,14 @@
 
 namespace koobika::hook::base {
 // =============================================================================
-// Variant                                                             [ class ]
+// Variant                                                             ( class )
 // -----------------------------------------------------------------------------
 // This specification holds for the default variant type.
 // =============================================================================
 class Variant {
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   Variant() : data_{} {}
   Variant(const Variant& in) { Set_(in); }
@@ -64,7 +64,7 @@ class Variant {
   Variant(const std::string& in) { operator=(in); }
   ~Variant() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   Variant& operator=(const Variant& in) { return Set_(in); }
   Variant& operator=(Variant&& in) noexcept { return Set_(std::move(in)); }
@@ -82,7 +82,7 @@ class Variant {
   Variant& operator=(const char* value) { return Set_(value); }
   Variant& operator=(const std::string& value) { return Set_(value); }
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
   // Returns the stored value (if any) using the provided type specifier.
   template <typename OUty>
@@ -123,7 +123,7 @@ class Variant {
 
  private:
   // ---------------------------------------------------------------------------
-  // Methods                                                         [ private ]
+  // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
   // Copies provided variant to the internal one.
   Variant& Set_(const Variant& in) {
@@ -152,7 +152,7 @@ class Variant {
     return *this;
   }
   // ---------------------------------------------------------------------------
-  // Constants                                                       [ private ]
+  // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
   static constexpr int kMonostate_ = 0;
   static constexpr int kBool_ = 1;
@@ -168,7 +168,7 @@ class Variant {
   static constexpr int kDouble_ = 11;
   static constexpr int kString_ = 12;
   // ---------------------------------------------------------------------------
-  // Atributes                                                       [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   std::variant<std::monostate, bool, unsigned char, char, unsigned short, short,
                unsigned int, int, unsigned long, long, float, double,

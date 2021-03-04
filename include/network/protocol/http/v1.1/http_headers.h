@@ -40,20 +40,20 @@
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpHeaders                                                         [ class ]
+// HttpHeaders                                                         ( class )
 // -----------------------------------------------------------------------------
-// This class is in charge of providing the http headers class
+// This class is in charge of providing the http headers class.
 // =============================================================================
 class HttpHeaders : public base::Serializable {
  private:
   // ---------------------------------------------------------------------------
-  // Usings                                                          [ private ]
+  // USINGs                                                          ( private )
   // ---------------------------------------------------------------------------
   using VariantList_ = std::initializer_list<base::Variant>;
 
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   HttpHeaders() = default;
   HttpHeaders(const std::string& raw_content) { raw_.assign(raw_content); }
@@ -62,21 +62,21 @@ class HttpHeaders : public base::Serializable {
   HttpHeaders(HttpHeaders&&) noexcept = default;
   ~HttpHeaders() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   HttpHeaders& operator=(const HttpHeaders&) = default;
   HttpHeaders& operator=(HttpHeaders&&) noexcept = default;
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Cleans up all stored information
+  // Cleans up all stored information.
   void Clear() { raw_.clear(); }
-  // Sets a header entry (templated version)
+  // Sets a header entry (templated version).
   template <typename DAty>
   void Set(const char* name, const DAty& value) {
     Set(name, std::to_string(value).c_str());
   }
-  // Sets a header entry
+  // Sets a header entry.
   void Set(const char* name, const std::string& value) {
     if (!HttpUtil::IsToken(name)) {
       // [error] -> specified name is NOT a token!
@@ -91,7 +91,7 @@ class HttpHeaders : public base::Serializable {
     SetFieldName_(name);
     SetFieldValue_(value);
   }
-  // Sets a header entry
+  // Sets a header entry.
   void Set(const char* name, const char* value) {
     if (!HttpUtil::IsToken(name)) {
       // [error] -> specified name is NOT a token!
@@ -106,7 +106,7 @@ class HttpHeaders : public base::Serializable {
     SetFieldName_(name);
     SetFieldValue_(value);
   }
-  // Sets a header entry (variant-list version)
+  // Sets a header entry (variant-list version).
   void Set(const std::string& name, const VariantList_& values) {
     if (!HttpUtil::IsToken(name)) {
       // [error] -> specified name is NOT a token!
@@ -126,11 +126,11 @@ class HttpHeaders : public base::Serializable {
       SetFieldValue_(element_value.value().data(), i++, i == length - 1);
     }
   }
-  // Sets a header entry (initializer-list version)
+  // Sets a header entry (initializer-list version).
   void Set(const std::pair<std::string, VariantList_>& elements) {
     Set(elements.first, elements.second);
   }
-  // Returns header entry using its name (const reference&)
+  // Returns header entry using its name (const reference&).
   std::optional<std::string> Get(const std::string& name) const {
     std::size_t begin = 0, end;
     std::string crlf(HttpConstants::Strings::kCrLf);
@@ -163,9 +163,9 @@ class HttpHeaders : public base::Serializable {
     }
     return {};
   }
-  // Returns all header entries (const reference&)
+  // Returns all header entries (const reference&).
   base::Stream Serialize() const override { return raw_; }
-  // Checks for the specified header entry (using its name)
+  // Checks for the specified header entry (using its name).
   bool Exist(const std::string& name) const {
     std::size_t begin = 0, end;
     std::string crlf(HttpConstants::Strings::kCrLf);
@@ -186,9 +186,9 @@ class HttpHeaders : public base::Serializable {
 
  private:
   // ---------------------------------------------------------------------------
-  // Methods                                                         [ private ]
+  // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
-  // Sets header field name
+  // Sets header field name.
   void SetFieldName_(const std::string& name) {
     std::size_t begin = 0, end;
     std::string crlf(HttpConstants::Strings::kCrLf);
@@ -209,7 +209,7 @@ class HttpHeaders : public base::Serializable {
     raw_.append(HttpConstants::Strings::kHeaderFieldNameSeparator);
     raw_.append(HttpConstants::Strings::kSpace);
   }
-  // Sets header field value
+  // Sets header field value.
   void SetFieldValue_(const std::string& val, const bool& add_pre_comma = false,
                       const bool& add_trailing_crlf = true) {
     if (add_pre_comma) {
@@ -222,7 +222,7 @@ class HttpHeaders : public base::Serializable {
     }
   }
   // ---------------------------------------------------------------------------
-  // Attributes                                                      [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   std::string raw_;
 };

@@ -37,102 +37,102 @@
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpConstants                                                       [ class ]
+// HttpConstants                                                       ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for http body writer interface
+// This specification holds for all http-module constants.
 // =============================================================================
 class HttpConstants {
  public:
   // ---------------------------------------------------------------------------
-  // Limits                                                           [ public ]
+  // LIMITs                                                           ( public )
   // ---------------------------------------------------------------------------
   class Limits {
    public:
-    // Maximum length for the http message section (body excluded)! (in bytes)
+    // Maximum length for the http message section (body excluded)! (in bytes).
     static constexpr std::size_t kMaxHttpMessageLength = 16384;
   };
   // ---------------------------------------------------------------------------
-  // Strings                                                          [ public ]
+  // STRINGs                                                          ( public )
   // ---------------------------------------------------------------------------
   class Strings {
    public:
-    // Http-version
+    // Http-version.
     static constexpr char kHttpVersion[] = "HTTP/1.1";
-    // CrLf
+    // CrLf.
     static constexpr char kCrLf[] = "\r\n";
     static constexpr std::size_t kCrLfLen = 2;
-    // Empty-line
+    // Empty-line.
     static constexpr char kEmptyLine[] = "\r\n\r\n";
     static constexpr std::size_t kEmptyLineLen = 4;
-    // Space
+    // Space.
     static constexpr char kSpace[] = " ";
     static constexpr std::size_t kSpaceLen = 1;
-    // Colon
+    // Colon.
     static constexpr char kColon[] = ":";
     static constexpr std::size_t kColonLen = 1;
-    // Header (field-name) separator
+    // Header (field-name) separator.
     static constexpr char kHeaderFieldNameSeparator[] = ":";
     static constexpr std::size_t kHeaderFieldNameSeparatorLen = 1;
-    // Header (field-value) separator
+    // Header (field-value) separator.
     static constexpr char kHeaderFieldValueSeparator[] = ",";
     static constexpr std::size_t kHeaderFieldValueSeparatorLen = 1;
-    // Header (chunked-content) end delimiter
+    // Header (chunked-content) end delimiter.
     static constexpr char kHeaderChunkedContentEnd[] = "0\r\n\r\n";
     static constexpr std::size_t kHeaderChunkedContentEndLen = 5;
   };
   // ---------------------------------------------------------------------------
-  // Characters                                                       [ public ]
+  // CHARACTERs                                                       ( public )
   // ---------------------------------------------------------------------------
   class Characters {
    public:
-    // Space
+    // Space.
     static constexpr char kSpace = ' ';
-    // Tab
+    // Tab.
     static constexpr char kHt = '\t';
-    // Carriage return
+    // Carriage return.
     static constexpr char kCr = '\r';
-    // Line feed
+    // Line feed.
     static constexpr char kLf = '\n';
   };
   // ---------------------------------------------------------------------------
-  // Headers                                                          [ public ]
+  // HEADERs                                                          ( public )
   // ---------------------------------------------------------------------------
   class Headers {
    public:
-    // Content-type
+    // Content-type.
     static constexpr char kContentType[] = "Content-Type";
     static constexpr std::size_t kContentTypeLen = 12;
-    // Content-length
+    // Content-length.
     static constexpr char kContentLength[] = "Content-Length";
     static constexpr std::size_t kContentLengthLen = 14;
-    // Transfer-encoding
+    // Transfer-encoding.
     static constexpr char kTransferEncoding[] = "Transfer-Encoding";
     static constexpr std::size_t kTransferEncodingLen = 17;
   };
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
   class Methods {
    public:
-    // Options
+    // Options.
     static constexpr HttpMethodValue kOptions = 1;
-    // Get
+    // Get.
     static constexpr HttpMethodValue kGet = 2;
-    // Head
+    // Head.
     static constexpr HttpMethodValue kHead = 4;
-    // Post
+    // Post.
     static constexpr HttpMethodValue kPost = 8;
-    // Put
+    // Put.
     static constexpr HttpMethodValue kPut = 16;
-    // Delete
+    // Delete.
     static constexpr HttpMethodValue kDelete = 32;
-    // Trace
+    // Trace.
     static constexpr HttpMethodValue kTrace = 64;
-    // Connect
+    // Connect.
     static constexpr HttpMethodValue kConnect = 128;
-    // Extension
+    // Extension.
     static constexpr HttpMethodValue kExtension = 256;
-    // All
+    // All.
     static constexpr HttpMethodValue kAll = kOptions | kGet | kHead | kPost |
                                             kPut | kDelete | kTrace | kConnect |
                                             kExtension;

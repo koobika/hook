@@ -37,9 +37,9 @@
 
 namespace koobika::hook::network::transport {
 // =============================================================================
-// ServerTransport                                                 [ interface ]
+// ServerTransport                                                 ( interface )
 // -----------------------------------------------------------------------------
-// This specification holds for server transport interface
+// This specification holds for server transport interface.
 // -----------------------------------------------------------------------------
 // Template parameters:
 //    HDty - server transport handler (native) type being used
@@ -49,12 +49,12 @@ template <typename HDty, typename DEty>
 class ServerTransport {
  public:
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // |starts current transport activity using the provided (json) configuration.
+  // Starts current transport activity using the provided (json) configuration.
   virtual void Start(const structured::json::JsonObject&,
                      const typename DEty::RequestHandler&) = 0;
-  // |stops transport activity.
+  // Stops transport activity.
   virtual void Stop() = 0;
   // Tries to sends the specified buffer through the transport connection.
   virtual bool Send(const HDty&, const base::Stream&) = 0;

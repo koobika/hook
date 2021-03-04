@@ -40,14 +40,14 @@
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpMethod                                                          [ class ]
+// HttpMethod                                                          ( class )
 // -----------------------------------------------------------------------------
 // This class is in charge of providing the http method class
 // =============================================================================
 class HttpMethod {
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   HttpMethod(const std::string& method) {
     static const std::unordered_map<std::string, int> known_methods = {
@@ -69,39 +69,39 @@ class HttpMethod {
   HttpMethod(HttpMethod&&) noexcept = default;
   ~HttpMethod() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   HttpMethod& operator=(const HttpMethod&) = default;
   HttpMethod& operator=(HttpMethod&&) noexcept = default;
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Returns the method code (numeric value)
+  // Returns the method code (numeric value).
   HttpMethodValue GetCode() const { return cd_; }
-  // Returns the method description (string value)
+  // Returns the method description (string value).
   std::string GetDescription() const { return st_; }
-  // Checks if current method is <OPTIONS>
+  // Checks if current method is 'OPTIONS'.
   bool IsOptions() const { return cd_ == HttpConstants::Methods::kOptions; }
-  // Checks if current method is <GET>
+  // Checks if current method is 'GET'.
   bool IsGet() const { return cd_ == HttpConstants::Methods::kGet; }
-  // Checks if current method is <HEAD>
+  // Checks if current method is 'HEAD'.
   bool IsHead() const { return cd_ == HttpConstants::Methods::kHead; }
-  // Checks if current method is <POST>
+  // Checks if current method is 'POST'.
   bool IsPost() const { return cd_ == HttpConstants::Methods::kPost; }
-  // Checks if current method is <PUT>
+  // Checks if current method is 'PUT>'.
   bool IsPut() const { return cd_ == HttpConstants::Methods::kPut; }
-  // Checks if current method is <DELETE>
+  // Checks if current method is 'DELETE'.
   bool IsDelete() const { return cd_ == HttpConstants::Methods::kDelete; }
-  // Checks if current method is <TRACE>
+  // Checks if current method is 'TRACE'.
   bool IsTrace() const { return cd_ == HttpConstants::Methods::kTrace; }
-  // Checks if current method is <CONNECT>
+  // Checks if current method is 'CONNECT'.
   bool IsConnect() const { return cd_ == HttpConstants::Methods::kConnect; }
-  // Checks if current method is <EXTENSION>
+  // Checks if current method is 'EXTENSION'.
   bool IsExtension() const { return cd_ == HttpConstants::Methods::kExtension; }
 
  private:
   // ---------------------------------------------------------------------------
-  // Constants                                                       [ private ]
+  // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
   static constexpr char kOptStr_[] = "options";
   static constexpr char kGetStr_[] = "get";
@@ -112,7 +112,7 @@ class HttpMethod {
   static constexpr char kTraStr_[] = "trace";
   static constexpr char kConStr_[] = "connect";
   // ---------------------------------------------------------------------------
-  // Attributes                                                      [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   HttpMethodValue cd_ = HttpConstants::Methods::kExtension;
   std::string st_;

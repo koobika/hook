@@ -38,14 +38,14 @@
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpRequest                                                         [ class ]
+// HttpRequest                                                         ( class )
 // -----------------------------------------------------------------------------
 // This class is in charge of providing the http request class
 // =============================================================================
 class HttpRequest {
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   HttpRequest(base::Uri&& uri, HttpMethod&& method, HttpHeaders&& headers,
               base::Stream&& body)
@@ -57,12 +57,12 @@ class HttpRequest {
   HttpRequest(HttpRequest&&) noexcept = delete;
   ~HttpRequest() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   HttpRequest& operator=(const HttpRequest&) = delete;
   HttpRequest& operator=(HttpRequest&&) noexcept = delete;
   // ---------------------------------------------------------------------------
-  // Attributes                                                       [ public ]
+  // ATTRIBUTEs                                                       ( public )
   // ---------------------------------------------------------------------------
   base::Uri Uri;
   HttpMethod Method;

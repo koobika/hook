@@ -35,9 +35,9 @@
 
 namespace koobika::hook::structured::json {
 // =============================================================================
-// JsonId                                                              [ class ]
+// JsonId                                                              ( alias )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON id default class
+// This specification holds for JSON id default class.
 // =============================================================================
 using JsonId = std::string;
 }  // namespace koobika::hook::structured::json

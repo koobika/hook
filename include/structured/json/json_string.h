@@ -35,14 +35,14 @@
 
 namespace koobika::hook::structured::json {
 // =============================================================================
-// JsonString                                                          [ class ]
+// JsonString                                                          ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON string default class
+// This specification holds for JSON string default class.
 // =============================================================================
 class JsonString : public base::Serializable {
  public:
   // ---------------------------------------------------------------------------
-  // Constructors/Destructors                                         [ public ]
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   JsonString() = default;
   JsonString(const JsonString&) = default;
@@ -51,7 +51,7 @@ class JsonString : public base::Serializable {
   JsonString(const char* in) : value_{in} {}
   ~JsonString() = default;
   // ---------------------------------------------------------------------------
-  // Operators                                                        [ public ]
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   JsonString& operator=(const JsonString& in) {
     value_ = in.value_;
@@ -62,23 +62,23 @@ class JsonString : public base::Serializable {
     return *this;
   }
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Sets the json-value with the specified string
+  // Sets the json-value with the specified string.
   JsonString& Set(const std::string& in) {
     value_ = in;
     return *this;
   }
-  // Gets the stored json-value
+  // Gets the stored json-value.
   std::string Get() const { return value_; }
-  // Dumps the current content to string
+  // Dumps the current content to string.
   base::Stream Serialize() const override {
     return base::Stream("\"").Write(value_).Write("\"");
   }
 
  private:
   // ---------------------------------------------------------------------------
-  // Attributes                                                      [ private ]
+  // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
   std::string value_;
 };
