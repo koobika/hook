@@ -38,9 +38,7 @@ using namespace koobika::hook::base;
 class SerializableClass : public Serializable {
  public:
   // We need to write this method in order to return the buffer!
-  std::optional<StreamWriter> Serialize() const override {
-    return std::optional<StreamWriter>("This is my custom content!");
-  }
+  Stream Serialize() const override { return "This is my custom content!"; }
 };
 
 int main() {
@@ -64,7 +62,7 @@ int main() {
     // Wait until user press a key..
     return getchar();
   } catch (std::exception exception) {
-    // [error] -> while performing setup!
+    // ((Error)) -> while performing setup!
     std::cout << exception.what() << std::endl;
     return -1;
   }

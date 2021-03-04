@@ -33,7 +33,7 @@
 
 #include <optional>
 
-#include "base/stream_writer.h"
+#include "base/stream.h"
 #include "http_constants.h"
 #include "http_mime_types.h"
 #include "structured/json/json_value.h"
@@ -53,29 +53,26 @@ class HttpResponseWriter {
   HttpResponseWriter(const SEty& serializable_object,
                      const std::string& content_type)
       : content_type_{content_type} {
-    auto data = serializable_object.Serialize();
-    if (data.has_value()) {
-      writer_.Write(data.value());
-    }
+    stream_.Write(serializable_object.Serialize());
   }
   HttpResponseWriter(const structured::json::JsonValue& json)
-      : HttpResponseWriter(json, HttpMimeTypes::kJSON){}
+      : HttpResponseWriter(json, HttpMimeTypes::kJSON) {}
   HttpResponseWriter(
       const std::string& string_content,
       const std::optional<std::string>& content_type = HttpMimeTypes::kTXT)
       : content_type_{content_type} {
-    writer_.Write(string_content);
+    stream_.Write(string_content);
   }
   HttpResponseWriter(
       const char* c_string_content,
       const std::optional<std::string>& content_type = HttpMimeTypes::kTXT)
       : content_type_{content_type} {
-    writer_.Write(c_string_content);
+    stream_.Write(c_string_content);
   }
   HttpResponseWriter(void* buffer, const std::size_t& length,
                      const std::optional<std::string>& content_type)
       : content_type_{content_type} {
-    writer_.Write(buffer, length);
+    stream_.Write(buffer, length);
   }
   HttpResponseWriter(const HttpResponseWriter&) = delete;
   HttpResponseWriter(HttpResponseWriter&&) noexcept = delete;
@@ -95,8 +92,8 @@ class HttpResponseWriter {
       res.Headers.Set(HttpConstants::Headers::kContentType,
                       content_type_.value());
     }
-    res.Headers.Set(HttpConstants::Headers::kContentLength, writer_.Length());
-    res.Body = std::move(writer_);
+    res.Headers.Set(HttpConstants::Headers::kContentLength, stream_.Length());
+    res.Body = std::move(stream_);
     return res;
   }
 
@@ -104,7 +101,7 @@ class HttpResponseWriter {
   // ---------------------------------------------------------------------------
   // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
-  base::StreamWriter writer_;
+  base::Stream stream_;
   std::optional<std::string> content_type_;
 };
 }  // namespace koobika::hook::network::protocol::http::v11

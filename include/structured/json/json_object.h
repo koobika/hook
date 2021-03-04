@@ -83,7 +83,7 @@ class JsonObjectGenericDumper : public base::Serializable {
   const JsonValue& operator[](const JsonId& id) const {
     auto const itr = map_.find(id);
     if (itr == map_.end()) {
-      // [error] -> specified id does not exist into object!
+      // ((Error)) -> specified id does not exist into object!
       throw std::logic_error("specified id does not exist into object!");
     }
     return *itr->second;

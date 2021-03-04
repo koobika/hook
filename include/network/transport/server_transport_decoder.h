@@ -58,10 +58,14 @@ class ServerTransportDecoder {
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
   // Adds (opaque) content to the decoder.
-  virtual bool Add(void*, const std::size_t&) = 0;
+  virtual bool Add(void* buffer, const std::size_t& length) = 0;
   // Tries to decode internal content.
-  virtual void Decode(const RequestHandler&, const ErrorHandler&,
-                      const Sender&) = 0;
+  virtual void Decode(
+      const transport::ServerTransportDecoder<RQty>::RequestHandler&
+          request_handler,
+      const transport::ServerTransportDecoder<RQty>::ErrorHandler&
+          error_handler,
+      const transport::ServerTransportDecoder<RQty>::Sender& sender) = 0;
 };
 }  // namespace koobika::hook::network::transport
 

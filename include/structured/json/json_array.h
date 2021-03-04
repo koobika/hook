@@ -74,14 +74,14 @@ class JsonArrayGenericDumper : public base::Serializable {
   }
   const JsonValue& operator[](const std::size_t& index) const {
     if (index >= vector_.size()) {
-      // [error] -> out of bounds index!
+      // ((Error)) -> out of bounds index!
       throw std::logic_error("out of bounds index!");
     }
     return *vector_[index];
   }
   JsonValue& operator[](const std::size_t& index) {
     if (index >= vector_.size()) {
-      // [error] -> out of bounds index!
+      // ((Error)) -> out of bounds index!
       throw std::logic_error("out of bounds index!");
     }
     return *vector_[index];
@@ -103,7 +103,7 @@ class JsonArrayGenericDumper : public base::Serializable {
   JsonArrayGenericDumper& Set(const std::size_t& index,
                               const JsonValue& value) {
     if (index >= vector_.size()) {
-      // [error] -> out of bounds index!
+      // ((Error)) -> out of bounds index!
       throw std::logic_error("out of bounds index!");
     }
     vector_[index] = std::make_shared<JsonValue>(value);
@@ -127,7 +127,7 @@ class JsonArrayGenericDumper : public base::Serializable {
   // Erase the json-value stored at the specified position.
   void Erase(const std::size_t& index) {
     if (index >= vector_.size()) {
-      // [error] -> out of bounds index!
+      // ((Error)) -> out of bounds index!
       throw std::logic_error("out of bounds index!");
     }
     vector_.erase(vector_.begin() + index);
@@ -135,7 +135,7 @@ class JsonArrayGenericDumper : public base::Serializable {
   // Erase the json-values stored within the specified range.
   void Erase(const std::size_t& from, const std::size_t& to) {
     if (from >= vector_.size() || (to + 1) >= vector_.size()) {
-      // [error] -> out of bounds index!
+      // ((Error)) -> out of bounds index!
       throw std::logic_error("out of bounds index!");
     }
     vector_.erase(vector_.begin() + from, vector_.begin() + (to + 1));

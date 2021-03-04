@@ -46,7 +46,7 @@ int main() {
         res.Headers.Set("Server", "Example");
         res.Headers.Set("Date", "Wed, 17 Apr 2013 12:00:00 GMT");
         // Let's directly write text using our 'HttpResponseWriter' class!
-        HttpResponseWriter("Hello, World!").Prepare(res).Ok_200();
+        HttpResponseWriter("Hello, World!\r\n").Prepare(res).Ok_200();
       } else {
         HttpResponseWriter("Not supported!").Prepare(res).Forbidden_403();
       }
@@ -56,7 +56,7 @@ int main() {
     // Wait until user press a key..
     return getchar();
   } catch (std::exception exception) {
-    // [error] -> while performing setup!
+    // ((Error)) -> while performing setup!
     std::cout << exception.what() << std::endl;
     return -1;
   }

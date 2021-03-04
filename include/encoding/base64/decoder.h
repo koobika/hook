@@ -67,7 +67,7 @@ class Decoder {
     std::string decoded;
     auto input_length = in.length();
     if (input_length % 4) {
-      // [error] -> input data is not 24-bit multiple!
+      // ((Error)) -> input data is not 24-bit multiple!
       throw std::logic_error("invalid input data (not 24-bit multiple)!");
     }
     for (std::size_t i = 0; i < input_length; i += 4) {
@@ -79,7 +79,7 @@ class Decoder {
       auto r_itr = map.find(in[r_idx]);
       if ((l_itr == map.end() && in[l_idx] != pad) ||
           (r_itr == map.end() && in[r_idx] != pad)) {
-        // [error] -> invalid base64 character!
+        // ((Error)) -> invalid base64 character!
         throw std::logic_error("invalid base64 character found!");
       }
       auto l = in[l_idx] == pad ? pad : l_itr->second;
@@ -91,7 +91,7 @@ class Decoder {
       if (in[r_idx] == Constants::kPadCh) break;
       r_itr = map.find(in[r_idx]);
       if (r_itr == map.end() && in[r_idx] != pad) {
-        // [error] -> invalid base64 character!
+        // ((Error)) -> invalid base64 character!
         throw std::logic_error("invalid base64 character found!");
       }
       l = r;
@@ -103,7 +103,7 @@ class Decoder {
       if (in[r_idx] == Constants::kPadCh) break;
       r_itr = map.find(in[r_idx]);
       if (r_itr == map.end() && in[r_idx] != pad) {
-        // [error] -> invalid base64 character!
+        // ((Error)) -> invalid base64 character!
         throw std::logic_error("invalid base64 character found!");
       }
       l = r;

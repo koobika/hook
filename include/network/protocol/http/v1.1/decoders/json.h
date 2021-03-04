@@ -54,7 +54,7 @@ class Json {
     std::string content;
     stream.ReadAll(content);
     if (!content.length()) {
-      // [error] -> while trying to access buffer!
+      // ((Error)) -> while trying to access buffer!
       throw std::logic_error(
           "Unable to read specified buffer: content is not available!");
     }
@@ -64,7 +64,7 @@ class Json {
   static std::optional<structured::json::JsonValue> Decode(
       const std::shared_ptr<base::Stream>& stream) {
     if (stream == nullptr) {
-      // [error] -> while trying to access an empty shared pointer!
+      // ((Error)) -> while trying to access an empty shared pointer!
       throw std::logic_error(
           "Unable to decode specified buffer: Invalid stream!");
     }

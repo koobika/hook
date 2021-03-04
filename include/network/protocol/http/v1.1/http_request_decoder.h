@@ -181,7 +181,7 @@ class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
                          field_name, HttpConstants::Headers::kContentType,
                          HttpConstants::Headers::kContentTypeLen)) {
             // [content-type]
-            // [to-do] implement it!
+            // ((To-Do)) implement it!
           }
         }
       }
@@ -208,10 +208,10 @@ class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
           dispatch_request = body_.Length() == content_length_;
           break;
         case HttpEncodingType::kMultipart:
-          // [to-do] -> to be implemented!
+          // ((To-Do)) -> to be implemented!
           break;
         case HttpEncodingType::kTransferEncoding:
-          // [to-do] -> to be implemented!
+          // ((To-Do)) -> to be implemented!
           break;
         case HttpEncodingType::kNone:
           dispatch_request = true;

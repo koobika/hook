@@ -81,7 +81,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
              const typename DEty::RequestHandler& request_handler)
       override {
     if (io_port_ != INVALID_HANDLE_VALUE) {
-      // [error] -> transport already initialized!
+      // ((Error)) -> transport already initialized!
       throw std::logic_error("Already initialized transport!");
     }
     // let's retrieve all needed parameters for this transport..
@@ -101,7 +101,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     while (true) {
       SOCKET client = WSAAccept(accept_socket_, NULL, NULL, NULL, NULL);
       if (client == INVALID_SOCKET) {
-        // [error] -> trying to accept a new connection: shutting down?
+        // ((Error)) -> trying to accept a new connection: shutting down?
         break;
       }
       // set the socket i/o mode: In this case FIONBIO enables or disables the
@@ -110,19 +110,19 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
       ULONG i_mode = 1;
       auto ioctl_socket_res = ioctlsocket(client, FIONBIO, &i_mode);
       if (ioctl_socket_res != NO_ERROR) {
-        // [error] -> could not change blocking mode on socket!
-        // [to-do] -> raise an exception?
+        // ((Error)) -> could not change blocking mode on socket!
+        // ((To-Do)) -> raise an exception?
       }
       // let's associate the accept socket with the i/o port!
       ULONG_PTR key = (ULONG_PTR) new Context(client);
       if (!CreateIoCompletionPort((HANDLE)client, io_port_, key, 0)) {
-        // [error] -> trying to associate socket to the i/o port!
-        // [to-do] -> raise an exception?
+        // ((Error)) -> trying to associate socket to the i/o port!
+        // ((To-Do)) -> raise an exception?
       }
       // let's notify waiting thread for the new connection!
       if (!PostQueuedCompletionStatus(io_port_, 0, key, NULL)) {
-        // [error] -> trying to notify waiting thread!
-        // [to-do] -> raise an exception?
+        // ((Error)) -> trying to notify waiting thread!
+        // ((To-Do)) -> raise an exception?
       }
     }
   }
@@ -143,18 +143,19 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     }
   }
   // Tries to send the specified buffer through the transport connection.
-  bool Send(const SOCKET& id, const base::Stream& stream) override {
+  bool Send(const SOCKET& handler, const base::Stream& stream) override {
     char buffer[ServerTransportConstants::kDefaultWriteBufferSize];
     while (std::size_t length = stream.ReadSome(
                buffer, ServerTransportConstants::kDefaultWriteBufferSize)) {
       std::size_t offset = 0;
       while (offset < length) {
         std::size_t len = std::min<std::size_t>(INT_MAX, length - offset);
-        auto res = ::send(id, &((const char*)buffer)[offset], (int)len, 0x0);
+        auto res =
+            ::send(handler, &((const char*)buffer)[offset], (int)len, 0x0);
         if (res == SOCKET_ERROR) {
           if (WSAGetLastError() != WSAEWOULDBLOCK) {
-            // [error] -> while trying to send information to socket!
-            // [to-do] -> inform user back?
+            // ((Error)) -> while trying to send information to socket!
+            // ((To-Do)) -> inform user back?
             return false;
           } 
         } else {
@@ -191,7 +192,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     struct WsaInitializer_ {
       WsaInitializer_() {
         if (WSAStartup(MAKEWORD(2, 2), &wsa_data)) {
-          // [error] -> winsock could not be initialized!
+          // ((Error)) -> winsock could not be initialized!
           throw std::runtime_error("could not initialize winsock!");
         }
       }
@@ -209,20 +210,20 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     auto io_port = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL,
                                           number_of_workers);
     if (io_port == nullptr) {
-      // [error] -> while setting up the i/o completion port!
+      // ((Error)) -> while setting up the i/o completion port!
       throw std::runtime_error("could not setup i/o completion port!");
     }
     // let's setup our main listening socket (server)!
     SOCKET sock = WSASocketW(AF_INET, SOCK_STREAM, IPPROTO_IP, NULL, 0,
                              WSA_FLAG_OVERLAPPED);
     if (sock == INVALID_SOCKET) {
-      // [error] -> could not create socket!
+      // ((Error)) -> could not create socket!
       CloseHandle(io_port);
       throw std::runtime_error("could not create listening socket!");
     }
     // let's associate the listening port to the i/o completion port!
     if (CreateIoCompletionPort((HANDLE)sock, io_port, 0UL, 0) == nullptr) {
-      // [error] -> while setting up the i/o completion port!
+      // ((Error)) -> while setting up the i/o completion port!
       CloseHandle(io_port);
       closesocket(sock);
       throw std::runtime_error("could not setup i/o completion port!");
@@ -233,7 +234,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     ULONG i_mode = 0;
     auto ioctl_socket_res = ioctlsocket(sock, FIONBIO, &i_mode);
     if (ioctl_socket_res != NO_ERROR) {
-      // [error] -> could not change blocking mode on socket!
+      // ((Error)) -> could not change blocking mode on socket!
       CloseHandle(io_port);
       closesocket(sock);
       throw std::runtime_error("could not set listening socket i/o mode!");
@@ -244,13 +245,13 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     address.sin_port = htons(atoi(port.c_str()));
     auto bind_res = bind(sock, (const sockaddr*)&address, sizeof(address));
     if (bind_res == SOCKET_ERROR) {
-      // [error] -> could not bind socket!
+      // ((Error)) -> could not bind socket!
       CloseHandle(io_port);
       closesocket(sock);
       throw std::runtime_error("could not bind to listening socket!");
     }
     if (listen(sock, SOMAXCONN) == SOCKET_ERROR) {
-      // [error] -> could not listen socket!
+      // ((Error)) -> could not listen socket!
       CloseHandle(io_port);
       closesocket(sock);
       throw std::runtime_error("could not bind to listening socket!");

@@ -79,13 +79,13 @@ class HttpHeaders : public base::Serializable {
   // Sets a header entry.
   void Set(const char* name, const std::string& value) {
     if (!HttpUtil::IsToken(name)) {
-      // [error] -> specified name is NOT a token!
-      // [to-do] -> raise an exception?
+      // ((Error)) -> specified name is NOT a token!
+      // ((To-Do)) -> raise an exception?
       return;
     }
     if (!HttpUtil::IsTEXT(value)) {
-      // [error] -> specified value is NOT text!
-      // [to-do] -> raise an exception?
+      // ((Error)) -> specified value is NOT text!
+      // ((To-Do)) -> raise an exception?
       return;
     }
     SetFieldName_(name);
@@ -94,13 +94,13 @@ class HttpHeaders : public base::Serializable {
   // Sets a header entry.
   void Set(const char* name, const char* value) {
     if (!HttpUtil::IsToken(name)) {
-      // [error] -> specified name is NOT a token!
-      // [to-do] -> raise an exception?
+      // ((Error)) -> specified name is NOT a token!
+      // ((To-Do)) -> raise an exception?
       return;
     }
     if (!HttpUtil::IsTEXT(value)) {
-      // [error] -> specified value is NOT text!
-      // [to-do] -> raise an exception?
+      // ((Error)) -> specified value is NOT text!
+      // ((To-Do)) -> raise an exception?
       return;
     }
     SetFieldName_(name);
@@ -109,8 +109,8 @@ class HttpHeaders : public base::Serializable {
   // Sets a header entry (variant-list version).
   void Set(const std::string& name, const VariantList_& values) {
     if (!HttpUtil::IsToken(name)) {
-      // [error] -> specified name is NOT a token!
-      // [to-do] -> raise an exception?
+      // ((Error)) -> specified name is NOT a token!
+      // ((To-Do)) -> raise an exception?
       return;
     }
     std::size_t length = values.size(), i = 0;
@@ -119,8 +119,8 @@ class HttpHeaders : public base::Serializable {
       auto const& element_value = value.GetAsString();
       if (!element_value.has_value()) continue;
       if (!HttpUtil::IsTEXT(element_value.value())) {
-        // [error] -> specified value is NOT text!
-        // [to-do] -> raise an exception?
+        // ((Error)) -> specified value is NOT text!
+        // ((To-Do)) -> raise an exception?
         continue;
       }
       SetFieldValue_(element_value.value().data(), i++, i == length - 1);

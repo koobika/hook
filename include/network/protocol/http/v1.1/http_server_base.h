@@ -88,7 +88,7 @@ class HttpServerBase : public HttpRoutesManager<RQty, RSty> {
   // Starts server activity uwing the provided port.
   void Start(const std::string& port) {
     if (transport_ != nullptr) {
-      // [error] -> server is already running!
+      // ((Error)) -> server is already running!
       throw std::logic_error("server is already running!");
     }
     configuration_[transport::ServerTransportConstants::kPortKey] = port;
@@ -104,17 +104,17 @@ class HttpServerBase : public HttpRoutesManager<RQty, RSty> {
             RSty res;
             try {
               if (!router.Perform(req.Uri.GetPath(), req, res, auth_support)) {
-                // [error] -> route is not registered!
-                // [to-do] -> inform user back?
+                // ((Error)) -> route is not registered!
+                // ((To-Do)) -> inform user back?
                 res.NotFound_404();
               }
             } catch (std::exception& e) {
-              // [error] -> an exception was thrown!
-              // [to-do] -> inform user back!
+              // ((Error)) -> an exception was thrown!
+              // ((To-Do)) -> inform user back!
               res.InternalServerError_500(e.what());
             } catch (...) {
-              // [error] -> an exception was thrown!
-              // [to-do] -> inform user back!
+              // ((Error)) -> an exception was thrown!
+              // ((To-Do)) -> inform user back!
               res.InternalServerError_500("Unknown server exception!");
             }
             sender(res.Serialize());

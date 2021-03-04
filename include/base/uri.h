@@ -199,8 +199,8 @@ class Uri : public UriReader {
     while (i < end) {
       auto const& ch = specific_[i++];
       if (!IsUric_(ch)) {
-        // [error] -> unexpected character found!
-        // [to-do] -> inform user back?
+        // ((Error)) -> unexpected character found!
+        // ((To-Do)) -> inform user back?
       }
     }
     query_.Set(specific_.substr(start, i - start));
@@ -209,14 +209,14 @@ class Uri : public UriReader {
   void ParseOpaque_() {
     std::size_t start = 0, off = start, end = specific_.length();
     if (!IsUricNoSlash_(specific_[off++])) {
-      // [error] -> unexpected character found!
-      // [to-do] -> inform user back?
+      // ((Error)) -> unexpected character found!
+      // ((To-Do)) -> inform user back?
     }
     while (off < end) {
       auto const& ch = specific_[off++];
       if (!IsUric_(ch)) {
-        // [error] -> unexpected character found!
-        // [to-do] -> inform user back?
+        // ((Error)) -> unexpected character found!
+        // ((To-Do)) -> inform user back?
       }
     }
     opaque_.assign(specific_.substr(start, off - start));

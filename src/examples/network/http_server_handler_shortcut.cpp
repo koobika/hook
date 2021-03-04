@@ -43,9 +43,8 @@ int main() {
       res.Headers.Set("Server", "Example");
       res.Headers.Set("Date", "Wed, 17 Apr 2013 12:00:00 GMT");
       res.Headers.Set("Content-Type", "text/plain; charset=UTF-8");
-      res.Headers.Set("Content-Length", 13);
       // Set the response body using the provided stream writer..
-      res.Body.Write("Hello, World!");
+      res.Body.Write("Hello, World!\r\n");
       // Set the response code and.. that's all!
       res.Ok_200();
     });
@@ -54,7 +53,7 @@ int main() {
     // Wait until user press a key..
     return getchar();
   } catch (std::exception exception) {
-    // [error] -> while performing setup!
+    // ((Error)) -> while performing setup!
     std::cout << exception.what() << std::endl;
     return -1;
   }

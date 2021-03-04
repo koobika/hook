@@ -98,7 +98,9 @@ class Stream {
     return Write_((void*)str.data(), str.length());
   }
   // Writes the specified char to the internal buffer.
-  Stream& Write(const char& character) { return Write_((void*)character, 0x1); }
+  Stream& Write(const char& character) {
+    return Write_((void*)&character, 0x1);
+  }
   // Writes the specified char* to the internal buffer.
   Stream& Write(const char* str) { return Write_((void*)str, strlen(str)); }
   // Writes the specified char* + length to the internal buffer.
@@ -121,14 +123,14 @@ class Stream {
       if (data_.file != nullptr) {
         if (!fclose(data_.file)) {
           if (std::remove(data_.filename.c_str())) {
-            // [error] -> trying to remove the file!
-            // [to-do] -> raise an exception?
+            // ((Error)) -> trying to remove the file!
+            // ((To-Do)) -> raise an exception?
           }
           data_.filename.clear();
           data_.file = nullptr;
         } else {
-          // [error] -> trying to close the file!
-          // [to-do] -> raise an exception?
+          // ((Error)) -> trying to close the file!
+          // ((To-Do)) -> raise an exception?
         }
       }
     }
@@ -144,16 +146,16 @@ class Stream {
       if (!fseek(data_.file, 0, SEEK_END)) {
         length = ftell(data_.file);
         if (fseek(data_.file, current, SEEK_SET)) {
-          // [error] -> trying to perform seek operation!
-          // [to-do] -> raise an exception?
+          // ((Error)) -> trying to perform seek operation!
+          // ((To-Do)) -> raise an exception?
         } else {
-          // [error] -> trying to perform seek operation!
-          // [to-do] -> raise an exception?
+          // ((Error)) -> trying to perform seek operation!
+          // ((To-Do)) -> raise an exception?
         }
 
       } else {
-        // [error] -> trying to perform seek operation!
-        // [to-do] -> raise an exception?
+        // ((Error)) -> trying to perform seek operation!
+        // ((To-Do)) -> raise an exception?
       }
     }
     return length;
@@ -168,19 +170,26 @@ class Stream {
       if (!fseek(data_.file, (long)data_.read_cursor, SEEK_SET)) {
         sz = fread(user_buffer, 1, sz, data_.file);
       } else {
-        // [error] -> trying to perform seek operation!
-        // [to-do] -> raise an exception?
+        // ((Error)) -> trying to perform seek operation!
+        // ((To-Do)) -> raise an exception?
       }
     }
     data_.read_cursor += sz;
     return sz;
   }
+  // Reads all the stored bytes (if available).
+  void ReadAll(std::string& out) const {
+    char tmp_buffer[kReadSomeBufferSize];
+    while (auto sz = ReadSome(tmp_buffer, kReadSomeBufferSize)) {
+      out.append(tmp_buffer, sz);
+    }
+  }
   // Flushes stream content (if required).
   void Flush() const {
     if (!memory_mode_ && data_.file != nullptr) {
       if (fflush(data_.file)) {
-        // [error] -> trying to perform flush operation!
-        // [to-do] -> raise an exception?
+        // ((Error)) -> trying to perform flush operation!
+        // ((To-Do)) -> raise an exception?
       }
     }
   }
@@ -223,8 +232,8 @@ class Stream {
     auto result = snprintf(filename, kMaxFilenameLength, "%s%010d.%s",
                            kFilenameBase_, counter_++, kFilenameExt_);
     if (result <= 0 || result >= kMaxFilenameLength) {
-      // [error] -> trying to build filename!
-      // [to-do] -> raise an exception?
+      // ((Error)) -> trying to build filename!
+      // ((To-Do)) -> raise an exception?
     }
     return filename;
   }
@@ -238,8 +247,8 @@ class Stream {
                             ? malloc(amount)
                             : realloc(data_.buffer, data_.buffer_size + amount);
       if (new_buffer == nullptr) {
-        // [error] -> trying to allocate memory!
-        // [to-do] -> raise an exception?
+        // ((Error)) -> trying to allocate memory!
+        // ((To-Do)) -> raise an exception?
         return;
       }
       data_.buffer = (char*)new_buffer;
@@ -268,8 +277,8 @@ class Stream {
           data_.buffer = nullptr;
           data_.buffer_size = 0;
         } else {
-          // [error] -> trying to open file!
-          // [to-do] -> raise an exception?
+          // ((Error)) -> trying to open file!
+          // ((To-Do)) -> raise an exception?
         }
       }
     } else if (data_.file == nullptr) {
@@ -280,8 +289,8 @@ class Stream {
         data_.file = file;
         data_.filename = filename;
       } else {
-        // [error] -> trying to open file!
-        // [to-do] -> raise an exception?
+        // ((Error)) -> trying to open file!
+        // ((To-Do)) -> raise an exception?
       }
     }
   }
@@ -299,8 +308,8 @@ class Stream {
           written += fwrite(&buf[written], 1, length - written, data_.file);
         }
       } else {
-        // [error] -> trying to perform seek operation!
-        // [to-do] -> raise an exception?
+        // ((Error)) -> trying to perform seek operation!
+        // ((To-Do)) -> raise an exception?
       }
     }
     data_.write_cursor += length;

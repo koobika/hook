@@ -59,7 +59,7 @@ int main() {
     // Wait until user press a key..
     return getchar();
   } catch (std::exception exception) {
-    // [error] -> while performing setup!
+    // ((Error)) -> while performing setup!
     std::cout << exception.what() << std::endl;
     return -1;
   }

@@ -353,7 +353,7 @@ class JsonValue : public base::Serializable {
     std::size_t index = 0;
     auto result = From_(json_content, index, numeric_parser, false);
     if (index != json_content.length()) {
-      // [error] -> unexpected value found!
+      // ((Error)) -> unexpected value found!
       throw std::logic_error("unexpected value found!");
     }
     return result;
@@ -376,7 +376,7 @@ class JsonValue : public base::Serializable {
     SkipWs_(json_content, idx);
     auto valueType = CheckValueType_(json_content, idx);
     if (!valueType.has_value() && !in_collection) {
-      // [error] -> unexpected value found!
+      // ((Error)) -> unexpected value found!
       throw std::logic_error("unexpected value found!");
     } else if (valueType.has_value()) {
       auto type = valueType.value();
@@ -418,27 +418,27 @@ class JsonValue : public base::Serializable {
                 break;
               case kUCh:
                 if (idx + 2 > json_content.length()) {
-                  // [error] -> unexpected value found!
+                  // ((Error)) -> unexpected value found!
                   throw std::logic_error("unexpected value found!");
                 }
                 idx += 2;
                 break;
               case kZeroCh:
                 if (idx + 1 > json_content.length()) {
-                  // [error] -> unexpected value found!
+                  // ((Error)) -> unexpected value found!
                   throw std::logic_error("unexpected value found!");
                 }
                 idx++;
                 break;
               default:
-                // [error] -> unexpected value found!
+                // ((Error)) -> unexpected value found!
                 throw std::logic_error("unexpected value found!");
             }
             escaped = false;
           }
         }
         if (!json_value.has_value()) {
-          // [error] -> unexpected value found!
+          // ((Error)) -> unexpected value found!
           throw std::logic_error("unexpected value found!");
         }
       } else if (type == JsonValueType::kObject) {
@@ -448,17 +448,17 @@ class JsonValue : public base::Serializable {
         while (idx < json_content.length()) {
           auto key = From_(json_content, idx, numeric_parser, true);
           if (!key.has_value() || key->Type() != JsonValueType::kString) {
-            // [error] -> unexpected value found!
+            // ((Error)) -> unexpected value found!
             throw std::logic_error("unexpected value found!");
           }
           auto ch = json_content[idx++];
           if (ch != kColonCh) {
-            // [error] -> unexpected value found!
+            // ((Error)) -> unexpected value found!
             throw std::logic_error("unexpected value found!");
           }
           auto element = From_(json_content, idx, numeric_parser, true);
           if (!element.has_value()) {
-            // [error] -> unexpected value found!
+            // ((Error)) -> unexpected value found!
             throw std::logic_error("unexpected value found!");
           }
           object[((JsonString&)key.value()).Get()] = std::move(element.value());
@@ -471,7 +471,7 @@ class JsonValue : public base::Serializable {
           }
         }
         if (!end_of_object_found) {
-          // [error] -> unexpected value found!
+          // ((Error)) -> unexpected value found!
           throw std::logic_error("unexpected value found!");
         }
         json_value = object;
@@ -493,7 +493,7 @@ class JsonValue : public base::Serializable {
           }
         }
         if (!end_of_array_found) {
-          // [error] -> unexpected value found!
+          // ((Error)) -> unexpected value found!
           throw std::logic_error("unexpected value found!");
         }
         json_value = array;
