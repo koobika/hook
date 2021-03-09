@@ -167,7 +167,7 @@
     <ClInclude Include="..\..\..\..\include\structured\json\json_value_type.h">
       <Filter>include\structured\json</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes.h">
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_types.h">
       <Filter>include\network\protocol\http\v1.1</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_manager.h">
@@ -212,6 +212,15 @@
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_auth_module.h">
       <Filter>include\network\protocol\http\v1.1</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_controller_handler.h">
+      <Filter>include\network\protocol\http\v1.1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_node.h">
+      <Filter>include\network\protocol\http\v1.1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_controller.h">
+      <Filter>include\network\protocol\http\v1.1</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\examples\network\http_server_hello_world.cpp">
@@ -227,6 +236,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\examples\network\http_server_response_writer_serializable.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\examples\network\http_server_controller.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

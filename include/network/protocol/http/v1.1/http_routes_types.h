@@ -28,29 +28,30 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/v1.1/http_server_builder.h"
+#ifndef koobika_hook_network_protocol_http_v11_httproutestypes_h
+#define koobika_hook_network_protocol_http_v11_httproutestypes_h
 
-using namespace koobika::hook::network::protocol::http::v11;
-using namespace koobika::hook::base;
+#include <functional>
 
-int main() {
-  try {
-    // Let's create our server using the default configuration..
-    auto server = HttpServerBuilder().Build();
-    // Let's configure our server to handle <GET> requests over '/foo/bar' uri..
-    server->Get("/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
-      // Set the response body using the provided stream writer..
-      res.Body.Write("Hello, World!\r\n");
-      // Set the response code and.. that's all!
-      res.Ok_200();
-    });
-    // Start server activity..
-    server->Start("8542");
-    // Wait until user press a key..
-    return getchar();
-  } catch (std::exception exception) {
-    // ((Error)) -> while performing setup!
-    std::cout << exception.what() << std::endl;
-    return -1;
-  }
-}
+namespace koobika::hook::network::protocol::http::v11 {
+// =============================================================================
+// HttpRoutesTypes                                                     ( class )
+// -----------------------------------------------------------------------------
+// This specification holds for http routes <common> types.
+// =============================================================================
+template <typename RQty, typename RSty>
+class HttpRoutesTypes {
+ public:
+  // ---------------------------------------------------------------------------
+  // USINGs                                                           ( public )
+  // ---------------------------------------------------------------------------
+  // Request parameter (read-only) type while dispatching route handlers.
+  using Request = const RQty&;
+  // Response parameter (read/write) type while dispatching route handlers.
+  using Response = RSty&;
+  // Route handler signature (method being called on route hit).
+  using RouteHandler = std::function<void(Request, Response)>;
+};
+}  // namespace koobika::hook::network::protocol::http::v11
+
+#endif

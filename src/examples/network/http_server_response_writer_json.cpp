@@ -44,12 +44,8 @@ int main() {
     server->Handle("/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
       // In this example we're only interested on <GET> requests..
       if (req.Method.IsGet()) {
-        // Let's declare a simple json array object!
-        JsonArray json = {"Sunday",   "Monday", "Tuesday",  "Wednesday",
-                          "Thursday", "Friday", "Saturday", 123456,
-                          6543.21,   nullptr,      false};
         // Let's directly use it through 'HttpResponseWriter' class!
-        HttpResponseWriter(json).Prepare(res).Ok_200();
+        HttpResponseWriter(JsonArray{"Hello", "World"}).Prepare(res).Ok_200();
       } else {
         HttpResponseWriter("Not supported!").Prepare(res).Forbidden_403();
       }

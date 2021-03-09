@@ -28,31 +28,51 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_v11_httproutes_h
-#define koobika_hook_network_protocol_http_v11_httproutes_h
+#include "base/stream.h"
+#include "network/protocol/http/v1.1/http_controller_handler.h"
+#include "network/protocol/http/v1.1/http_server_builder.h"
 
-#include <functional>
-#include <string>
+using namespace koobika::hook::network::protocol::http::v11;
+using namespace koobika::hook::base;
 
-namespace koobika::hook::network::protocol::http::v11 {
-// =============================================================================
-// HttpRoutes                                                      ( interface )
-// -----------------------------------------------------------------------------
-// This specification holds for http routes <common> interface.
-// =============================================================================
-template <typename RQty, typename RSty>
-class HttpRoutes {
+// This is our custom controller! We can add all the needed handlers!
+class CustomController : public HttpController<> {
  public:
-  // ---------------------------------------------------------------------------
-  // USINGs                                                           ( public )
-  // ---------------------------------------------------------------------------
-  // Request parameter (read-only) type while dispatching route handlers.
-  using Request = const RQty&;
-  // Response parameter (read/write) type while dispatching route handlers.
-  using Response = RSty&;
-  // Route handler signature (method being called on route hit).
-  using RouteHandler = std::function<void(Request, Response)>;
+  // This is my sample <nominal> controller!
+  HttpControllerHandler<> myNominalHandler{
+      this, "/foo/bar",
+      [](const HttpRequest& req, HttpResponse& res) {
+        // Set the response body using the provided stream writer..
+        res.Body.Write("Hello, Nominal World!\r\n");
+        // Set the response code and.. that's all!
+        res.Ok_200();
+      },
+      HttpConstants::Methods::kGet, HttpAuthSupport::kDisabled};
+  // This is my sample <regex> controller!
+  HttpControllerHandler<> myRegExHandler{
+      this, std::regex("/foo/abc+"),
+      [](const HttpRequest& req, HttpResponse& res) {
+        // Set the response body using the provided stream writer..
+        res.Body.Write("Hello, RegEx World!\r\n");
+        // Set the response code and.. that's all!
+        res.Ok_200();
+      },
+      HttpConstants::Methods::kGet, HttpAuthSupport::kDisabled};
 };
-}  // namespace koobika::hook::network::protocol::http::v11
 
-#endif
+int main() {
+  try {
+    // Let's create our server using the default configuration..
+    auto server = HttpServerBuilder().Build();
+    // Let's configure our server to handle our controller..
+    server->Handle<CustomController>();
+    // Start server activity..
+    server->Start("8542");
+    // Wait until user press a key..
+    return getchar();
+  } catch (std::exception exception) {
+    // ((Error)) -> while performing setup!
+    std::cout << exception.what() << std::endl;
+    return -1;
+  }
+}

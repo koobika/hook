@@ -28,35 +28,55 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_v11_httproutesperformer_h
-#define koobika_hook_network_protocol_http_v11_httproutesperformer_h
+#ifndef koobika_hook_network_protocol_http_v11_httpcontrollerhandler_h
+#define koobika_hook_network_protocol_http_v11_httpcontrollerhandler_h
 
 #include <string>
+#include <regex>
 
-#include "http_auth_module.h"
-#include "http_routes_types.h"
+#include "http_router.h"
+#include "http_request.h"
+#include "http_response.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpRoutesPerformer                                             ( interface )
+// HttpControllerHandler                                               ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for http routes performer interface.
+// This class is in charge of providing the http controller handler class.
+// -----------------------------------------------------------------------------
+// Template parameters:
+//    RQty - http request type being used
+//    RQty - http response type being used
 // =============================================================================
-template <typename RQty, typename RSty>
-class HttpRoutesPerformer {
+template <typename RQty = HttpRequest, typename RSty = HttpResponse>
+class HttpControllerHandler {
  public:
   // ---------------------------------------------------------------------------
-  // METHODs                                                          ( public )
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
-  // Tries to perform router enabled action.
-  virtual bool Perform(
+  HttpControllerHandler(
+      HttpRouter<RQty, RSty>* parent,
       const std::string& route,
-      typename HttpRoutesTypes<RQty, RSty>::Request request,
-      typename HttpRoutesTypes<RQty, RSty>::Response response,
-      const std::shared_ptr<
-          HttpAuthModule<typename HttpRoutesTypes<RQty, RSty>::Request,
-                         typename HttpRoutesTypes<RQty, RSty>::Response>>&
-          auth_module) const = 0;
+      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler, 
+      const HttpMethodValue& method = HttpConstants::Methods::kAll, 
+      const HttpAuthSupport& auth_support = HttpAuthSupport::kDisabled) {
+    parent->Handle(route, handler, method, auth_support);
+  }
+  HttpControllerHandler(
+      HttpRouter<RQty, RSty>* parent, const std::regex& regex,
+      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
+      const HttpMethodValue& method = HttpConstants::Methods::kAll,
+      const HttpAuthSupport& auth_support = HttpAuthSupport::kDisabled) {
+    parent->Handle(regex, handler, method, auth_support);
+  }
+  HttpControllerHandler(const HttpControllerHandler&) = delete;
+  HttpControllerHandler(HttpControllerHandler&&) noexcept = delete;
+  virtual ~HttpControllerHandler() = default;
+  // ---------------------------------------------------------------------------
+  // OPERATORs                                                        ( public )
+  // ---------------------------------------------------------------------------
+  HttpControllerHandler& operator=(const HttpControllerHandler&) = delete;
+  HttpControllerHandler& operator=(HttpControllerHandler&&) noexcept = delete;
 };
 }  // namespace koobika::hook::network::protocol::http::v11
 

@@ -42,9 +42,6 @@ int main() {
     server->Handle("/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
       // In this example we're only interested on <GET> requests..
       if (req.Method.IsGet()) {
-        // Set some response headers..
-        res.Headers.Set("Server", "Example");
-        res.Headers.Set("Date", "Wed, 17 Apr 2013 12:00:00 GMT");
         // Let's directly write text using our 'HttpResponseWriter' class!
         HttpResponseWriter("Hello, World!\r\n").Prepare(res).Ok_200();
       } else {

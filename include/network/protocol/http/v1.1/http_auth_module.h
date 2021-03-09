@@ -28,29 +28,38 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/v1.1/http_server_builder.h"
+#ifndef koobika_hook_network_protocol_http_v11_httpauthmodule_h
+#define koobika_hook_network_protocol_http_v11_httpauthmodule_h
 
-using namespace koobika::hook::network::protocol::http::v11;
-using namespace koobika::hook::base;
+#include <functional>
 
-int main() {
-  try {
-    // Let's create our server using the default configuration..
-    auto server = HttpServerBuilder().Build();
-    // Let's configure our server to handle <GET> requests over '/foo/bar' uri..
-    server->Get("/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
-      // Set the response body using the provided stream writer..
-      res.Body.Write("Hello, World!\r\n");
-      // Set the response code and.. that's all!
-      res.Ok_200();
-    });
-    // Start server activity..
-    server->Start("8542");
-    // Wait until user press a key..
-    return getchar();
-  } catch (std::exception exception) {
-    // ((Error)) -> while performing setup!
-    std::cout << exception.what() << std::endl;
-    return -1;
-  }
-}
+namespace koobika::hook::network::protocol::http::v11 {
+// =============================================================================
+// HttpAuthModule                                                  ( interface )
+// -----------------------------------------------------------------------------
+// This interface must be implemented by every auth-module.
+// =============================================================================
+template <typename RQty, typename RSty>
+class HttpAuthModule {
+ public:
+  // ---------------------------------------------------------------------------
+  // USINGs                                                           ( public )
+  // ---------------------------------------------------------------------------
+  // Every checker method must follow this signature. A checker is a function
+  // that will be called in order to evaluate an auth-mechanism. Every auth
+  // class providing for any authorization mechanism must provide for an
+  // implementation of this method (returned by 'GetChecker' method).
+  // Basically, it will use the provided RQty/RSty pair to check if the
+  // request can be processed (satisfies the auth requirements) filling the
+  // corresponding response with the required data. It must return TRUE if
+  // access was granted, FALSE otherwise.
+  using Checker = std::function<bool(RQty, RSty)>;
+  // ---------------------------------------------------------------------------
+  // METHODs                                                          ( public )
+  // ---------------------------------------------------------------------------
+  // Returns the associated checker functor.
+  virtual Checker GetChecker() const = 0;
+};
+}  // namespace koobika::hook::network::protocol::http::v11
+
+#endif

@@ -40,7 +40,7 @@
 #include "encoding/base64/decoder.h"
 #include "encoding/base64/encoder.h"
 #include "network/protocol/http/v1.1/http_auth_module.h"
-#include "network/protocol/http/v1.1/http_routes.h"
+#include "network/protocol/http/v1.1/http_routes_types.h"
 
 namespace koobika::hook::network::protocol::http::v11::auth {
 // =============================================================================
@@ -96,8 +96,8 @@ class Basic : public HttpAuthModule<RQty, RSty> {
   // Clears user/password database.
   void Clear() { repository_.clear(); }
   // Checks for the incoming request to be an authorized one.
-  bool Check(typename HttpRoutes<RQty, RSty>::Request req,
-             typename HttpRoutes<RQty, RSty>::Response res) override {
+  bool Check(typename HttpRoutesTypes<RQty, RSty>::Request req,
+             typename HttpRoutesTypes<RQty, RSty>::Response res) override {
     do {
       auto header_segment = req.Headers.get(kAuthorization);
       if (!header_segment.has_value()) break;

@@ -38,6 +38,7 @@
 
 #include "auth/basic.h"
 #include "http_router.h"
+#include "http_controller.h"
 #include "network/transport/server_transport_constants.h"
 #include "structured/json/json_value.h"
 
@@ -130,142 +131,155 @@ class HttpServerBase : public HttpRoutesManager<RQty, RSty> {
       transport_thread_->join();
     }
   }
-  // Adds a new <generic> route_handler to 'nominal' router structures.
+  // Adds a new <templated-controller> to the internal map.
+  template <template <typename, typename> typename CNty, typename... ARty>
+  void Handle() {
+    auto controller = std::make_shared<CNty<RQty, RSty>>(ARty...);
+    controller->AddToRouter(router_);
+  }
+  // Adds a new <templated-controller> to the internal map.
+  template <typename CNty, typename... ARty>
+  void Handle() {
+    auto controller = std::make_shared<CNty>(ARty...);
+    controller->AddToRouter(router_);
+  }
+  // Adds a new <generic> route to 'nominal' router structures.
   void Handle(
       const std::string& route,
-      const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
       const HttpMethodValue& method = HttpConstants::Methods::kAll,
-      const HttpAuthSupport& auth_support =
-          HttpAuthSupport::kDisabled) override {
-    router_.Handle(route, route_handler, method, auth_support);
+      const HttpAuthSupport& auth_support = HttpAuthSupport::kDisabled,
+      const std::shared_ptr<HttpController<RQty, RSty>>& controller =
+          nullptr) override {
+    router_.Handle(route, route_handler, method, auth_support, controller);
   }
-  // Adds a new <generic> route_handler to 'regular-expressions' router
-  // structures
+  // Adds a new <generic> route to 'regular-expressions' router structures.
   void Handle(
       const std::regex& regex,
-      const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
       const HttpMethodValue& method = HttpConstants::Methods::kAll,
-      const HttpAuthSupport& auth_support =
-          HttpAuthSupport::kDisabled) override {
-    router_.Handle(regex, route_handler, method, auth_support);
+      const HttpAuthSupport& auth_support = HttpAuthSupport::kDisabled,
+      const std::shared_ptr<HttpController<RQty, RSty>>& controller =
+          nullptr) override {
+    router_.Handle(regex, route_handler, method, auth_support, controller);
   }
-  // Adds a new <options> route_handler to the 'nominal' router structures
+  // Adds a new <options> route to the 'nominal' router structures
   void Options(
       const std::string& route,
-      const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
       const HttpAuthSupport& auth_support =
           HttpAuthSupport::kDisabled) override {
     Handle(route, route_handler, HttpConstants::Methods::kOptions,
            auth_support);
   }
-  // Adds a new <options> route_handler to the 'regex' router structures
+  // Adds a new <options> route to the 'regex' router structures
   void Options(
       const std::regex& regex,
-      const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
       const HttpAuthSupport& auth_support =
           HttpAuthSupport::kDisabled) override {
     Handle(regex, route_handler, HttpConstants::Methods::kOptions,
            auth_support);
   }
-  // Adds a new <get> route_handler to the 'nominal' router structures
+  // Adds a new <get> route to the 'nominal' router structures
   void Get(const std::string& route,
-           const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+           const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
            const HttpAuthSupport& auth_support =
                HttpAuthSupport::kDisabled) override {
     Handle(route, route_handler, HttpConstants::Methods::kGet, auth_support);
   }
-  // Adds a new <get> route_handler to the 'regex' router structures
+  // Adds a new <get> route to the 'regex' router structures
   void Get(const std::regex& regex,
-           const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+           const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
            const HttpAuthSupport& auth_support =
                HttpAuthSupport::kDisabled) override {
     Handle(regex, route_handler, HttpConstants::Methods::kGet, auth_support);
   }
-  // Adds a new <head> route_handler to the 'nominal' router structures
+  // Adds a new <head> route to the 'nominal' router structures
   void Head(const std::string& route,
-            const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+            const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
             const HttpAuthSupport& auth_support =
                 HttpAuthSupport::kDisabled) override {
     Handle(route, route_handler, HttpConstants::Methods::kHead, auth_support);
   }
-  // Adds a new <head> route_handler to the 'regex' router structures
+  // Adds a new <head> route to the 'regex' router structures
   void Head(const std::regex& regex,
-            const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+            const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
             const HttpAuthSupport& auth_support =
                 HttpAuthSupport::kDisabled) override {
     Handle(regex, route_handler, HttpConstants::Methods::kHead, auth_support);
   }
-  // Adds a new <post> route_handler to the 'nominal' router structures
+  // Adds a new <post> route to the 'nominal' router structures
   void Post(const std::string& route,
-            const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+            const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
             const HttpAuthSupport& auth_support =
                 HttpAuthSupport::kDisabled) override {
     Handle(route, route_handler, HttpConstants::Methods::kPost, auth_support);
   }
-  // Adds a new <post> route_handler to the 'regex' router structures
+  // Adds a new <post> route to the 'regex' router structures
   void Post(const std::regex& regex,
-            const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+            const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
             const HttpAuthSupport& auth_support =
                 HttpAuthSupport::kDisabled) override {
     Handle(regex, route_handler, HttpConstants::Methods::kPost, auth_support);
   }
-  // Adds a new <put> route_handler to the 'nominal' router structures
+  // Adds a new <put> route to the 'nominal' router structures
   void Put(const std::string& route,
-           const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+           const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
            const HttpAuthSupport& auth_support =
                HttpAuthSupport::kDisabled) override {
     Handle(route, route_handler, HttpConstants::Methods::kPut, auth_support);
   }
-  // Adds a new <put> route_handler to the 'regex' router structures
+  // Adds a new <put> route to the 'regex' router structures
   void Put(const std::regex& regex,
-           const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+           const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
            const HttpAuthSupport& auth_support =
                HttpAuthSupport::kDisabled) override {
     Handle(regex, route_handler, HttpConstants::Methods::kPut, auth_support);
   }
-  // Adds a new <delete> route_handler to the 'nominal' router structures
+  // Adds a new <delete> route to the 'nominal' router structures
   void Delete(
       const std::string& route,
-      const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
       const HttpAuthSupport& auth_support =
           HttpAuthSupport::kDisabled) override {
     Handle(route, route_handler, HttpConstants::Methods::kDelete, auth_support);
   }
-  // Adds a new <delete> route_handler to the 'regex' router structures
+  // Adds a new <delete> route to the 'regex' router structures
   void Delete(
       const std::regex& regex,
-      const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
       const HttpAuthSupport& auth_support =
           HttpAuthSupport::kDisabled) override {
     Handle(regex, route_handler, HttpConstants::Methods::kDelete, auth_support);
   }
-  // Adds a new <trace> route_handler to the 'nominal' router structures
+  // Adds a new <trace> route to the 'nominal' router structures
   void Trace(const std::string& route,
-             const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+             const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
              const HttpAuthSupport& auth_support =
                  HttpAuthSupport::kDisabled) override {
     Handle(route, route_handler, HttpConstants::Methods::kTrace, auth_support);
   }
-  // Adds a new <trace> route_handler to the 'regex' router structures
+  // Adds a new <trace> route to the 'regex' router structures
   void Trace(const std::regex& regex,
-             const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+             const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
              const HttpAuthSupport& auth_support =
                  HttpAuthSupport::kDisabled) override {
     Handle(regex, route_handler, HttpConstants::Methods::kTrace, auth_support);
   }
-  // Adds a new <connect> route_handler to the 'nominal' router structures
+  // Adds a new <connect> route to the 'nominal' router structures
   void Connect(
       const std::string& route,
-      const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
       const HttpAuthSupport& auth_support =
           HttpAuthSupport::kDisabled) override {
     Handle(route, route_handler, HttpConstants::Methods::kConnect,
            auth_support);
   }
-  // Adds a new <connect> route_handler to the 'regex' router structures
+  // Adds a new <connect> route to the 'regex' router structures
   void Connect(
       const std::regex& regex,
-      const typename HttpRoutes<RQty, RSty>::RouteHandler& route_handler,
+      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
       const HttpAuthSupport& auth_support = HttpAuthSupport::kDisabled) {
     Handle(regex, route_handler, HttpConstants::Methods::kConnect,
            auth_support);
@@ -277,8 +291,8 @@ class HttpServerBase : public HttpRoutesManager<RQty, RSty> {
   // ---------------------------------------------------------------------------
   ROty<RQty, RSty> router_;
   std::shared_ptr<TRty> transport_;
-  std::shared_ptr<HttpAuthModule<typename HttpRoutes<RQty, RSty>::Request,
-                                 typename HttpRoutes<RQty, RSty>::Response>>
+  std::shared_ptr<HttpAuthModule<typename HttpRoutesTypes<RQty, RSty>::Request,
+                                 typename HttpRoutesTypes<RQty, RSty>::Response>>
       auth_;
   std::shared_ptr<std::thread> transport_thread_;
   structured::json::JsonObject configuration_;

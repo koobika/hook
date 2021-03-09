@@ -28,35 +28,46 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_v11_httproutesperformer_h
-#define koobika_hook_network_protocol_http_v11_httproutesperformer_h
+#ifndef koobika_hook_network_protocol_http_v11_httproutesnode_h
+#define koobika_hook_network_protocol_http_v11_httproutesnode_h
 
+#include <functional>
 #include <string>
 
-#include "http_auth_module.h"
 #include "http_routes_types.h"
+#include "http_method_value.h"
+#include "http_auth_support.h"
+#include "http_constants.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpRoutesPerformer                                             ( interface )
+// types-forwarding.
+// =============================================================================
+template <typename, typename>
+class HttpController;
+// =============================================================================
+// HttpRoutesNode                                                     ( struct )
 // -----------------------------------------------------------------------------
-// This specification holds for http routes performer interface.
+// This specification holds for http routes <node> type. This class will
+// encapsulate all the information needed to perform routing.
 // =============================================================================
 template <typename RQty, typename RSty>
-class HttpRoutesPerformer {
- public:
+struct HttpRoutesNode {
   // ---------------------------------------------------------------------------
-  // METHODs                                                          ( public )
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
-  // Tries to perform router enabled action.
-  virtual bool Perform(
-      const std::string& route,
-      typename HttpRoutesTypes<RQty, RSty>::Request request,
-      typename HttpRoutesTypes<RQty, RSty>::Response response,
-      const std::shared_ptr<
-          HttpAuthModule<typename HttpRoutesTypes<RQty, RSty>::Request,
-                         typename HttpRoutesTypes<RQty, RSty>::Response>>&
-          auth_module) const = 0;
+  HttpRoutesNode() = default;
+  HttpRoutesNode(const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& hdl,
+                 const HttpMethodValue& mth, const HttpAuthSupport& aut,
+                 const std::shared_ptr<HttpController<RQty, RSty>>& ctl)
+      : handler{hdl}, method{mth}, auth_support{aut}, controller{ctl} {}
+  // ---------------------------------------------------------------------------
+  // ATTRIBUTEs                                                       ( public )
+  // ---------------------------------------------------------------------------
+  std::shared_ptr<HttpController<RQty, RSty>> controller = nullptr;
+  typename HttpRoutesTypes<RQty, RSty>::RouteHandler handler = nullptr;
+  HttpMethodValue method = HttpConstants::Methods::kExtension;
+  HttpAuthSupport auth_support = HttpAuthSupport::kDisabled;
 };
 }  // namespace koobika::hook::network::protocol::http::v11
 

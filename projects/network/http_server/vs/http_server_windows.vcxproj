@@ -38,6 +38,8 @@
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_auth_module.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_auth_support.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_constants.h" />
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_controller.h" />
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_controller_handler.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_encoding_type.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_headers.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_method.h" />
@@ -48,7 +50,8 @@
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_response.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_response_writer.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_router.h" />
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes.h" />
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_node.h" />
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_types.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_manager.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_performer.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_server.h" />
@@ -74,6 +77,7 @@
     <ClInclude Include="..\..\..\..\include\structured\json\json_value_type.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\src\examples\network\http_server_controller.cpp" />
     <ClCompile Include="..\..\..\..\src\examples\network\http_server_handler_shortcut.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -99,10 +103,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\examples\network\http_server_response_writer_serializable.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
