@@ -101,8 +101,8 @@ class Uri : public UriReader {
   // ---------------------------------------------------------------------------
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
-  Uri(const std::string& str) { ParseFull_(str.data(), str.length()); }
-  Uri(const char* str) { ParseFull_(str, strlen(str)); }
+  Uri(const std::string& str) { parseFull(str.data(), str.length()); }
+  Uri(const char* str) { parseFull(str, strlen(str)); }
   Uri(const Uri&) = default;
   Uri(Uri&&) noexcept = default;
   ~Uri() = default;
@@ -112,7 +112,7 @@ class Uri : public UriReader {
   Uri& operator=(const Uri&) = default;
   Uri& operator=(Uri&&) noexcept = default;
   // ---------------------------------------------------------------------------
-  // Methods                                                          [ public ]
+  // Methods                                                          ( public )
   // ---------------------------------------------------------------------------
   // Returns the stored 'scheme' part.
   std::string GetScheme() const override { return scheme_; }
@@ -132,12 +132,12 @@ class Uri : public UriReader {
   // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
   // Used to parse the full content of the provided string.
-  void ParseFull_(const char* str, const std::size_t length) {
-    ParseScheme_(str, length);
-    ParseSchemeSpecificPart_();
+  void parseFull(const char* str, const std::size_t length) {
+    parseScheme(str, length);
+    parseSchemeSpecificPart();
   }
   // Used to parse the schema part.
-  void ParseScheme_(const char* str, const std::size_t length) {
+  void parseScheme(const char* str, const std::size_t length) {
     std::size_t i = 0, end = length;
     while (i < end) {
       auto const& ch = str[i++];
@@ -153,24 +153,24 @@ class Uri : public UriReader {
     }
   }
   // Used to parse the schema-specific part.
-  void ParseSchemeSpecificPart_() {
+  void parseSchemeSpecificPart() {
     std::size_t i = 0;
     auto len = specific_.length();
     if (len >= 2 && specific_[0] == '/' && specific_[1] == '/') {
       // net_path = "//" authority [abs_path]
-      ParseAuthority_(i);
-      ParsePath_(i);
+      parseAuthority(i);
+      parsePath(i);
     } else if (len >= 1 && specific_[0] == '/') {
       // ok!, it's a <abs-path> candidate!
-      ParsePath_(i);
-      ParseQuery_(i);
+      parsePath(i);
+      parseQuery(i);
     } else {
       // ok!, it's an <opaque-part> candidate!
-      ParseOpaque_();
+      parseOpaque();
     }
   }
   // Used to parse the authority part.
-  void ParseAuthority_(std::size_t& i) {
+  void parseAuthority(std::size_t& i) {
     std::size_t off = i, start = i, end = specific_.length();
     while (off < end) {
       auto const& ch = specific_[off];
@@ -181,11 +181,11 @@ class Uri : public UriReader {
     authority_.assign(specific_.substr(start, i - start));
   }
   // Used to parse the path part.
-  void ParsePath_(std::size_t& i) {
+  void parsePath(std::size_t& i) {
     std::size_t start = i, end = specific_.length();
     while (i < end) {
       auto const& ch = specific_[i];
-      if (!IsUnreserved_(ch) && !IsEscaped_(ch) && ch != ':' && ch != '@' &&
+      if (!isUnreserved(ch) && !isEscaped(ch) && ch != ':' && ch != '@' &&
           ch != '&' && ch != '=' && ch != '+' && ch != '$' && ch != ',' &&
           ch != '/')
         break;
@@ -194,11 +194,11 @@ class Uri : public UriReader {
     path_.assign(specific_.substr(start, i - start));
   }
   // Used to parse the query part.
-  void ParseQuery_(std::size_t& i) {
+  void parseQuery(std::size_t& i) {
     std::size_t start = i, end = specific_.length();
     while (i < end) {
       auto const& ch = specific_[i++];
-      if (!IsUric_(ch)) {
+      if (!isUric(ch)) {
         // ((Error)) -> unexpected character found!
         // ((To-Do)) -> inform user back?
       }
@@ -206,15 +206,15 @@ class Uri : public UriReader {
     query_.Set(specific_.substr(start, i - start));
   }
   // Used to parse the opaque part.
-  void ParseOpaque_() {
+  void parseOpaque() {
     std::size_t start = 0, off = start, end = specific_.length();
-    if (!IsUricNoSlash_(specific_[off++])) {
+    if (!isUricNoSlash(specific_[off++])) {
       // ((Error)) -> unexpected character found!
       // ((To-Do)) -> inform user back?
     }
     while (off < end) {
       auto const& ch = specific_[off++];
-      if (!IsUric_(ch)) {
+      if (!isUric(ch)) {
         // ((Error)) -> unexpected character found!
         // ((To-Do)) -> inform user back?
       }
@@ -222,37 +222,35 @@ class Uri : public UriReader {
     opaque_.assign(specific_.substr(start, off - start));
   }
   // Returns true if the provided character is alphanumeric.
-  inline bool IsAlpha_(const char& ch) const {
+  inline bool isAlpha(const char& ch) const {
     return (ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122);
   }
   // Returns true if the provided character is a digit.
-  inline bool IsDigit_(const char& ch) const { return ch >= 48 && ch <= 57; }
+  inline bool isDigit(const char& ch) const { return ch >= 48 && ch <= 57; }
   // Returns true if the provided character is a reserved one.
-  inline bool IsReserved_(const char& ch) const {
+  inline bool isReserved(const char& ch) const {
     return ch == ';' || ch == '/' || ch == '?' || ch == ':' || ch == '@' ||
            ch == '&' || ch == '=' || ch == '+' || ch == '$' || ch == ',';
   }
   // Returns true if the provided character is an unreserved one.
-  inline bool IsUnreserved_(const char& ch) const {
-    return IsAlpha_(ch) || IsDigit_(ch) || ch == '-' || ch == '_' ||
-           ch == '.' || ch == '!' || ch == '~' || ch == '*' || ch == '\'' ||
-           ch == '(' || ch == ')';
+  inline bool isUnreserved(const char& ch) const {
+    return isAlpha(ch) || isDigit(ch) || ch == '-' || ch == '_' || ch == '.' ||
+           ch == '!' || ch == '~' || ch == '*' || ch == '\'' || ch == '(' ||
+           ch == ')';
   }
   // Returns true if the provided character is hexadecimal.
-  inline bool IsHex_(const char& ch) const {
-    return IsDigit_(ch) || (ch >= 65 && ch <= 70) || (ch >= 97 && ch <= 102);
+  inline bool isHex(const char& ch) const {
+    return isDigit(ch) || (ch >= 65 && ch <= 70) || (ch >= 97 && ch <= 102);
   }
   // Returns true if the provided character is an escaped one.
-  inline bool IsEscaped_(const char& ch) const {
-    return ch == '%' || IsHex_(ch);
-  }
+  inline bool isEscaped(const char& ch) const { return ch == '%' || isHex(ch); }
   // Returns true if the provided character is an uric.
-  inline bool IsUric_(const char& ch) {
-    return (IsReserved_(ch) || IsUnreserved_(ch) || IsEscaped_(ch));
+  inline bool isUric(const char& ch) {
+    return (isReserved(ch) || isUnreserved(ch) || isEscaped(ch));
   }
   // Returns true if the provided character is an uric-no-slash.
-  inline bool IsUricNoSlash_(const char& ch) const {
-    return (IsReserved_(ch) || IsUnreserved_(ch) || IsEscaped_(ch));
+  inline bool isUricNoSlash(const char& ch) const {
+    return (isReserved(ch) || isUnreserved(ch) || isEscaped(ch));
   }
   // ---------------------------------------------------------------------------
   // ATTRIBUTEs                                                      ( private )

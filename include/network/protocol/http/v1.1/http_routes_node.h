@@ -41,7 +41,7 @@
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// types-forwarding.
+// Forward-Declarations
 // =============================================================================
 template <typename, typename>
 class HttpController;
@@ -61,6 +61,13 @@ struct HttpRoutesNode {
                  const HttpMethodValue& mth, const HttpAuthSupport& aut,
                  const std::shared_ptr<HttpController<RQty, RSty>>& ctl)
       : handler{hdl}, method{mth}, auth_support{aut}, controller{ctl} {}
+  HttpRoutesNode(const HttpRoutesNode&) = default;
+  HttpRoutesNode(HttpRoutesNode&&) noexcept = default;
+  // ---------------------------------------------------------------------------
+  // OPERATORs                                                        ( public )
+  // ---------------------------------------------------------------------------
+  HttpRoutesNode& operator=(const HttpRoutesNode&) = default;
+  HttpRoutesNode& operator=(HttpRoutesNode&&) noexcept = default;
   // ---------------------------------------------------------------------------
   // ATTRIBUTEs                                                       ( public )
   // ---------------------------------------------------------------------------

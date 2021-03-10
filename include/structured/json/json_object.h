@@ -41,7 +41,7 @@
 
 namespace koobika::hook::structured::json {
 // =============================================================================
-// Types forwarding
+// Forward-Declarations
 // =============================================================================
 struct ObjectDumper;
 class JsonValue;
@@ -61,7 +61,7 @@ class JsonObjectGenericDumper : public base::Serializable {
   JsonObjectGenericDumper(JsonObjectGenericDumper&&) noexcept = default;
   JsonObjectGenericDumper(
       const std::initializer_list<std::pair<JsonString, JsonValue>>& in) {
-    Assign_initializer_list_(in);
+    assignInitializerList(in);
   }
   ~JsonObjectGenericDumper() = default;
   // ---------------------------------------------------------------------------
@@ -77,7 +77,7 @@ class JsonObjectGenericDumper : public base::Serializable {
   }
   JsonObjectGenericDumper& operator=(
       const std::initializer_list<std::pair<JsonString, JsonValue>>& in) {
-    Assign_initializer_list_(in);
+    assignInitializerList(in);
     return *this;
   }
   const JsonValue& operator[](const JsonId& id) const {
@@ -136,7 +136,7 @@ class JsonObjectGenericDumper : public base::Serializable {
   // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
   // Copies an initializer list of json-values to the internal data.
-  void Assign_initializer_list_(
+  void assignInitializerList(
       const std::initializer_list<std::pair<JsonString, JsonValue>>& in) {
     for (auto const& element : in) {
       map_[element.first.Get()] = std::make_shared<JsonValue>(element.second);

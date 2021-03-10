@@ -47,8 +47,8 @@ class Variant {
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   Variant() : data_{} {}
-  Variant(const Variant& in) { Set_(in); }
-  Variant(Variant&& in) noexcept { Set_(std::move(in)); }
+  Variant(const Variant& in) { set(in); }
+  Variant(Variant&& in) noexcept { set(std::move(in)); }
   Variant(const bool& in) { operator=(in); }
   Variant(const unsigned char& in) { operator=(in); }
   Variant(const char& in) { operator=(in); }
@@ -66,21 +66,21 @@ class Variant {
   // ---------------------------------------------------------------------------
   // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
-  Variant& operator=(const Variant& in) { return Set_(in); }
-  Variant& operator=(Variant&& in) noexcept { return Set_(std::move(in)); }
-  Variant& operator=(const bool& value) { return Set_(value); }
-  Variant& operator=(const unsigned char& value) { return Set_(value); }
-  Variant& operator=(const char& value) { return Set_(value); }
-  Variant& operator=(const unsigned short& value) { return Set_(value); }
-  Variant& operator=(const short& value) { return Set_(value); }
-  Variant& operator=(const unsigned int& value) { return Set_(value); }
-  Variant& operator=(const int& value) { return Set_(value); }
-  Variant& operator=(const unsigned long& value) { return Set_(value); }
-  Variant& operator=(const long& value) { return Set_(value); }
-  Variant& operator=(const float& value) { return Set_(value); }
-  Variant& operator=(const double& value) { return Set_(value); }
-  Variant& operator=(const char* value) { return Set_(value); }
-  Variant& operator=(const std::string& value) { return Set_(value); }
+  Variant& operator=(const Variant& in) { return set(in); }
+  Variant& operator=(Variant&& in) noexcept { return set(std::move(in)); }
+  Variant& operator=(const bool& value) { return set(value); }
+  Variant& operator=(const unsigned char& value) { return set(value); }
+  Variant& operator=(const char& value) { return set(value); }
+  Variant& operator=(const unsigned short& value) { return set(value); }
+  Variant& operator=(const short& value) { return set(value); }
+  Variant& operator=(const unsigned int& value) { return set(value); }
+  Variant& operator=(const int& value) { return set(value); }
+  Variant& operator=(const unsigned long& value) { return set(value); }
+  Variant& operator=(const long& value) { return set(value); }
+  Variant& operator=(const float& value) { return set(value); }
+  Variant& operator=(const double& value) { return set(value); }
+  Variant& operator=(const char* value) { return set(value); }
+  Variant& operator=(const std::string& value) { return set(value); }
   // ---------------------------------------------------------------------------
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
@@ -126,28 +126,28 @@ class Variant {
   // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
   // Copies provided variant to the internal one.
-  Variant& Set_(const Variant& in) {
+  Variant& set(const Variant& in) {
     data_ = in.data_;
     return *this;
   }
   // Moves the provided variant to the internal one.
-  Variant& Set_(Variant&& in) noexcept {
+  Variant& set(Variant&& in) noexcept {
     data_ = std::move(in.data_);
     return *this;
   }
   // Copies the provided element to the internal data.
   template <typename DAty>
-  Variant& Set_(const DAty& in) {
+  Variant& set(const DAty& in) {
     data_ = in;
     return *this;
   }
   // Copies the provided string to the internal data.
-  Variant& Set_(const char* in) {
+  Variant& set(const char* in) {
     data_ = std::string(in);
     return *this;
   }
   // Copies the provided string to the internal data.
-  Variant& Set_(const std::string& in) {
+  Variant& set(const std::string& in) {
     data_ = in;
     return *this;
   }

@@ -35,7 +35,8 @@
 using namespace koobika::hook::network::protocol::http::v11;
 using namespace koobika::hook::base;
 
-// This is our custom controller! We can add all the needed handlers!
+// This is our custom controller! In this example we're just creating
+// two different handlers managing two kind of routes: string/regex.
 class CustomController : public HttpController<> {
  public:
   // This is my sample <nominal> controller!
@@ -43,7 +44,7 @@ class CustomController : public HttpController<> {
       this, "/foo/bar",
       [](const HttpRequest& req, HttpResponse& res) {
         // Set the response body using the provided stream writer..
-        res.Body.Write("Hello, Nominal World!\r\n");
+        res.Body.Write("Hello, string routing World!\r\n");
         // Set the response code and.. that's all!
         res.Ok_200();
       },
@@ -53,7 +54,7 @@ class CustomController : public HttpController<> {
       this, std::regex("/foo/abc+"),
       [](const HttpRequest& req, HttpResponse& res) {
         // Set the response body using the provided stream writer..
-        res.Body.Write("Hello, RegEx World!\r\n");
+        res.Body.Write("Hello, regex routing World!\r\n");
         // Set the response code and.. that's all!
         res.Ok_200();
       },

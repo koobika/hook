@@ -39,7 +39,7 @@
 
 namespace koobika::hook::structured::json {
 // =============================================================================
-// Types forwarding
+// Forward-Declarations
 // =============================================================================
 struct ArrayDumper;
 class JsonValue;
@@ -58,18 +58,18 @@ class JsonArrayGenericDumper : public base::Serializable {
   JsonArrayGenericDumper(const JsonArrayGenericDumper&) = default;
   JsonArrayGenericDumper(JsonArrayGenericDumper&&) noexcept = default;
   JsonArrayGenericDumper(const std::initializer_list<JsonValue>& in) {
-    Assign_initializer_list_(in);
+    assignInitializerList(in);
   }
   ~JsonArrayGenericDumper() = default;
   // ---------------------------------------------------------------------------
   // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
   JsonArrayGenericDumper& operator=(const JsonArrayGenericDumper&) = default;
-  JsonArrayGenericDumper& operator=(JsonArrayGenericDumper&& in) noexcept =
+  JsonArrayGenericDumper& operator=(JsonArrayGenericDumper&&) noexcept =
       default;
   JsonArrayGenericDumper& operator=(
       const std::initializer_list<JsonValue>& in) {
-    Assign_initializer_list_(in);
+    assignInitializerList(in);
     return *this;
   }
   const JsonValue& operator[](const std::size_t& index) const {
@@ -146,7 +146,7 @@ class JsonArrayGenericDumper : public base::Serializable {
   // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
   // Copies an initializer list of json-values to the internal data.
-  void Assign_initializer_list_(const std::initializer_list<JsonValue>& in) {
+  void assignInitializerList(const std::initializer_list<JsonValue>& in) {
     for (auto const& element : in) {
       vector_.push_back(std::make_shared<JsonValue>(element));
     }

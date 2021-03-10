@@ -225,7 +225,7 @@ class Stream {
     std::size_t write_cursor = 0;
   };
   // Gets next buffer filename.
-  static std::string GetNextFilename_() {
+  static std::string getNextFilename() {
     static std::mutex counter_lock_;
     static char filename[kMaxFilenameLength] = {0};
     std::unique_lock<std::mutex> unique{counter_lock_};
@@ -238,7 +238,7 @@ class Stream {
     return filename;
   }
   // Allocates the needed space to allow required length.
-  void Allocate_(const std::size_t& length) {
+  void allocate(const std::size_t& length) {
     constexpr std::size_t kDefaultBufferChunkSize = 4096;
     std::size_t off = data_.write_cursor + length;
     if (off > data_.buffer_size) {
@@ -256,10 +256,10 @@ class Stream {
     }
   }
   // Checks for the current size (in memory) and switches to disk (if needed).
-  void CheckAndSwitch_(const std::size_t& length) {
+  void checkAndSwitch(const std::size_t& length) {
     if (memory_mode_) {
       if ((data_.write_cursor + length) > kDefaultMemoryBufferLimit) {
-        auto filename = GetNextFilename_();
+        auto filename = getNextFilename();
         FILE* file = nullptr;
         errno_t result = fopen_s(&file, filename.c_str(), "w+b");
         if (!result) {
@@ -283,7 +283,7 @@ class Stream {
       }
     } else if (data_.file == nullptr) {
       FILE* file = nullptr;
-      auto filename = GetNextFilename_();
+      auto filename = getNextFilename();
       errno_t result = fopen_s(&file, filename.c_str(), "w+b");
       if (!result) {
         data_.file = file;
@@ -296,9 +296,9 @@ class Stream {
   }
   // Adds the specified buffer fragment to the internal decoder data.
   Stream& Write_(void* buffer, const std::size_t& length) {
-    CheckAndSwitch_(length);
+    checkAndSwitch(length);
     if (memory_mode_) {
-      Allocate_(length);
+      allocate(length);
       memcpy(&((char*)data_.buffer)[data_.write_cursor], buffer, length);
     } else {
       std::size_t written = 0;

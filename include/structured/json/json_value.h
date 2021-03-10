@@ -60,24 +60,24 @@ struct DefaultNumericParser {
   // Performs a parsing of the incoming string to return a json-number.
   JsonNumber Parse(const std::string& str) const {
     double number = atof(str.data());
-    if (str.find(kDotCh) != std::string::npos) {
+    if (str.find(kDotCh_) != std::string::npos) {
       return JsonNumber(number);
     } else {
-      if (number >= kSCMin && number <= kSCMax) {
+      if (number >= kSCMin_ && number <= kSCMax_) {
         return JsonNumber(char(number));
-      } else if (number >= kUCMin && number <= kUCMax) {
+      } else if (number >= kUCMin_ && number <= kUCMax_) {
         return JsonNumber(unsigned char(number));
-      } else if (number >= kSSMin && number <= kSSMax) {
+      } else if (number >= kSSMin_ && number <= kSSMax_) {
         return JsonNumber(short(number));
-      } else if (number >= kUSMin && number <= kUSMax) {
+      } else if (number >= kUSMin_ && number <= kUSMax_) {
         return JsonNumber(unsigned short(number));
-      } else if (number >= kSIMin && number <= kSIMax) {
+      } else if (number >= kSIMin_ && number <= kSIMax_) {
         return JsonNumber(int(number));
-      } else if (number >= kUIMin && number <= kUIMax) {
+      } else if (number >= kUIMin_ && number <= kUIMax_) {
         return JsonNumber(unsigned int(number));
-      } else if (number >= kSLMin && number <= kSLMax) {
+      } else if (number >= kSLMin_ && number <= kSLMax_) {
         return JsonNumber(long(number));
-      } else if (number >= kULMin && number <= kULMax) {
+      } else if (number >= kULMin_ && number <= kULMax_) {
         return JsonNumber(unsigned long(number));
       } else {
         return JsonNumber(number);
@@ -90,24 +90,24 @@ struct DefaultNumericParser {
   // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
   // Structural-characters.
-  static constexpr char kDotCh = 0x2E;
+  static constexpr char kDotCh_ = 0x2E;
   // Thresholds.
-  static constexpr double kUCMin = std::numeric_limits<unsigned char>::min();
-  static constexpr double kUCMax = std::numeric_limits<unsigned char>::max();
-  static constexpr double kSCMin = std::numeric_limits<char>::min();
-  static constexpr double kSCMax = std::numeric_limits<char>::max();
-  static constexpr double kUSMin = std::numeric_limits<unsigned short>::min();
-  static constexpr double kUSMax = std::numeric_limits<unsigned short>::max();
-  static constexpr double kSSMin = std::numeric_limits<short>::min();
-  static constexpr double kSSMax = std::numeric_limits<short>::max();
-  static constexpr double kUIMin = std::numeric_limits<unsigned int>::min();
-  static constexpr double kUIMax = std::numeric_limits<unsigned int>::max();
-  static constexpr double kSIMin = std::numeric_limits<int>::min();
-  static constexpr double kSIMax = std::numeric_limits<int>::max();
-  static constexpr double kULMin = std::numeric_limits<unsigned long>::min();
-  static constexpr double kULMax = std::numeric_limits<unsigned long>::max();
-  static constexpr double kSLMin = std::numeric_limits<long>::min();
-  static constexpr double kSLMax = std::numeric_limits<long>::max();
+  static constexpr double kUCMin_ = std::numeric_limits<unsigned char>::min();
+  static constexpr double kUCMax_ = std::numeric_limits<unsigned char>::max();
+  static constexpr double kSCMin_ = std::numeric_limits<char>::min();
+  static constexpr double kSCMax_ = std::numeric_limits<char>::max();
+  static constexpr double kUSMin_ = std::numeric_limits<unsigned short>::min();
+  static constexpr double kUSMax_ = std::numeric_limits<unsigned short>::max();
+  static constexpr double kSSMin_ = std::numeric_limits<short>::min();
+  static constexpr double kSSMax_ = std::numeric_limits<short>::max();
+  static constexpr double kUIMin_ = std::numeric_limits<unsigned int>::min();
+  static constexpr double kUIMax_ = std::numeric_limits<unsigned int>::max();
+  static constexpr double kSIMin_ = std::numeric_limits<int>::min();
+  static constexpr double kSIMax_ = std::numeric_limits<int>::max();
+  static constexpr double kULMin_ = std::numeric_limits<unsigned long>::min();
+  static constexpr double kULMax_ = std::numeric_limits<unsigned long>::max();
+  static constexpr double kSLMin_ = std::numeric_limits<long>::min();
+  static constexpr double kSLMax_ = std::numeric_limits<long>::max();
 };
 
 // =============================================================================
@@ -143,20 +143,20 @@ class JsonValue : public base::Serializable {
   JsonValue(JsonString&& in) noexcept : data_{std::move(in)} {}
   JsonValue(JsonObject&& in) noexcept : data_{std::move(in)} {}
   JsonValue(JsonArray&& in) noexcept : data_{std::move(in)} {}
-  JsonValue(const nullptr_t& in) { Assign_null_(in); }
-  JsonValue(const bool& in) { Assign_bool_(in); }
-  JsonValue(const unsigned char& in) { Assign_number_(in); }
-  JsonValue(const char& in) { Assign_number_(in); }
-  JsonValue(const unsigned short& in) { Assign_number_(in); }
-  JsonValue(const short& in) { Assign_number_(in); }
-  JsonValue(const unsigned int& in) { Assign_number_(in); }
-  JsonValue(const int& in) { Assign_number_(in); }
-  JsonValue(const unsigned long& in) { Assign_number_(in); }
-  JsonValue(const long& in) { Assign_number_(in); }
-  JsonValue(const float& in) { Assign_number_(in); }
-  JsonValue(const double& in) { Assign_number_(in); }
-  JsonValue(const std::string& in) { Assign_string_(in); }
-  JsonValue(const char* in) { Assign_string_(in); }
+  JsonValue(const nullptr_t& in) { assignNull(in); }
+  JsonValue(const bool& in) { assignBool(in); }
+  JsonValue(const unsigned char& in) { assignNumber(in); }
+  JsonValue(const char& in) { assignNumber(in); }
+  JsonValue(const unsigned short& in) { assignNumber(in); }
+  JsonValue(const short& in) { assignNumber(in); }
+  JsonValue(const unsigned int& in) { assignNumber(in); }
+  JsonValue(const int& in) { assignNumber(in); }
+  JsonValue(const unsigned long& in) { assignNumber(in); }
+  JsonValue(const long& in) { assignNumber(in); }
+  JsonValue(const float& in) { assignNumber(in); }
+  JsonValue(const double& in) { assignNumber(in); }
+  JsonValue(const std::string& in) { assignString(in); }
+  JsonValue(const char* in) { assignString(in); }
   ~JsonValue() = default;
   // ---------------------------------------------------------------------------
   // OPERATORs                                                        ( public )
@@ -170,115 +170,115 @@ class JsonValue : public base::Serializable {
     return *this;
   }
   JsonValue& operator=(const nullptr_t& in) {
-    Assign_null_(in);
+    assignNull(in);
     return *this;
   }
   JsonValue& operator=(const bool& in) {
-    Assign_bool_(in);
+    assignBool(in);
     return *this;
   }
   JsonValue& operator=(const unsigned char& in) {
-    Assign_number_(in);
+    assignNumber(in);
     return *this;
   }
   JsonValue& operator=(const char& in) {
-    Assign_number_(in);
+    assignNumber(in);
     return *this;
   }
   JsonValue& operator=(const unsigned short& in) {
-    Assign_number_(in);
+    assignNumber(in);
     return *this;
   }
   JsonValue& operator=(const short& in) {
-    Assign_number_(in);
+    assignNumber(in);
     return *this;
   }
   JsonValue& operator=(const unsigned int& in) {
-    Assign_number_(in);
+    assignNumber(in);
     return *this;
   }
   JsonValue& operator=(const int& in) {
-    Assign_number_(in);
+    assignNumber(in);
     return *this;
   }
   JsonValue& operator=(const unsigned long& in) {
-    Assign_number_(in);
+    assignNumber(in);
     return *this;
   }
   JsonValue& operator=(const long& in) {
-    Assign_number_(in);
+    assignNumber(in);
     return *this;
   }
   JsonValue& operator=(const float& in) {
-    Assign_number_(in);
+    assignNumber(in);
     return *this;
   }
   JsonValue& operator=(const double& in) {
-    Assign_number_(in);
+    assignNumber(in);
     return *this;
   }
   JsonValue& operator=(const std::string& in) {
-    Assign_string_(in);
+    assignString(in);
     return *this;
   }
   JsonValue& operator=(const char* in) {
-    Assign_string_(in);
+    assignString(in);
     return *this;
   }
   JsonValue& operator=(const JsonNull& in) {
-    Assign_value_(in);
+    assignValue(in);
     return *this;
   }
   JsonValue& operator=(const JsonTrue& in) {
-    Assign_value_(in);
+    assignValue(in);
     return *this;
   }
   JsonValue& operator=(const JsonFalse& in) {
-    Assign_value_(in);
+    assignValue(in);
     return *this;
   }
   JsonValue& operator=(const JsonNumber& in) {
-    Assign_value_(in);
+    assignValue(in);
     return *this;
   }
   JsonValue& operator=(const JsonString& in) {
-    Assign_value_(in);
+    assignValue(in);
     return *this;
   }
   JsonValue& operator=(const JsonObject& in) {
-    Assign_value_(in);
+    assignValue(in);
     return *this;
   }
   JsonValue& operator=(const JsonArray& in) {
-    Assign_value_(in);
+    assignValue(in);
     return *this;
   }
   JsonValue& operator=(JsonNull&& in) noexcept {
-    Assign_value_(std::move(in));
+    assignValue(std::move(in));
     return *this;
   }
   JsonValue& operator=(JsonTrue&& in) noexcept {
-    Assign_value_(std::move(in));
+    assignValue(std::move(in));
     return *this;
   }
   JsonValue& operator=(JsonFalse&& in) noexcept {
-    Assign_value_(std::move(in));
+    assignValue(std::move(in));
     return *this;
   }
   JsonValue& operator=(JsonNumber&& in) noexcept {
-    Assign_value_(std::move(in));
+    assignValue(std::move(in));
     return *this;
   }
   JsonValue& operator=(JsonString&& in) noexcept {
-    Assign_value_(std::move(in));
+    assignValue(std::move(in));
     return *this;
   }
   JsonValue& operator=(JsonObject&& in) noexcept {
-    Assign_value_(std::move(in));
+    assignValue(std::move(in));
     return *this;
   }
   JsonValue& operator=(JsonArray&& in) noexcept {
-    Assign_value_(std::move(in));
+    assignValue(std::move(in));
     return *this;
   }
   operator JsonNull() const { return std::get<JsonNull>(data_); }
@@ -366,32 +366,32 @@ class JsonValue : public base::Serializable {
   // Parses (in a recursive way) the incoming string content to
   // generate a json-value.
   template <typename NumericParser>
-  static std::optional<JsonValue> From_(const std::string& json_content,
+  static std::optional<JsonValue> from(const std::string& json_content,
                                         std::size_t& idx,
                                         const NumericParser& numeric_parser,
                                         const bool& in_collection) {
     std::optional<JsonValue> json_value = {};
     if (idx >= json_content.length()) return json_value;
     // JSON-text = ws value ws
-    SkipWs_(json_content, idx);
-    auto valueType = CheckValueType_(json_content, idx);
+    skipWs(json_content, idx);
+    auto valueType = checkValueType(json_content, idx);
     if (!valueType.has_value() && !in_collection) {
       // ((Error)) -> unexpected value found!
       throw std::logic_error("unexpected value found!");
     } else if (valueType.has_value()) {
       auto type = valueType.value();
       if (type == JsonValueType::kNull) {
-        idx += strlen(kNullStr);
+        idx += strlen(kNullStr_);
         json_value = JsonNull();
       } else if (type == JsonValueType::kTrue) {
-        idx += strlen(kTrueStr);
+        idx += strlen(kTrueStr_);
         json_value = JsonTrue();
       } else if (type == JsonValueType::kFalse) {
-        idx += strlen(kFalseStr);
+        idx += strlen(kFalseStr_);
         json_value = JsonFalse();
       } else if (type == JsonValueType::kNumber) {
         auto beg = idx;
-        idx = GetNextStructuralCharacter_(json_content, idx);
+        idx = getNextStructuralCharacter(json_content, idx);
         json_value = numeric_parser.Parse(json_content.substr(beg, idx - beg));
       } else if (type == JsonValueType::kString) {
         auto beg = ++idx;
@@ -399,31 +399,31 @@ class JsonValue : public base::Serializable {
         while (idx < json_content.length()) {
           auto const& ch = json_content[idx++];
           if (!escaped) {
-            if (ch == kReverseSolidusCh) {
+            if (ch == kReverseSolidusCh_) {
               escaped = true;
-            } else if (ch == kQuotationMarkCh) {
+            } else if (ch == kQuotationMarkCh_) {
               json_value = JsonString(json_content.substr(beg, idx - beg - 1));
               break;
             }
           } else {
             switch (ch) {
-              case kQuotationMarkCh:
-              case kReverseSolidusCh:
-              case kSolidusCh:
-              case kBackspaceCh:
-              case kFormFeedCh:
-              case kLfCh:
-              case kCrCh:
-              case kHtCh:
+              case kQuotationMarkCh_:
+              case kReverseSolidusCh_:
+              case kSolidusCh_:
+              case kBackspaceCh_:
+              case kFormFeedCh_:
+              case kLfCh_:
+              case kCrCh_:
+              case kHtCh_:
                 break;
-              case kUCh:
+              case kUCh_:
                 if (idx + 2 > json_content.length()) {
                   // ((Error)) -> unexpected value found!
                   throw std::logic_error("unexpected value found!");
                 }
                 idx += 2;
                 break;
-              case kZeroCh:
+              case kZeroCh_:
                 if (idx + 1 > json_content.length()) {
                   // ((Error)) -> unexpected value found!
                   throw std::logic_error("unexpected value found!");
@@ -452,7 +452,7 @@ class JsonValue : public base::Serializable {
             throw std::logic_error("unexpected value found!");
           }
           auto ch = json_content[idx++];
-          if (ch != kColonCh) {
+          if (ch != kColonCh_) {
             // ((Error)) -> unexpected value found!
             throw std::logic_error("unexpected value found!");
           }
@@ -463,10 +463,10 @@ class JsonValue : public base::Serializable {
           }
           object[((JsonString&)key.value()).Get()] = std::move(element.value());
           ch = json_content[idx++];
-          if (ch == kRightCurlyBracketCh) {
+          if (ch == kRightCurlyBracketCh_) {
             end_of_object_found = true;
             break;
-          } else if (ch != kCommaCh) {
+          } else if (ch != kCommaCh_) {
             break;
           }
         }
@@ -485,10 +485,10 @@ class JsonValue : public base::Serializable {
             array.Add(std::move(element.value()));
           }
           auto const& ch = json_content[idx++];
-          if (ch == kRightSquareBracketCh) {
+          if (ch == kRightSquareBracketCh_) {
             end_of_array_found = true;
             break;
-          } else if (ch != kCommaCh) {
+          } else if (ch != kCommaCh_) {
             break;
           }
         }
@@ -499,49 +499,50 @@ class JsonValue : public base::Serializable {
         json_value = array;
       }
     }
-    SkipWs_(json_content, idx);
+    skipWs(json_content, idx);
     return json_value;
   }
   // Skips all ws (white-space) characters.
-  static void SkipWs_(const std::string& json_content, std::size_t& index) {
+  static void skipWs(const std::string& json_content, std::size_t& index) {
     while (index < json_content.length()) {
       auto const& ch = json_content[index];
-      if (ch != kSpaceCh && ch != kHtCh && ch != kCrCh && ch != kLfCh) break;
+      if (ch != kSpaceCh_ && ch != kHtCh_ && ch != kCrCh_ && ch != kLfCh_)
+        break;
       index++;
     }
   }
   // Gets the next character position (within the provided) string that is
   // an structural one.
-  static std::size_t GetNextStructuralCharacter_(
+  static std::size_t getNextStructuralCharacter(
       const std::string& json_content, const std::size_t& index) {
     auto i = index;
     while (i < json_content.length()) {
       auto const& ch = json_content[i];
-      if (ch == kLeftSquareBracketCh || ch == kLeftCurlyBracketCh ||
-          ch == kRightSquareBracketCh || ch == kRightCurlyBracketCh ||
-          ch == kCommaCh || ch == kColonCh || ch == kQuotationMarkCh)
+      if (ch == kLeftSquareBracketCh_ || ch == kLeftCurlyBracketCh_ ||
+          ch == kRightSquareBracketCh_ || ch == kRightCurlyBracketCh_ ||
+          ch == kCommaCh_ || ch == kColonCh_ || ch == kQuotationMarkCh_)
         break;
       i++;
     }
     return i;
   }
   // Checks for the next element type (returns no value if unknown).
-  static std::optional<JsonValueType> CheckValueType_(
+  static std::optional<JsonValueType> checkValueType(
       const std::string& json_content, const std::size_t& index) {
-    if (json_content[index] == kLeftCurlyBracketCh) {
+    if (json_content[index] == kLeftCurlyBracketCh_) {
       return JsonValueType::kObject;
-    } else if (json_content[index] == kLeftSquareBracketCh) {
+    } else if (json_content[index] == kLeftSquareBracketCh_) {
       return JsonValueType::kArray;
-    } else if (json_content[index] == kQuotationMarkCh) {
+    } else if (json_content[index] == kQuotationMarkCh_) {
       return JsonValueType::kString;
     } else {
-      auto limiter = GetNextStructuralCharacter_(json_content, index);
+      auto limiter = getNextStructuralCharacter(json_content, index);
       auto str = json_content.substr(index, limiter - index);
-      if (!str.compare(kNullStr)) {
+      if (!str.compare(kNullStr_)) {
         return JsonValueType::kNull;
-      } else if (!str.compare(kTrueStr)) {
+      } else if (!str.compare(kTrueStr_)) {
         return JsonValueType::kTrue;
-      } else if (!str.compare(kFalseStr)) {
+      } else if (!str.compare(kFalseStr_)) {
         return JsonValueType::kFalse;
       } else {
         return JsonValueType::kNumber;
@@ -550,9 +551,9 @@ class JsonValue : public base::Serializable {
     return {};
   }
   // Assigns a <nullptr> value to the current json_value.
-  void Assign_null_(const std::nullptr_t& in) { data_ = JsonNull(); }
+  void assignNull(const std::nullptr_t& in) { data_ = JsonNull(); }
   // Assigns a <bool> value to the current json_value.
-  void Assign_bool_(const bool& in) {
+  void assignBool(const bool& in) {
     if (in) {
       data_ = JsonTrue();
     } else {
@@ -561,51 +562,51 @@ class JsonValue : public base::Serializable {
   }
   // Assigns a <numeric> value to the current json_value.
   template <typename DAty>
-  void Assign_number_(const DAty& in) {
+  void assignNumber(const DAty& in) {
     data_ = JsonNumber(in);
   }
   // Assigns an <string> value to the current json_value.
-  void Assign_string_(const std::string& in) { data_ = JsonString(in); }
+  void assignString(const std::string& in) { data_ = JsonString(in); }
   // Assigns an <string> value to the current json_value.
-  void Assign_string_(const char* in) { data_ = JsonString(in); }
+  void assignString(const char* in) { data_ = JsonString(in); }
   // Copies the incoming value to the internal data.
   template <typename VAty>
-  void Assign_value_(const VAty& in) {
+  void assignValue(const VAty& in) {
     data_ = in;
   }
   // Moves the incoming value to the internal data.
   template <typename VAty>
-  void Assign_value_(VAty&& in) noexcept {
+  void assignValue(VAty&& in) noexcept {
     data_ = std::move(in);
   }
   // ---------------------------------------------------------------------------
   // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
   // Structural-characters.
-  static constexpr char kLeftSquareBracketCh = 0x5B;
-  static constexpr char kLeftCurlyBracketCh = 0x7B;
-  static constexpr char kRightSquareBracketCh = 0x5D;
-  static constexpr char kRightCurlyBracketCh = 0x7D;
-  static constexpr char kColonCh = 0x3A;
-  static constexpr char kCommaCh = 0x2C;
-  static constexpr char kQuotationMarkCh = 0x22;
-  static constexpr char kMinusCh = 0x2D;
+  static constexpr char kLeftSquareBracketCh_ = 0x5B;
+  static constexpr char kLeftCurlyBracketCh_ = 0x7B;
+  static constexpr char kRightSquareBracketCh_ = 0x5D;
+  static constexpr char kRightCurlyBracketCh_ = 0x7D;
+  static constexpr char kColonCh_ = 0x3A;
+  static constexpr char kCommaCh_ = 0x2C;
+  static constexpr char kQuotationMarkCh_ = 0x22;
+  static constexpr char kMinusCh_ = 0x2D;
   // Ws-characters.
-  static constexpr char kSpaceCh = 0x20;
-  static constexpr char kHtCh = 0x09;
-  static constexpr char kLfCh = 0x0A;
-  static constexpr char kCrCh = 0x0D;
+  static constexpr char kSpaceCh_ = 0x20;
+  static constexpr char kHtCh_ = 0x09;
+  static constexpr char kLfCh_ = 0x0A;
+  static constexpr char kCrCh_ = 0x0D;
   // Others.
-  static constexpr char kReverseSolidusCh = 0x5C;
-  static constexpr char kSolidusCh = 0x2F;
-  static constexpr char kBackspaceCh = 0x62;
-  static constexpr char kFormFeedCh = 0x66;
-  static constexpr char kUCh = 0x75;
-  static constexpr char kZeroCh = 0x00;
+  static constexpr char kReverseSolidusCh_ = 0x5C;
+  static constexpr char kSolidusCh_ = 0x2F;
+  static constexpr char kBackspaceCh_ = 0x62;
+  static constexpr char kFormFeedCh_ = 0x66;
+  static constexpr char kUCh_ = 0x75;
+  static constexpr char kZeroCh_ = 0x00;
   // Strings.
-  static constexpr char kNullStr[] = "null";
-  static constexpr char kTrueStr[] = "true";
-  static constexpr char kFalseStr[] = "false";
+  static constexpr char kNullStr_[] = "null";
+  static constexpr char kTrueStr_[] = "true";
+  static constexpr char kFalseStr_[] = "false";
   // ---------------------------------------------------------------------------
   // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------

@@ -54,7 +54,6 @@ namespace koobika::hook::network::transport::tcpip {
 // =============================================================================
 template <typename DEty>
 class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
- private:
   // ---------------------------------------------------------------------------
   // USINGs                                                          ( private )
   // ---------------------------------------------------------------------------
@@ -78,8 +77,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
   // ---------------------------------------------------------------------------
   // Starts current transport activity using the provided (json) configuration.
   void Start(const structured::json::JsonObject& configuration,
-             const typename DEty::RequestHandler& request_handler)
-      override {
+             const typename DEty::RequestHandler& request_handler) override {
     if (io_port_ != INVALID_HANDLE_VALUE) {
       // ((Error)) -> transport already initialized!
       throw std::logic_error("Already initialized transport!");
@@ -94,9 +92,9 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     // let's assign the user-specified request handler function..
     request_handler_ = request_handler;
     // let's setup all the required resources..
-    SetupWinsock_();
-    SetupListener_(port.Get(), number_of_workers.Get<int>());
-    SetupWorkers_(number_of_workers.Get<int>());
+    setupWinsock();
+    setupListener(port.Get(), number_of_workers.Get<int>());
+    setupWorkers(number_of_workers.Get<int>());
     // let's start incoming connections loop!
     while (true) {
       SOCKET client = WSAAccept(accept_socket_, NULL, NULL, NULL, NULL);
@@ -157,7 +155,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
             // ((Error)) -> while trying to send information to socket!
             // ((To-Do)) -> inform user back?
             return false;
-          } 
+          }
         } else {
           offset += res;
         }
@@ -188,7 +186,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
   // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
   // Sets-up winsock resources.
-  void SetupWinsock_() {
+  void setupWinsock() {
     struct WsaInitializer_ {
       WsaInitializer_() {
         if (WSAStartup(MAKEWORD(2, 2), &wsa_data)) {
@@ -205,7 +203,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     }
   }
   // Sets-up listener socket resources.
-  void SetupListener_(const std::string& port, const int& number_of_workers) {
+  void setupListener(const std::string& port, const int& number_of_workers) {
     // let's create our main i/o completion port!
     auto io_port = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL,
                                           number_of_workers);
@@ -260,7 +258,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     io_port_ = io_port;
   }
   // Sets-up all needed workers within this transport.
-  void SetupWorkers_(const int& number_of_workers) {
+  void setupWorkers(const int& number_of_workers) {
     for (int i = 0; i < number_of_workers; i++) {
       threads_.push(std::make_shared<std::thread>([this]() {
         ULONG_PTR completion_key = NULL;

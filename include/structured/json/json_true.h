@@ -47,13 +47,13 @@ class JsonTrue : public base::Serializable {
   // Gets the stored json-value.
   bool Get() const { return true; }
   // Dumps the current content to string.
-  base::Stream Serialize() const override { return kTrueStr; }
+  base::Stream Serialize() const override { return kTrueStr_; }
 
  private:
   // ---------------------------------------------------------------------------
   // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
-  static constexpr char kTrueStr[] = "true";
+  static constexpr char kTrueStr_[] = "true";
 };
 }  // namespace koobika::hook::structured::json
 

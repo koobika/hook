@@ -45,11 +45,10 @@ namespace koobika::hook::network::protocol::http::v11 {
 // This class is in charge of providing the http headers class.
 // =============================================================================
 class HttpHeaders : public base::Serializable {
- private:
   // ---------------------------------------------------------------------------
   // USINGs                                                          ( private )
   // ---------------------------------------------------------------------------
-  using VariantList_ = std::initializer_list<base::Variant>;
+  using VariantList = std::initializer_list<base::Variant>;
 
  public:
   // ---------------------------------------------------------------------------
@@ -88,8 +87,8 @@ class HttpHeaders : public base::Serializable {
       // ((To-Do)) -> raise an exception?
       return;
     }
-    SetFieldName_(name);
-    SetFieldValue_(value);
+    setFieldName(name);
+    setFieldValue(value);
   }
   // Sets a header entry.
   void Set(const char* name, const char* value) {
@@ -103,18 +102,18 @@ class HttpHeaders : public base::Serializable {
       // ((To-Do)) -> raise an exception?
       return;
     }
-    SetFieldName_(name);
-    SetFieldValue_(value);
+    setFieldName(name);
+    setFieldValue(value);
   }
   // Sets a header entry (variant-list version).
-  void Set(const std::string& name, const VariantList_& values) {
+  void Set(const std::string& name, const VariantList& values) {
     if (!HttpUtil::IsToken(name)) {
       // ((Error)) -> specified name is NOT a token!
       // ((To-Do)) -> raise an exception?
       return;
     }
     std::size_t length = values.size(), i = 0;
-    SetFieldName_(name);
+    setFieldName(name);
     for (auto const& value : values) {
       auto const& element_value = value.GetAsString();
       if (!element_value.has_value()) continue;
@@ -123,11 +122,11 @@ class HttpHeaders : public base::Serializable {
         // ((To-Do)) -> raise an exception?
         continue;
       }
-      SetFieldValue_(element_value.value().data(), i++, i == length - 1);
+      setFieldValue(element_value.value().data(), i++, i == length - 1);
     }
   }
   // Sets a header entry (initializer-list version).
-  void Set(const std::pair<std::string, VariantList_>& elements) {
+  void Set(const std::pair<std::string, VariantList>& elements) {
     Set(elements.first, elements.second);
   }
   // Returns header entry using its name (const reference&).
@@ -189,7 +188,7 @@ class HttpHeaders : public base::Serializable {
   // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
   // Sets header field name.
-  void SetFieldName_(const std::string& name) {
+  void setFieldName(const std::string& name) {
     std::size_t begin = 0, end;
     std::string crlf(HttpConstants::Strings::kCrLf);
     while (true) {
@@ -204,14 +203,14 @@ class HttpHeaders : public base::Serializable {
         raw_.erase(begin, (end - begin) + HttpConstants::Strings::kCrLfLen);
       }
       begin = end + HttpConstants::Strings::kCrLfLen;
-    } 
+    }
     raw_.append(name);
     raw_.append(HttpConstants::Strings::kHeaderFieldNameSeparator);
     raw_.append(HttpConstants::Strings::kSpace);
   }
   // Sets header field value.
-  void SetFieldValue_(const std::string& val, const bool& add_pre_comma = false,
-                      const bool& add_trailing_crlf = true) {
+  void setFieldValue(const std::string& val, const bool& add_pre_comma = false,
+                     const bool& add_trailing_crlf = true) {
     if (add_pre_comma) {
       raw_.append(HttpConstants::Strings::kHeaderFieldValueSeparator);
       raw_.append(HttpConstants::Strings::kSpace);

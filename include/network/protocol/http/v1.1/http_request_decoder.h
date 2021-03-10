@@ -47,29 +47,29 @@ namespace koobika::hook::network::protocol::http::v11 {
 #define PERFORM_ERROR_HANDLING \
   {                            \
     error_handler();           \
-    Reset_();                  \
+    reset();                   \
     return;                    \
   }
 // =============================================================================
 // GET_REQUEST_LINE_FIELD                                              ( macro )
 // =============================================================================
-#define GET_REQUEST_LINE_FIELD(field, delimiter, delimiter_length)   \
-  {                                                                  \
-    auto ptr = SearchFor_(&buffer_[cursor], end - cursor, delimiter, \
-                          delimiter_length);                         \
-    if (ptr == nullptr) PERFORM_ERROR_HANDLING                       \
-    auto length = ptr - &buffer_[cursor];                            \
-    field.assign(&buffer_[cursor], length);                          \
-    cursor += length + delimiter_length;                             \
+#define GET_REQUEST_LINE_FIELD(field, delimiter, delimiter_length)  \
+  {                                                                 \
+    auto ptr = searchFor(&buffer_[cursor], end - cursor, delimiter, \
+                         delimiter_length);                         \
+    if (ptr == nullptr) PERFORM_ERROR_HANDLING                      \
+    auto length = ptr - &buffer_[cursor];                           \
+    field.assign(&buffer_[cursor], length);                         \
+    cursor += length + delimiter_length;                            \
   }
 // =============================================================================
 // GET_HEADER_FIELD_NAME                                               ( macro )
 // =============================================================================
 #define GET_HEADER_FIELD_NAME(name)                            \
   {                                                            \
-    auto ptr = SearchFor_(&buffer_[cursor], end - cursor,      \
-                          HttpConstants::Strings::kColon,      \
-                          HttpConstants::Strings::kColonLen);  \
+    auto ptr = searchFor(&buffer_[cursor], end - cursor,       \
+                         HttpConstants::Strings::kColon,       \
+                         HttpConstants::Strings::kColonLen);   \
     if (ptr == nullptr) PERFORM_ERROR_HANDLING                 \
     name = {cursor, ptr - &buffer_[cursor]};                   \
     cursor += name.second + HttpConstants::Strings::kColonLen; \
@@ -80,13 +80,13 @@ namespace koobika::hook::network::protocol::http::v11 {
 #define GET_HEADER_FIELD_VALUES(values)                              \
   values.clear();                                                    \
   while (cursor < end) {                                             \
-    auto ptr = SearchFor_(&buffer_[cursor], end - cursor,            \
-                          HttpConstants::Strings::kCrLf,             \
-                          HttpConstants::Strings::kCrLfLen);         \
+    auto ptr = searchFor(&buffer_[cursor], end - cursor,             \
+                         HttpConstants::Strings::kCrLf,              \
+                         HttpConstants::Strings::kCrLfLen);          \
     if (ptr == nullptr) PERFORM_ERROR_HANDLING                       \
     Indices field_value = {cursor, ptr - &buffer_[cursor]};          \
     cursor += field_value.second + HttpConstants::Strings::kCrLfLen; \
-    Trim_(field_value);                                              \
+    trim(field_value);                                               \
     values.push_back(field_value);                                   \
     if (!HttpUtil::SkipLWS(&buffer_[cursor], end - cursor)) break;   \
   }
@@ -146,9 +146,9 @@ class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
     // first, let's check for <basic> message content decoding!
     if (!decoding_body_part_) {
       std::size_t cursor = 0, end = 0;
-      auto empty_line_ptr = SearchFor_(&buffer_[cursor], used_ - cursor,
-                                       HttpConstants::Strings::kEmptyLine,
-                                       HttpConstants::Strings::kEmptyLineLen);
+      auto empty_line_ptr = searchFor(&buffer_[cursor], used_ - cursor,
+                                      HttpConstants::Strings::kEmptyLine,
+                                      HttpConstants::Strings::kEmptyLineLen);
       // if empty-line sequence (\r\n\r\n) was not found, let's
       // return control and wait for more data to arrive!
       if (empty_line_ptr == nullptr) return;
@@ -170,14 +170,14 @@ class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
         GET_HEADER_FIELD_NAME(field_name)
         GET_HEADER_FIELD_VALUES(field_values)
         for (auto const& value : field_values) {
-          if (IsHeaderFieldName_(field_name,
-                                 HttpConstants::Headers::kContentLength,
-                                 HttpConstants::Headers::kContentLengthLen)) {
+          if (isHeaderFieldName(field_name,
+                                HttpConstants::Headers::kContentLength,
+                                HttpConstants::Headers::kContentLengthLen)) {
             // [content-length]
             encoding_type_ = HttpEncodingType::kContentLength;
             auto val = std::string(&buffer_[value.first], value.second);
             content_length_ = atol(val.data());
-          } else if (IsHeaderFieldName_(
+          } else if (isHeaderFieldName(
                          field_name, HttpConstants::Headers::kContentType,
                          HttpConstants::Headers::kContentTypeLen)) {
             // [content-type]
@@ -224,7 +224,7 @@ class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
                            std::move(HttpMethod(method_)),
                            std::move(HttpHeaders(headers_)), std::move(body_)),
                       sender);
-      Reset_();
+      reset();
     }
   }
 
@@ -233,8 +233,8 @@ class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
   // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
   // Searchs for the required string content within the provided buffer.
-  const char* SearchFor_(const char* buffer, const std::size_t& length,
-                         const char* str, const std::size_t& str_len) const {
+  const char* searchFor(const char* buffer, const std::size_t& length,
+                        const char* str, const std::size_t& str_len) const {
     if (str_len > 0) {
       std::size_t s_off = 0, out_pos = 0;
       while (out_pos < length) {
@@ -251,8 +251,8 @@ class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
     return nullptr;
   }
   // Checks if the specified sub-string is a header field name.
-  bool IsHeaderFieldName_(const Indices& delimiters, const char* buffer,
-                          const std::size_t& length) {
+  bool isHeaderFieldName(const Indices& delimiters, const char* buffer,
+                         const std::size_t& length) {
     if (delimiters.second != length) return false;
     for (std::size_t i = 0; i < length; i++) {
       if (tolower(buffer[i]) != tolower(buffer_[delimiters.first + i])) {
@@ -262,7 +262,7 @@ class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
     return true;
   }
   // Checks if the specified sub-string is a header field name.
-  void Trim_(Indices& delimiters) {
+  void trim(Indices& delimiters) {
     bool perform_ltrim = true, perform_rtrim = true;
     auto original_offset = delimiters.first;
     auto original_length = delimiters.second;
@@ -292,7 +292,7 @@ class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
     }
   }
   // Resets all the internal decoder variables to the initial state.
-  void Reset_() {
+  void reset() {
     encoding_type_ = HttpEncodingType::kNone;
     decoding_body_part_ = false;
     content_length_ = 0;

@@ -33,10 +33,14 @@
 
 #include <string>
 
-#include "http_auth_module.h"
 #include "http_routes_types.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
+// =============================================================================
+// Forward-Declarations
+// =============================================================================
+template <typename, typename>
+class HttpAuthModule;
 // =============================================================================
 // HttpRoutesPerformer                                             ( interface )
 // -----------------------------------------------------------------------------

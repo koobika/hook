@@ -65,185 +65,185 @@ class HttpResponse : public base::Serializable {
   // ---------------------------------------------------------------------------
   // 100 - Continue.
   void Continue_100(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k100_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k100_, reason_phrase);
   }
   // 101 - Switching Protocols.
   void SwitchingProtocols_101(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k101_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k101_, reason_phrase);
   }
   // 200 - Ok.
   void Ok_200(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k200_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k200_, reason_phrase);
   }
   // 201 - Created.
-  void created_201(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k201_, reason_phrase);
+  void Created_201(const std::optional<std::string>& reason_phrase = {}) {
+    setStatusCodeAndReasonPhrase(k201_, reason_phrase);
   }
   // 202 - Accepted.
   void Accepted_202(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k202_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k202_, reason_phrase);
   }
   // 203 - Non Authoritative Information.
   void NonAuthoritativeInformation_203(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k203_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k203_, reason_phrase);
   }
   // 204 - No Content.
   void NoContent_204(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k204_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k204_, reason_phrase);
   }
   // 205 - Reset Content.
   void ResetContent_205(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k205_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k205_, reason_phrase);
   }
   // 206 - Partial Content.
   void PartialContent_206(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k206_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k206_, reason_phrase);
   }
   // 300 - Multiple Choices.
   void MultipleChoices_300(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k300_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k300_, reason_phrase);
   }
   // 301 - Moved Permanently.
   void MovedPermanently_301(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k301_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k301_, reason_phrase);
   }
   // 302 - Found.
   void Found_302(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k302_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k302_, reason_phrase);
   }
   // 303 - See Other.
   void SeeOther_303(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k303_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k303_, reason_phrase);
   }
   // 304 - Not Modified.
   void NotModified_304(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k304_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k304_, reason_phrase);
   }
   // 305 - Use Proxy.
   void UseProxy_305(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k305_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k305_, reason_phrase);
   }
   // 307 - Temporary Redirect.
   void TemporaryRedirect_307(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k307_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k307_, reason_phrase);
   }
   // 400 - Bad Request.
   void BadRequest_400(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k400_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k400_, reason_phrase);
   }
   // 401 - Unauthorized.
   void Unauthorized_401(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k401_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k401_, reason_phrase);
   }
   // 402 - Payment Required.
   void PaymentRequired_402(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k402_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k402_, reason_phrase);
   }
   // 403 - Forbidden.
   void Forbidden_403(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k403_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k403_, reason_phrase);
   }
   // 404 - Not Found.
   void NotFound_404(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k404_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k404_, reason_phrase);
   }
   // 405 - Method Not Allowed.
   void MethodNotAllowed_405(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k405_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k405_, reason_phrase);
   }
   // 406 - Not Acceptable.
   void NotAcceptable_406(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k406_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k406_, reason_phrase);
   }
   // 407 - Proxy Authentication Required.
   void ProxyAuthenticationRequired_407(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k407_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k407_, reason_phrase);
   }
   // 408 - Request Timeout.
   void RequestTimeout_408(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k408_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k408_, reason_phrase);
   }
   // 409 - Conflict.
   void Conflict_409(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k409_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k409_, reason_phrase);
   }
   // 410 - Gone.
   void Gone_410(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k410_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k410_, reason_phrase);
   }
   // 411 - Length Required.
   void LengthRequired_411(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k411_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k411_, reason_phrase);
   }
   // 412 - Precondition Failed.
   void PreconditionFailed_412(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k412_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k412_, reason_phrase);
   }
   // 413 - Request Entity Too Large.
   void RequestEntityTooLarge_413(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k413_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k413_, reason_phrase);
   }
   // 414 - Request Uri Too Large.
   void RequestUriTooLarge_414(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k414_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k414_, reason_phrase);
   }
   // 415 - Unsupported Media Type.
   void UnsupportedMediaType_415(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k415_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k415_, reason_phrase);
   }
   // 416 - Requested Range Not Satisfiable.
   void RequestedRangeNotSatisfiable_416(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k416_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k416_, reason_phrase);
   }
   // 417 - Expectation Failed.
   void ExpectationFailed_417(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k417_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k417_, reason_phrase);
   }
   // 500 - InternalServerError.
   void InternalServerError_500(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k500_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k500_, reason_phrase);
   }
   // 501 - Not Implemented.
   void NotImplemented_501(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k501_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k501_, reason_phrase);
   }
   // 502 - Bad Gateway.
   void BadGateway_502(const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k502_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k502_, reason_phrase);
   }
   // 503 - Service Unavailable.
   void ServiceUnavailable_503(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k503_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k503_, reason_phrase);
   }
   // 504 - Gateway Timeout.
   void GatewayTimeout_504(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k504_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k504_, reason_phrase);
   }
   // 505 - Http Version Not Supported.
   void HttpVersionNotSupported_505(
       const std::optional<std::string>& reason_phrase = {}) {
-    SetStatusCodeAndReasonPhrase_(k505_, reason_phrase);
+    setStatusCodeAndReasonPhrase(k505_, reason_phrase);
   }
   // Renders current content to string.
   base::Stream Serialize() const override {
@@ -281,16 +281,16 @@ class HttpResponse : public base::Serializable {
   // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
   // Sets the status code and reason phrase.
-  void SetStatusCodeAndReasonPhrase_(
+  void setStatusCodeAndReasonPhrase(
       const unsigned short& status_code,
       const std::optional<std::string>& reason_phrase) {
     StatusCode = status_code;
     ReasonPhrase = reason_phrase.has_value()
                        ? reason_phrase.value()
-                       : GetDefaultReasonPhraseFor_(status_code);
+                       : getDefaultReasonPhraseFor(status_code);
   }
   // Gets the default reason phrase for the specified code.
-  std::string GetDefaultReasonPhraseFor_(const unsigned short& code) {
+  std::string getDefaultReasonPhraseFor(const unsigned short& code) {
     static const std::unordered_map<unsigned short, std::string>
         known_reason_phrases = {
             {k100_, k100Str_}, {k101_, k101Str_}, {k200_, k200Str_},

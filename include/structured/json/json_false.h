@@ -47,13 +47,13 @@ class JsonFalse : public base::Serializable {
   // Gets the stored json-value.
   bool Get() const { return false; }
   // Dumps the current content to string.
-  base::Stream Serialize() const override { return kFalseStr; }
+  base::Stream Serialize() const override { return kFalseStr_; }
 
  private:
   // ---------------------------------------------------------------------------
   // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
-  static constexpr char kFalseStr[] = "false";
+  static constexpr char kFalseStr_[] = "false";
 };
 }  // namespace koobika::hook::structured::json
 

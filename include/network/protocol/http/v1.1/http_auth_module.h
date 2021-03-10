@@ -31,7 +31,7 @@
 #ifndef koobika_hook_network_protocol_http_v11_httpauthmodule_h
 #define koobika_hook_network_protocol_http_v11_httpauthmodule_h
 
-#include <functional>
+#include "http_controller.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
@@ -40,7 +40,7 @@ namespace koobika::hook::network::protocol::http::v11 {
 // This interface must be implemented by every auth-module.
 // =============================================================================
 template <typename RQty, typename RSty>
-class HttpAuthModule {
+class HttpAuthModule : public HttpController<RQty, RSty> {
  public:
   // ---------------------------------------------------------------------------
   // USINGs                                                           ( public )
@@ -53,7 +53,9 @@ class HttpAuthModule {
   // request can be processed (satisfies the auth requirements) filling the
   // corresponding response with the required data. It must return TRUE if
   // access was granted, FALSE otherwise.
-  using Checker = std::function<bool(RQty, RSty)>;
+  using Checker =
+      std::function<bool(typename HttpRoutesTypes<RQty, RSty>::Request,
+                         typename HttpRoutesTypes<RQty, RSty>::Response)>;
   // ---------------------------------------------------------------------------
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------

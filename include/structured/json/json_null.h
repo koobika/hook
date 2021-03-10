@@ -47,13 +47,13 @@ class JsonNull : public base::Serializable {
   // Gets the stored json-value.
   auto Get() const { return nullptr; }
   // Dumps the current content to string.
-  base::Stream Serialize() const override { return kNullStr; }
+  base::Stream Serialize() const override { return kNullStr_; }
 
  private:
   // ---------------------------------------------------------------------------
   // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
-  static constexpr char kNullStr[] = "null";
+  static constexpr char kNullStr_[] = "null";
 };
 }  // namespace koobika::hook::structured::json
 
