@@ -33,34 +33,25 @@
 
 #include <string>
 
+#include "http_routes_performer_result.h"
 #include "http_routes_types.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
-// =============================================================================
-// Forward-Declarations
-// =============================================================================
-template <typename, typename>
-class HttpAuthModule;
 // =============================================================================
 // HttpRoutesPerformer                                             ( interface )
 // -----------------------------------------------------------------------------
 // This specification holds for http routes performer interface.
 // =============================================================================
-template <typename RQty, typename RSty>
 class HttpRoutesPerformer {
  public:
   // ---------------------------------------------------------------------------
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
   // Tries to perform router enabled action.
-  virtual bool Perform(
+  virtual HttpRoutesPerformerResult Perform(
       const std::string& route,
-      typename HttpRoutesTypes<RQty, RSty>::Request request,
-      typename HttpRoutesTypes<RQty, RSty>::Response response,
-      const std::shared_ptr<
-          HttpAuthModule<typename HttpRoutesTypes<RQty, RSty>::Request,
-                         typename HttpRoutesTypes<RQty, RSty>::Response>>&
-          auth_module) const = 0;
+      typename HttpRoutesTypes::Request request,
+      typename HttpRoutesTypes::Response response) const = 0;
 };
 }  // namespace koobika::hook::network::protocol::http::v11
 

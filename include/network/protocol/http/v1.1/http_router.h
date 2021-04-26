@@ -39,7 +39,6 @@
 #include <string>
 #include <unordered_map>
 
-#include "http_auth_support.h"
 #include "http_method.h"
 #include "http_routes_manager.h"
 #include "http_routes_node.h"
@@ -50,14 +49,9 @@ namespace koobika::hook::network::protocol::http::v11 {
 // HttpRouter                                                          ( class )
 // -----------------------------------------------------------------------------
 // This class is in charge of providing the default http router class
-// -----------------------------------------------------------------------------
-// Template parameters:
-//    RQty - request type being used
-//    RSty - response type being used
 // =============================================================================
-template <typename RQty, typename RSty>
-class HttpRouter : public HttpRoutesManager<RQty, RSty>,
-                   public HttpRoutesPerformer<RQty, RSty> {
+class HttpRouter : public HttpRoutesManager,
+                   public HttpRoutesPerformer {
  public:
   // ---------------------------------------------------------------------------
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
@@ -75,202 +69,162 @@ class HttpRouter : public HttpRoutesManager<RQty, RSty>,
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
   // Adds a new <generic> handler to the internal map using an string route.
-  void Handle(const std::string& route,
-              const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-              const HttpMethodValue& method = HttpConstants::Methods::kAll,
-              const HttpAuthSupport& auth_support = HttpAuthSupport::kDisabled,
-              const std::shared_ptr<HttpController<RQty, RSty>>& controller =
-                  nullptr) override {
+  void Handle(
+      const std::string& route,
+      const typename HttpRoutesTypes::Handler& handler,
+      const HttpMethodValue& method = HttpConstants::Methods::kAll) override {
     std::unique_lock sync(map_mutex_);
-    map_[route] =
-        HttpRoutesNode<RQty, RSty>(handler, method, auth_support, controller);
+    map_[route] = HttpRoutesNode(handler, method);
   }
   // Adds a new <generic> handler to the internal map using an regex route.
-  void Handle(const std::regex& regex,
-              const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-              const HttpMethodValue& method = HttpConstants ::Methods::kAll,
-              const HttpAuthSupport& auth_support = HttpAuthSupport::kDisabled,
-              const std::shared_ptr<HttpController<RQty, RSty>>& controller =
-                  nullptr) override {
+  void Handle(
+      const std::regex& regex,
+      const typename HttpRoutesTypes::Handler& handler,
+      const HttpMethodValue& method = HttpConstants ::Methods::kAll) override {
     std::unique_lock sync(vec_mutex_);
-    vec_.push_back(std::make_pair(
-        regex,
-        HttpRoutesNode<RQty, RSty>(handler, method, auth_support, controller)));
+    vec_.push_back(
+        std::make_pair(regex, HttpRoutesNode(handler, method)));
   }
   // Adds a new <options> handler to 'string-guided' router structures.
   void Options(
       const std::string& route,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-      const HttpAuthSupport& auth_support =
-          HttpAuthSupport::kDisabled) override {
-    Handle(route, handler, HttpConstants::Methods::kOptions, auth_support);
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(route, handler, HttpConstants::Methods::kOptions);
   }
   // Adds a new <options> handler to 'regex-guided' router structures.
   void Options(
       const std::regex& regex,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-      const HttpAuthSupport& auth_support =
-          HttpAuthSupport::kDisabled) override {
-    Handle(regex, handler, HttpConstants::Methods::kOptions, auth_support);
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(regex, handler, HttpConstants::Methods::kOptions);
   }
   // Adds a new <get> handler to 'string-guided' router structures.
-  void Get(const std::string& route,
-           const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-           const HttpAuthSupport& auth_support =
-               HttpAuthSupport::kDisabled) override {
-    Handle(route, handler, HttpConstants::Methods::kGet, auth_support);
+  void Get(
+      const std::string& route,
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(route, handler, HttpConstants::Methods::kGet);
   }
   // Adds a new <get> handler to 'regex-guided' router structures.
-  void Get(const std::regex& regex,
-           const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-           const HttpAuthSupport& auth_support =
-               HttpAuthSupport::kDisabled) override {
-    Handle(regex, handler, HttpConstants::Methods::kGet, auth_support);
+  void Get(
+      const std::regex& regex,
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(regex, handler, HttpConstants::Methods::kGet);
   }
   // Adds a new <head> handler to 'string-guided' router structures.
-  void Head(const std::string& route,
-            const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-            const HttpAuthSupport& auth_support =
-                HttpAuthSupport::kDisabled) override {
-    Handle(route, handler, HttpConstants::Methods::kHead, auth_support);
+  void Head(
+      const std::string& route,
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(route, handler, HttpConstants::Methods::kHead);
   }
   // Adds a new <head> handler to 'regex-guided' router structures.
-  void Head(const std::regex& regex,
-            const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-            const HttpAuthSupport& auth_support =
-                HttpAuthSupport::kDisabled) override {
-    Handle(regex, handler, HttpConstants::Methods::kHead, auth_support);
+  void Head(
+      const std::regex& regex,
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(regex, handler, HttpConstants::Methods::kHead);
   }
   // Adds a new <post> handler to 'string-guided' router structures.
-  void Post(const std::string& route,
-            const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-            const HttpAuthSupport& auth_support =
-                HttpAuthSupport::kDisabled) override {
-    Handle(route, handler, HttpConstants::Methods::kPost, auth_support);
+  void Post(
+      const std::string& route,
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(route, handler, HttpConstants::Methods::kPost);
   }
   // Adds a new <post> handler to 'regex-guided' router structures.
-  void Post(const std::regex& regex,
-            const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-            const HttpAuthSupport& auth_support =
-                HttpAuthSupport::kDisabled) override {
-    Handle(regex, handler, HttpConstants::Methods::kPost, auth_support);
+  void Post(
+      const std::regex& regex,
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(regex, handler, HttpConstants::Methods::kPost);
   }
   // Adds a new <put> handler to 'string-guided' router structures.
-  void Put(const std::string& route,
-           const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-           const HttpAuthSupport& auth_support =
-               HttpAuthSupport::kDisabled) override {
-    Handle(route, handler, HttpConstants::Methods::kPut, auth_support);
+  void Put(
+      const std::string& route,
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(route, handler, HttpConstants::Methods::kPut);
   }
   // Adds a new <put> handler to 'regex-guided' router structures.
-  void Put(const std::regex& regex,
-           const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-           const HttpAuthSupport& auth_support =
-               HttpAuthSupport::kDisabled) override {
-    Handle(regex, handler, HttpConstants::Methods::kPut, auth_support);
+  void Put(
+      const std::regex& regex,
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(regex, handler, HttpConstants::Methods::kPut);
   }
   // Adds a new <delete> handler to 'string-guided' router structures.
-  void Delete(const std::string& route,
-              const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-              const HttpAuthSupport& auth_support =
-                  HttpAuthSupport::kDisabled) override {
-    Handle(route, handler, HttpConstants::Methods::kDelete, auth_support);
+  void Delete(
+      const std::string& route,
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(route, handler, HttpConstants::Methods::kDelete);
   }
   // Adds a new <delete> handler to 'regex-guided' router structures.
-  void Delete(const std::regex& regex,
-              const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-              const HttpAuthSupport& auth_support =
-                  HttpAuthSupport::kDisabled) override {
-    Handle(regex, handler, HttpConstants::Methods::kDelete, auth_support);
+  void Delete(
+      const std::regex& regex,
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(regex, handler, HttpConstants::Methods::kDelete);
   }
   // Adds a new <trace> handler to 'string-guided' router structures.
-  void Trace(const std::string& route,
-             const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-             const HttpAuthSupport& auth_support =
-                 HttpAuthSupport::kDisabled) override {
-    Handle(route, handler, HttpConstants::Methods::kTrace, auth_support);
+  void Trace(
+      const std::string& route,
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(route, handler, HttpConstants::Methods::kTrace);
   }
   // Adds a new <trace> handler to 'regex-guided' router structures.
-  void Trace(const std::regex& route,
-             const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-             const HttpAuthSupport& auth_support =
-                 HttpAuthSupport::kDisabled) override {
-    Handle(route, handler, HttpConstants::Methods::kTrace, auth_support);
+  void Trace(
+      const std::regex& route,
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(route, handler, HttpConstants::Methods::kTrace);
   }
   // Adds a new <connect> handler to 'string-guided' router structures.
   void Connect(
       const std::string& route,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-      const HttpAuthSupport& auth_support =
-          HttpAuthSupport::kDisabled) override {
-    Handle(route, handler, HttpConstants::Methods::kConnect, auth_support);
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(route, handler, HttpConstants::Methods::kConnect);
   }
   // Adds a new <connect> handler to 'regex-guided' router structures.
   void Connect(
       const std::regex& regex,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-      const HttpAuthSupport& auth_support =
-          HttpAuthSupport::kDisabled) override {
-    Handle(regex, handler, HttpConstants::Methods::kConnect, auth_support);
+      const typename HttpRoutesTypes::Handler& handler) override {
+    Handle(regex, handler, HttpConstants::Methods::kConnect);
   }
   // Tries to perform router enabled action.
-  bool Perform(
+  HttpRoutesPerformerResult Perform(
       const std::string& route,
-      typename HttpRoutesTypes<RQty, RSty>::Request request,
-      typename HttpRoutesTypes<RQty, RSty>::Response response,
-      const std::shared_ptr<
-          HttpAuthModule<typename HttpRoutesTypes<RQty, RSty>::Request,
-                         typename HttpRoutesTypes<RQty, RSty>::Response>>&
-          auth_module) const override {
-    std::optional<HttpRoutesNode<RQty, RSty>> value;
-    do {
-      {
-        std::unique_lock sync(map_mutex_);
-        auto const& itr = map_.find(route);
-        if (itr != map_.end()) {
-          value = itr->second;
-          break;
-        }
-      }
-      {
-        std::unique_lock sync(vec_mutex_);
-        for (auto& re : vec_) {
-          std::sregex_iterator next(route.begin(), route.end(), re.first);
-          if (next != std::sregex_iterator()) {
-            value = re.second;
-            break;
-          }
-        }
-      }
-    } while (false);
-    if (value.has_value()) {
-      if (value->handler != nullptr &&
-          (request.Method.GetCode() & value->method)) {
-        bool authorized = true;
-        if (value->auth_support == HttpAuthSupport::kEnabled &&
-            auth_module != nullptr) {
-          auto checker = auth_module->GetChecker();
-          if (checker != nullptr) {
-            authorized = checker(request, response);
-          }
-        }
-        if (authorized) {
-          value->handler(request, response);
-          return true;
-        } else {
-          response.Unauthorized_401();
-        }
-      }
+      typename HttpRoutesTypes::Request request,
+      typename HttpRoutesTypes::Response response) const override {
+    std::optional<HttpRoutesNode> value = MatchStringRoute(route);
+    if (!value.has_value()) value = MatchRegExRoute(route);
+    if (value.has_value() && value->handler &&
+        request.Method.GetCode() & value->method) {
+      value->handler(request, response);
+      return HttpRoutesPerformerResult::kOk;
     }
-    return false;
+    return HttpRoutesPerformerResult::kNotFound;
   }
 
  protected:
   // ---------------------------------------------------------------------------
+  // METHODs                                                       ( protected )
+  // ---------------------------------------------------------------------------
+  // Searchs for the specified string route and returns the associated node.
+  inline std::optional<HttpRoutesNode> MatchStringRoute(
+      const std::string& route) const {
+    std::lock_guard<std::mutex> sync{map_mutex_};
+    auto const& itr = map_.find(route);
+    return (itr != map_.end()) ? itr->second
+                               : std::optional<HttpRoutesNode>{};
+  }
+  // Searchs for the specified regex route and returns the associated node.
+  inline std::optional<HttpRoutesNode> MatchRegExRoute(
+      const std::string& route) const {
+    std::lock_guard<std::mutex> sync{vec_mutex_};
+    for (auto& re : vec_) {
+      std::sregex_iterator next(route.begin(), route.end(), re.first);
+      if (next != std::sregex_iterator()) {
+        return re.second;
+      }
+    }
+    return {};
+  }
+  // ---------------------------------------------------------------------------
   // ATTRIBUTEs                                                    ( protected )
   // ---------------------------------------------------------------------------
-  std::unordered_map<std::string, HttpRoutesNode<RQty, RSty>> map_;
-  std::vector<std::pair<std::regex, HttpRoutesNode<RQty, RSty>>> vec_;
+  std::unordered_map<std::string, HttpRoutesNode> map_;
+  std::vector<std::pair<std::regex, HttpRoutesNode>> vec_;
   mutable std::mutex map_mutex_;
   mutable std::mutex vec_mutex_;
 };

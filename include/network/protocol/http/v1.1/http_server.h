@@ -45,9 +45,9 @@ namespace koobika::hook::network::protocol::http::v11 {
 // This class is in charge of providing the default http server base class.
 // =============================================================================
 class HttpServer
-    : public HttpServerBase<transport::tcpip::ServerTransportTcpIp<
-                                HttpRequestDecoder<HttpRequest>>,
-                            HttpRouter, HttpRequest, HttpResponse> {
+    : public HttpServerBase<
+          transport::tcpip::ServerTransportTcpIp<HttpRequestDecoder>,
+          HttpRouter> {
  public:
   // ---------------------------------------------------------------------------
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )

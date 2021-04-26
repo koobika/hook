@@ -49,6 +49,7 @@ class HttpMethod {
   // ---------------------------------------------------------------------------
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
+  HttpMethod() = default;
   HttpMethod(const std::string& method) {
     static const std::unordered_map<std::string, int> known_methods = {
         {kOptStr_, HttpConstants::Methods::kOptions},

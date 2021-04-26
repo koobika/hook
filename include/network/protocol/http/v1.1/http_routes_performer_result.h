@@ -28,52 +28,16 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_v11_httpcontroller_h
-#define koobika_hook_network_protocol_http_v11_httpcontroller_h
-
-#include "http_router.h"
-#include "http_controller_handler.h"
+#ifndef koobika_hook_network_protocol_http_v11_httproutesperformerresult_h
+#define koobika_hook_network_protocol_http_v11_httproutesperformerresult_h
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
-// HttpController                                                      ( class )
+// HttpRoutesPerformerResult                                      ( enum class )
 // -----------------------------------------------------------------------------
-// This class is in charge of providing the http controller class.
+// This specification holds for http routes performer result types.
 // =============================================================================
-template <typename AUty = auth::NoAuth>
-class HttpController : public HttpRouter, public AUty {
- public:
-  // ---------------------------------------------------------------------------
-  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // ---------------------------------------------------------------------------
-  HttpController() = default;
-  HttpController(const HttpController&) = delete;
-  HttpController(HttpController&&) noexcept = delete;
-  virtual ~HttpController() = default;
-  // ---------------------------------------------------------------------------
-  // OPERATORs                                                        ( public )
-  // ---------------------------------------------------------------------------
-  HttpController& operator=(const HttpController&) = delete;
-  HttpController& operator=(HttpController&&) noexcept = delete;
-
- protected:
-  // ---------------------------------------------------------------------------
-  // METHODs                                                       ( protected )
-  // ---------------------------------------------------------------------------
-  void AddToRouter(HttpRouter& router) const {
-    for (auto const& itr : this->map_) {
-      router.Handle(itr.first, itr.second.handler, itr.second.method);
-    }
-    for (auto const& itr : this->vec_) {
-      router.Handle(itr.first, itr.second.handler, itr.second.method);
-    }
-  }
-  // ---------------------------------------------------------------------------
-  // FRIENDs                                                       ( protected )
-  // ---------------------------------------------------------------------------
-  template <typename TRty, typename ROty>
-  friend class HttpServerBase;
-};
+enum class HttpRoutesPerformerResult { kOk, kNotFound };
 }  // namespace koobika::hook::network::protocol::http::v11
 
 #endif

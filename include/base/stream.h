@@ -141,7 +141,7 @@ class Stream {
     if (memory_mode_) {
       // we always take the writer cursor as the limit for reading!
       length = data_.write_cursor;
-    } else {
+    } else if (data_.file != nullptr) {
       auto current = ftell(data_.file);
       if (!fseek(data_.file, 0, SEEK_END)) {
         length = ftell(data_.file);
@@ -182,6 +182,13 @@ class Stream {
     char tmp_buffer[kReadSomeBufferSize];
     while (auto sz = ReadSome(tmp_buffer, kReadSomeBufferSize)) {
       out.append(tmp_buffer, sz);
+    }
+  }
+  // Reads all the stored bytes (if available).
+  void ReadAll(std::stringstream& out) const {
+    char tmp_buffer[kReadSomeBufferSize];
+    while (auto sz = ReadSome(tmp_buffer, kReadSomeBufferSize)) {
+      out << std::string_view{tmp_buffer, sz};
     }
   }
   // Flushes stream content (if required).

@@ -32,27 +32,59 @@
 
 using namespace koobika::hook::network::protocol::http::v11;
 
+// This is our basic controller using basic built-in authorization!
+// In this example we're just creating three different handlers managing
+// different funcionalities. Some of them will require authorization
+// mechanism while other ones will be accessed using no credentials.
+class BasicController : public HttpController<auth::Basic> {
+ public:
+  // Let's, for example, set the user specified checker function!
+  BasicController(const Checker& custom_user_checker) {
+    Check = custom_user_checker;
+  }
+
+ protected:
+  // This |POST| handler will increment internal counter value!
+  // In order to allow operation only authorized users can access it!
+  HttpControllerPost myIncrementHandler{
+      this, "/foo/inc",
+      Authorize([this](const HttpRequest& req, HttpResponse& res) {
+        res.Body.Write("Incrementing internal counter to -> ")
+            .Write(std::to_string(++counter_))
+            .Write(" !");
+        res.Ok_200();
+      })};
+  // This |POST| handler will decrement internal counter value!
+  // In order to allow operation only authorized users can access it!
+  HttpControllerPost myDecrementHandler{
+      this, "/foo/dec",
+      Authorize([this](const HttpRequest& req, HttpResponse& res) {
+        res.Body.Write("Decrementing internal counter to -> ")
+            .Write(std::to_string(--counter_))
+            .Write(" !");
+        res.Ok_200();
+      })};
+  // This |GET| handler will return current internal counter value!
+  // No authorization mechanism is enabled!
+  HttpControllerGet myCurrentValueHandler{
+      this, "/foo/cur", [this](const HttpRequest& req, HttpResponse& res) {
+        res.Body.Write("Current internal counter value -> ")
+            .Write(std::to_string(counter_))
+            .Write(" !");
+        res.Ok_200();
+      }};
+
+ private:
+  int counter_ = 0;
+};
+
 int main() {
   try {
-    // Let's create our server using the default configuration..
     auto server = HttpServerBuilder().Build();
-    // Let's configure our server to handle requests over '/foo/bar' uri..
-    server->Handle("/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
-      // In this example we're only interested on <GET> requests..
-      if (req.Method.IsGet()) {
-        // Set some response headers..
-        res.Headers.Set("Server", "Example");
-        res.Headers.Set("Date", "Wed, 17 Apr 2013 12:00:00 GMT");
-        res.Headers.Set("Content-Type", "text/plain; charset=UTF-8");
-        // Set the response body using the provided stream writer..
-        res.Body.Write("Hello, World!\r\n");
-        // Set the response code and.. that's all!
-        res.Ok_200();
-      } else {
-        res.Forbidden_403();
-      }
-    });
-    // Start server activity..
+    server->Handle<BasicController>(
+        [](const BasicController::Context& context) -> bool {
+          return context.Username == "hook" && context.Password == "rules";
+        });
     server->Start("8542");
     return getchar();
   } catch (std::exception exception) {

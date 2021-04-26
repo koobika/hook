@@ -28,31 +28,24 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/v1.1/decoders/json.h"
-#include "network/protocol/http/v1.1/http_response_writer.h"
 #include "network/protocol/http/v1.1/http_server_builder.h"
 
 using namespace koobika::hook::network::protocol::http::v11;
 using namespace koobika::hook::structured::json;
-using namespace koobika::hook::base;
 
 int main() {
   try {
-    // Let's create our server using the default configuration..
     auto server = HttpServerBuilder().Build();
-    // Let's configure our server to handle requests over '/foo/bar' uri..
     server->Handle("/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
-      // In this example we're only interested on <GET> requests..
       if (req.Method.IsGet()) {
-        // Let's directly use it through 'HttpResponseWriter' class!
+        // Let's directly write JSON content using 'HttpResponseWriter' class!
         HttpResponseWriter(JsonArray{"Hello", "World"}).Prepare(res).Ok_200();
       } else {
+        // Let's directly write TEXT content using 'HttpResponseWriter' class!
         HttpResponseWriter("Not supported!").Prepare(res).Forbidden_403();
       }
     });
-    // Start server activity..
     server->Start("8542");
-    // Wait until user press a key..
     return getchar();
   } catch (std::exception exception) {
     // ((Error)) -> while performing setup!

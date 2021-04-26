@@ -34,10 +34,9 @@
 #include <regex>
 #include <string>
 
-#include "http_auth_support.h"
 #include "http_method_value.h"
-#include "http_routes_types.h"
 #include "http_routes_node.h"
+#include "http_routes_types.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
@@ -45,7 +44,6 @@ namespace koobika::hook::network::protocol::http::v11 {
 // -----------------------------------------------------------------------------
 // This specification holds for http routes manager interface.
 // =============================================================================
-template <typename RQty, typename RSty>
 class HttpRoutesManager {
  public:
   // ---------------------------------------------------------------------------
@@ -54,95 +52,77 @@ class HttpRoutesManager {
   // Adds a new <generic> route to the internal map using an string route.
   virtual void Handle(
       const std::string& route,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpMethodValue& method, const HttpAuthSupport& auth_support,
-      const std::shared_ptr<HttpController<RQty, RSty>>& controller) = 0;
-  // Adds a new <generic> route_handler to the internal map using a regex route.
+      const typename HttpRoutesTypes::Handler& handler,
+      const HttpMethodValue& method) = 0;
+  // Adds a new <generic> handler to the internal map using a regex route.
   virtual void Handle(
       const std::regex& regex,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpMethodValue& method, const HttpAuthSupport& auth_support,
-      const std::shared_ptr<HttpController<RQty, RSty>>& controller) = 0;
+      const typename HttpRoutesTypes::Handler& handler,
+      const HttpMethodValue& method) = 0;
   // Adds a new <options> route to 'string-guided' router structures.
   virtual void Options(
       const std::string& route,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
   // Adds a new <options> route to 'regex-guided' router structures.
   virtual void Options(
       const std::regex& regex,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
   // Adds a new <get> route to 'string-guided' router structures.
   virtual void Get(
       const std::string& route,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
   // Adds a new <get> route to 'regex-guided' router structures.
   virtual void Get(
       const std::regex& regex,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
   // Adds a new <head> route to 'string-guided' router structures.
   virtual void Head(
       const std::string& route,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
   // Adds a new <head> route to 'regex-guided' router structures.
   virtual void Head(
       const std::regex& regex,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
   // Adds a new <post> route to 'string-guided' router structures.
   virtual void Post(
       const std::string& route,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
   // Adds a new <post> route to 'regex-guided' router structures.
   virtual void Post(
       const std::regex& regex,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
   // Adds a new <put> route to 'string-guided' router structures.
   virtual void Put(
       const std::string& route,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
   // Adds a new <put> route to 'regex-guided' router structures.
   virtual void Put(
       const std::regex& regex,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
   // Adds a new <delete> route to 'string-guided' router structures.
   virtual void Delete(
       const std::string& route,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
   // Adds a new <delete> route to 'regex-guided' router structures.
   virtual void Delete(
       const std::regex& regex,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
   // Adds a new <trace> route to 'string-guided' router structures.
   virtual void Trace(
       const std::string& route,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
   // Adds a new <trace> route to 'regex-guided' router structures.
   virtual void Trace(
       const std::regex& regex,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
   // Adds a new <connect> route to 'string-guided' router structures.
   virtual void Connect(
       const std::string& route,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
   // Adds a new <connect> route to 'regex-guided' router structures.
   virtual void Connect(
       const std::regex& regex,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& route_handler,
-      const HttpAuthSupport& auth_support) = 0;
+      const typename HttpRoutesTypes::Handler& handler) = 0;
 };
 }  // namespace koobika::hook::network::protocol::http::v11
 

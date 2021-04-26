@@ -28,48 +28,26 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "base/stream.h"
-#include "network/protocol/http/v1.1/http_controller_handler.h"
 #include "network/protocol/http/v1.1/http_server_builder.h"
 
 using namespace koobika::hook::network::protocol::http::v11;
-using namespace koobika::hook::base;
 
-// This is our custom controller! In this example we're just creating
-// two different handlers managing two kind of routes: string/regex.
+// This is our custom controller with only one handler!
 class CustomController : public HttpController<> {
- public:
-  // This is my sample <nominal> controller!
-  HttpControllerHandler<> myNominalHandler{
-      this, "/foo/bar",
-      [](const HttpRequest& req, HttpResponse& res) {
-        // Set the response body using the provided stream writer..
-        res.Body.Write("Hello, string routing World!\r\n");
-        // Set the response code and.. that's all!
+ protected:
+  // This |GET| handler will return the 'hello world' message!
+  HttpControllerGet myCurrentValueHandler{
+      this, "/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
+        res.Body.Write("Hello, World!\r\n");
         res.Ok_200();
-      },
-      HttpConstants::Methods::kGet, HttpAuthSupport::kDisabled};
-  // This is my sample <regex> controller!
-  HttpControllerHandler<> myRegExHandler{
-      this, std::regex("/foo/abc+"),
-      [](const HttpRequest& req, HttpResponse& res) {
-        // Set the response body using the provided stream writer..
-        res.Body.Write("Hello, regex routing World!\r\n");
-        // Set the response code and.. that's all!
-        res.Ok_200();
-      },
-      HttpConstants::Methods::kGet, HttpAuthSupport::kDisabled};
+      }};
 };
 
 int main() {
   try {
-    // Let's create our server using the default configuration..
     auto server = HttpServerBuilder().Build();
-    // Let's configure our server to handle our controller..
     server->Handle<CustomController>();
-    // Start server activity..
     server->Start("8542");
-    // Wait until user press a key..
     return getchar();
   } catch (std::exception exception) {
     // ((Error)) -> while performing setup!

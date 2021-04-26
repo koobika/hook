@@ -28,49 +28,56 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_v11_decoders_json_h
-#define koobika_hook_network_protocol_http_v11_decoders_json_h
+#ifndef koobika_hook_network_protocol_http_v11_auth_internal_contextbasic_h
+#define koobika_hook_network_protocol_http_v11_auth_internal_contextbasic_h
 
-#include <stdexcept>
-#include <string>
+#include "mapper.h"
+#include "context.h"
+#include "encoding/base64/decoder.h"
+#include "network/protocol/http/v1.1/http_util.h"
 
-#include "base/stream.h"
-#include "structured/json/json_value.h"
-
-namespace koobika::hook::network::protocol::http::v11::decoders {
+namespace koobika::hook::network::protocol::http::v11::auth::internal {
 // =============================================================================
-// Json                                                                ( class )
+// ContextBasic                                                        ( class )
 // -----------------------------------------------------------------------------
-// This class is in charge of providing the default json body decoding
+// This specification holds for <basic-authorization> context module
 // =============================================================================
-class Json {
+class ContextBasic : public Context, public Mapper {
  public:
   // ---------------------------------------------------------------------------
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Decodes content stored within the provided body-stream.
-  static std::optional<structured::json::JsonValue> Decode(
-      const base::Stream& stream) {
-    std::string content;
-    stream.ReadAll(content);
-    if (!content.length()) {
-      // ((Error)) -> while trying to access buffer!
-      throw std::logic_error(
-          "Unable to read specified buffer: content is not available!");
-    }
-    return koobika::hook::structured::json::JsonValue::From(content);
+  // Tries to fill-up internal structures using the provided request.
+  bool Map(typename HttpRoutesTypes::Request req) override {
+    auto auth_field = req.Headers.Get(kAuthorization);
+    if (!auth_field.has_value()) return false;
+    auto const& auth = auth_field.value();
+    std::regex reg("\\s+");
+    std::sregex_token_iterator iter(auth.begin(), auth.end(), reg, -1), end;
+    std::vector<std::string> vec(iter, end);
+    if (vec.size() != 0x2) return false;  // "Basic <base64-encoded-data>"..
+    if (!HttpUtil::Compare(vec[0], kBasic, false)) return false;
+    auto decoded = encoding::base64::Decoder::Decode(vec[1]);
+    auto colon_pos = decoded.find(HttpConstants::Characters::kColon);
+    if (colon_pos == std::string::npos) return false;
+    Request = req;
+    Username = decoded.substr(0, colon_pos);
+    Password = decoded.substr(colon_pos + 1);
+    return true;
   }
-  // Decodes content stored within the provided body-stream.
-  static std::optional<structured::json::JsonValue> Decode(
-      const std::shared_ptr<base::Stream>& stream) {
-    if (stream == nullptr) {
-      // ((Error)) -> while trying to access an empty shared pointer!
-      throw std::logic_error(
-          "Unable to decode specified buffer: Invalid stream!");
-    }
-    return Decode(*stream);
-  }
+  // ---------------------------------------------------------------------------
+  // PROPERTIEs                                                       ( public )
+  // ---------------------------------------------------------------------------
+  std::string Username;
+  std::string Password;
+
+ private:
+  // ---------------------------------------------------------------------------
+  // CONSTANTs                                                       ( private )
+  // ---------------------------------------------------------------------------
+  static constexpr char kBasic[] = "Basic";
+  static constexpr char kAuthorization[] = "Authorization";
 };
-}  // namespace koobika::hook::network::protocol::http::v11::decoders
+}  // namespace koobika::hook::network::protocol::http::v11::auth::internal
 
 #endif

@@ -40,7 +40,8 @@ namespace koobika::hook::network::protocol::http::v11 {
 enum class HttpEncodingType {
   kNone,              // Data has no encoding type (not available).
   kContentLength,     // Data is being encoded using 'Content-Length' type.
-  kTransferEncoding,  // Data is being encoded using 'Transfer-Encoding' encoding.
+  kTransferEncoding,  // Data is being encoded using 'Transfer-Encoding'
+                      // encoding.
   kMultipart          // Data is being endoded as 'Multipart'.
 };
 }  // namespace koobika::hook::network::protocol::http::v11

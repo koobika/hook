@@ -86,20 +86,19 @@ namespace koobika::hook::network::protocol::http::v11 {
     if (ptr == nullptr) PERFORM_ERROR_HANDLING                       \
     Indices field_value = {cursor, ptr - &buffer_[cursor]};          \
     cursor += field_value.second + HttpConstants::Strings::kCrLfLen; \
-    trim(field_value);                                               \
-    values.push_back(field_value);                                   \
+    if (field_value.second) {                                        \
+      trim(field_value);                                             \
+      values.push_back(field_value);                                 \
+    }                                                                \
     if (!HttpUtil::SkipLWS(&buffer_[cursor], end - cursor)) break;   \
   }
 // =============================================================================
 // HttpRequestDecoder                                                  ( class )
 // -----------------------------------------------------------------------------
 // This class is in charge of providing the default http request decoder class.
-// -----------------------------------------------------------------------------
-// Template parameters:
-//    RQty - http request type being used
 // =============================================================================
-template <typename RQty>
-class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
+class HttpRequestDecoder
+    : public transport::ServerTransportDecoder<HttpRequest> {
   // ---------------------------------------------------------------------------
   // USINGs                                                          ( private )
   // ---------------------------------------------------------------------------
@@ -137,11 +136,12 @@ class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
     return true;
   }
   // Decodes currently stored data.
-  void Decode(const transport::ServerTransportDecoder<RQty>::RequestHandler&
-                  request_handler,
-              const transport::ServerTransportDecoder<RQty>::ErrorHandler&
-                  error_handler,
-              const transport::ServerTransportDecoder<RQty>::Sender& sender) {
+  void Decode(
+      const transport::ServerTransportDecoder<HttpRequest>::RequestHandler&
+          request_handler,
+      const transport::ServerTransportDecoder<HttpRequest>::ErrorHandler&
+          error_handler,
+      const transport::ServerTransportDecoder<HttpRequest>::Sender& sender) {
     bool dispatch_request = false;
     // first, let's check for <basic> message content decoding!
     if (!decoding_body_part_) {
@@ -220,10 +220,11 @@ class HttpRequestDecoder : public transport::ServerTransportDecoder<RQty> {
     }
     // third, prepare request..
     if (dispatch_request) {
-      request_handler(RQty(std::move(base::Uri(request_uri_)),
-                           std::move(HttpMethod(method_)),
-                           std::move(HttpHeaders(headers_)), std::move(body_)),
-                      sender);
+      request_handler(
+          HttpRequest(std::move(base::Uri(request_uri_)),
+                      std::move(HttpMethod(method_)),
+                      std::move(HttpHeaders(headers_)), std::move(body_)),
+          sender);
       reset();
     }
   }

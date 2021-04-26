@@ -113,6 +113,15 @@ class HttpUtil {
     }
     return str;
   }
+  // Compares (case-sensitive/insensitive mode) two strings.
+  static bool Compare(const std::string& s, const std::string& t,
+                      const bool& case_sensitive = true) {
+    return std::equal(s.begin(), s.end(), t.begin(), t.end(),
+                      [&case_sensitive](char sc, char tc) {
+                        return case_sensitive ? sc == tc
+                                              : tolower(sc) == tolower(tc);
+                      });
+  }
 };
 }  // namespace koobika::hook::network::protocol::http::v11
 

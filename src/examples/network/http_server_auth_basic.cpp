@@ -34,25 +34,17 @@ using namespace koobika::hook::network::protocol::http::v11;
 
 int main() {
   try {
-    // Let's create our server using the default configuration..
     auto server = HttpServerBuilder().Build();
-    // Let's configure our server to handle requests over '/foo/bar' uri..
-    server->Handle("/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
-      // In this example we're only interested on <GET> requests..
-      if (req.Method.IsGet()) {
-        // Set some response headers..
-        res.Headers.Set("Server", "Example");
-        res.Headers.Set("Date", "Wed, 17 Apr 2013 12:00:00 GMT");
-        res.Headers.Set("Content-Type", "text/plain; charset=UTF-8");
-        // Set the response body using the provided stream writer..
-        res.Body.Write("Hello, World!\r\n");
-        // Set the response code and.. that's all!
-        res.Ok_200();
-      } else {
-        res.Forbidden_403();
-      }
-    });
-    // Start server activity..
+    // Here we're just creating the default (built-in) basic auth module!
+    auth::Basic auth;
+    // Adding some default (built-in) credentials!
+    auth.Set("koobika", "koobika");
+    // Let's configure our server to handle <GET> requests over '/foo/bar' uri..
+    server->Get("/foo/bar",
+                auth.Authorize([](const HttpRequest& req, HttpResponse& res) {
+                  res.Body.Write("Hello, World!\r\n");
+                  res.Ok_200();
+                }));
     server->Start("8542");
     return getchar();
   } catch (std::exception exception) {

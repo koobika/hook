@@ -28,52 +28,24 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_v11_httpcontroller_h
-#define koobika_hook_network_protocol_http_v11_httpcontroller_h
+#ifndef koobika_hook_network_protocol_http_v11_auth_internal_context_h
+#define koobika_hook_network_protocol_http_v11_auth_internal_context_h
 
-#include "http_router.h"
-#include "http_controller_handler.h"
+#include "network/protocol/http/v1.1/http_routes_types.h"
 
-namespace koobika::hook::network::protocol::http::v11 {
+namespace koobika::hook::network::protocol::http::v11::auth::internal {
 // =============================================================================
-// HttpController                                                      ( class )
+// Context                                                             ( class )
 // -----------------------------------------------------------------------------
-// This class is in charge of providing the http controller class.
+// This specification holds for <authorization> context base class
 // =============================================================================
-template <typename AUty = auth::NoAuth>
-class HttpController : public HttpRouter, public AUty {
+class Context {
  public:
   // ---------------------------------------------------------------------------
-  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
+  // PROPERTIEs                                                       ( public )
   // ---------------------------------------------------------------------------
-  HttpController() = default;
-  HttpController(const HttpController&) = delete;
-  HttpController(HttpController&&) noexcept = delete;
-  virtual ~HttpController() = default;
-  // ---------------------------------------------------------------------------
-  // OPERATORs                                                        ( public )
-  // ---------------------------------------------------------------------------
-  HttpController& operator=(const HttpController&) = delete;
-  HttpController& operator=(HttpController&&) noexcept = delete;
-
- protected:
-  // ---------------------------------------------------------------------------
-  // METHODs                                                       ( protected )
-  // ---------------------------------------------------------------------------
-  void AddToRouter(HttpRouter& router) const {
-    for (auto const& itr : this->map_) {
-      router.Handle(itr.first, itr.second.handler, itr.second.method);
-    }
-    for (auto const& itr : this->vec_) {
-      router.Handle(itr.first, itr.second.handler, itr.second.method);
-    }
-  }
-  // ---------------------------------------------------------------------------
-  // FRIENDs                                                       ( protected )
-  // ---------------------------------------------------------------------------
-  template <typename TRty, typename ROty>
-  friend class HttpServerBase;
+  HttpRequest Request;
 };
-}  // namespace koobika::hook::network::protocol::http::v11
+}  // namespace koobika::hook::network::protocol::http::v11::auth::internal
 
 #endif

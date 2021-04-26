@@ -28,40 +28,47 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_v11_httpauthmodule_h
-#define koobika_hook_network_protocol_http_v11_httpauthmodule_h
+#ifndef koobika_hook_network_protocol_http_v11_auth_internal_contextapikey_h
+#define koobika_hook_network_protocol_http_v11_auth_internal_contextapikey_h
 
-#include "http_controller.h"
+#include "context.h"
+#include "encoding/base64/decoder.h"
+#include "mapper.h"
+#include "network/protocol/http/v1.1/http_util.h"
 
-namespace koobika::hook::network::protocol::http::v11 {
+namespace koobika::hook::network::protocol::http::v11::auth::internal {
 // =============================================================================
-// HttpAuthModule                                                  ( interface )
+// ContextApiKey                                                       ( class )
 // -----------------------------------------------------------------------------
-// This interface must be implemented by every auth-module.
+// This specification holds for <apikey-authorization> context module
 // =============================================================================
-template <typename RQty, typename RSty>
-class HttpAuthModule : public HttpController<RQty, RSty> {
+class ContextApiKey : public Context, public Mapper {
  public:
-  // ---------------------------------------------------------------------------
-  // USINGs                                                           ( public )
-  // ---------------------------------------------------------------------------
-  // Every checker method must follow this signature. A checker is a function
-  // that will be called in order to evaluate an auth-mechanism. Every auth
-  // class providing for any authorization mechanism must provide for an
-  // implementation of this method (returned by 'GetChecker' method).
-  // Basically, it will use the provided RQty/RSty pair to check if the
-  // request can be processed (satisfies the auth requirements) filling the
-  // corresponding response with the required data. It must return TRUE if
-  // access was granted, FALSE otherwise.
-  using Checker =
-      std::function<bool(typename HttpRoutesTypes<RQty, RSty>::Request,
-                         typename HttpRoutesTypes<RQty, RSty>::Response)>;
   // ---------------------------------------------------------------------------
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Returns the associated checker functor.
-  virtual Checker GetChecker() const = 0;
+  // Tries to fill-up internal structures using the provided request.
+  bool Map(typename HttpRoutesTypes::Request req) override {
+    auto auth_field = req.Headers.Get(kApiKeyField);
+    if (!auth_field.has_value()) {
+      auth_field = req.Uri.GetQuery().Get(kApiKeyField);
+      if (!auth_field.has_value()) return false;
+    }
+    Request = req;
+    Token = auth_field.value();
+    return true;
+  }
+  // ---------------------------------------------------------------------------
+  // PROPERTIEs                                                       ( public )
+  // ---------------------------------------------------------------------------
+  std::string Token;
+
+ private:
+  // ---------------------------------------------------------------------------
+  // CONSTANTs                                                       ( private )
+  // ---------------------------------------------------------------------------
+  static constexpr char kApiKeyField[] = "x-api-key";
 };
-}  // namespace koobika::hook::network::protocol::http::v11
+}  // namespace koobika::hook::network::protocol::http::v11::auth::internal
 
 #endif

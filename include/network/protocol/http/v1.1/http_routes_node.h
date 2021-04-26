@@ -34,33 +34,25 @@
 #include <functional>
 #include <string>
 
-#include "http_routes_types.h"
-#include "http_method_value.h"
-#include "http_auth_support.h"
 #include "http_constants.h"
+#include "http_method_value.h"
+#include "http_routes_types.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
-// =============================================================================
-// Forward-Declarations
-// =============================================================================
-template <typename, typename>
-class HttpController;
 // =============================================================================
 // HttpRoutesNode                                                     ( struct )
 // -----------------------------------------------------------------------------
 // This specification holds for http routes <node> type. This class will
 // encapsulate all the information needed to perform routing.
 // =============================================================================
-template <typename RQty, typename RSty>
 struct HttpRoutesNode {
   // ---------------------------------------------------------------------------
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
   HttpRoutesNode() = default;
-  HttpRoutesNode(const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& hdl,
-                 const HttpMethodValue& mth, const HttpAuthSupport& aut,
-                 const std::shared_ptr<HttpController<RQty, RSty>>& ctl)
-      : handler{hdl}, method{mth}, auth_support{aut}, controller{ctl} {}
+  HttpRoutesNode(const typename HttpRoutesTypes::Handler& hdl,
+                 const HttpMethodValue& mth)
+      : handler{hdl}, method{mth} {}
   HttpRoutesNode(const HttpRoutesNode&) = default;
   HttpRoutesNode(HttpRoutesNode&&) noexcept = default;
   // ---------------------------------------------------------------------------
@@ -69,12 +61,10 @@ struct HttpRoutesNode {
   HttpRoutesNode& operator=(const HttpRoutesNode&) = default;
   HttpRoutesNode& operator=(HttpRoutesNode&&) noexcept = default;
   // ---------------------------------------------------------------------------
-  // ATTRIBUTEs                                                       ( public )
+  // PROPERTIEs                                                       ( public )
   // ---------------------------------------------------------------------------
-  std::shared_ptr<HttpController<RQty, RSty>> controller = nullptr;
-  typename HttpRoutesTypes<RQty, RSty>::RouteHandler handler = nullptr;
+  typename HttpRoutesTypes::Handler handler = nullptr;
   HttpMethodValue method = HttpConstants::Methods::kExtension;
-  HttpAuthSupport auth_support = HttpAuthSupport::kDisabled;
 };
 }  // namespace koobika::hook::network::protocol::http::v11
 

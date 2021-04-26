@@ -28,31 +28,19 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_v11_encoders_json_h
-#define koobika_hook_network_protocol_http_v11_encoders_json_h
+#ifndef koobika_hook_network_protocol_http_v11_auth_noauth_h
+#define koobika_hook_network_protocol_http_v11_auth_noauth_h
 
-#include <memory>
+#include "internal/controller.h"
+#include "internal/context_null.h"
 
-#include "base/stream.h"
-#include "structured/json/json_value.h"
-
-namespace koobika::hook::network::protocol::http::v11::encoders {
+namespace koobika::hook::network::protocol::http::v11::auth {
 // =============================================================================
-// Json                                                                ( class )
+// NoAuth                                                              ( class )
 // -----------------------------------------------------------------------------
-// This class is in charge of providing the default json body decoding
+// This specification holds for <no-auth> module
 // =============================================================================
-class Json {
- public:
-  // ---------------------------------------------------------------------------
-  // METHODs                                                          ( public )
-  // ---------------------------------------------------------------------------
-  // Encodes content stored within the provided data.
-  static std::shared_ptr<base::Stream> Encode(
-      const structured::json::JsonValue& json) {
-    return std::make_shared<base::Stream>(json.Serialize());
-  }
-};
-}  // namespace koobika::hook::network::protocol::http::v11::encoders
+class NoAuth : public internal::Controller<internal::ContextNull> {};
+}  // namespace koobika::hook::network::protocol::http::v11::auth
 
 #endif

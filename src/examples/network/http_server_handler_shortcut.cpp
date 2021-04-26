@@ -31,22 +31,16 @@
 #include "network/protocol/http/v1.1/http_server_builder.h"
 
 using namespace koobika::hook::network::protocol::http::v11;
-using namespace koobika::hook::base;
 
 int main() {
   try {
-    // Let's create our server using the default configuration..
     auto server = HttpServerBuilder().Build();
     // Let's configure our server to handle <GET> requests over '/foo/bar' uri..
     server->Get("/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
-      // Set the response body using the provided stream writer..
       res.Body.Write("Hello, World!\r\n");
-      // Set the response code and.. that's all!
       res.Ok_200();
     });
-    // Start server activity..
     server->Start("8542");
-    // Wait until user press a key..
     return getchar();
   } catch (std::exception exception) {
     // ((Error)) -> while performing setup!

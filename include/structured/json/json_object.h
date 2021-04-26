@@ -106,6 +106,8 @@ class JsonObjectGenericDumper : public base::Serializable {
   }
   // Gets the json-value stored at the specified id.
   const JsonValue& Get(const JsonId& id) const { return operator[](id); }
+  // Gets the object length.
+  std::size_t Length() const { return map_.size(); }
   // Dumps the current content to string.
   base::Stream Serialize() const override {
     base::Stream stream;
@@ -130,6 +132,14 @@ class JsonObjectGenericDumper : public base::Serializable {
       Erase(id);
     }
   }
+  // Just to allow range-based iteration.
+  auto begin() { return map_.begin(); }
+  // Just to allow range-based iteration.
+  const auto begin() const { return map_.begin(); }
+  // Just to allow range-based iteration.
+  auto end() { return map_.end(); }
+  // Just to allow range-based iteration.
+  const auto end() const { return map_.end(); }
 
  private:
   // ---------------------------------------------------------------------------

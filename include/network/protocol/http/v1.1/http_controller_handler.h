@@ -31,43 +31,31 @@
 #ifndef koobika_hook_network_protocol_http_v11_httpcontrollerhandler_h
 #define koobika_hook_network_protocol_http_v11_httpcontrollerhandler_h
 
-#include <string>
 #include <regex>
+#include <string>
 
 #include "http_router.h"
-#include "http_request.h"
-#include "http_response.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
 // HttpControllerHandler                                               ( class )
 // -----------------------------------------------------------------------------
 // This class is in charge of providing the http controller handler class.
-// -----------------------------------------------------------------------------
-// Template parameters:
-//    RQty - http request type being used
-//    RQty - http response type being used
 // =============================================================================
-template <typename RQty = HttpRequest, typename RSty = HttpResponse>
 class HttpControllerHandler {
  public:
   // ---------------------------------------------------------------------------
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
-  HttpControllerHandler(
-      HttpRouter<RQty, RSty>* parent,
-      const std::string& route,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler, 
-      const HttpMethodValue& method = HttpConstants::Methods::kAll, 
-      const HttpAuthSupport& auth_support = HttpAuthSupport::kDisabled) {
-    parent->Handle(route, handler, method, auth_support);
+  HttpControllerHandler(HttpRouter* parent, const std::string& route,
+                        const typename HttpRoutesTypes::Handler& handler,
+                        const HttpMethodValue& method) {
+    parent->Handle(route, handler, method);
   }
-  HttpControllerHandler(
-      HttpRouter<RQty, RSty>* parent, const std::regex& regex,
-      const typename HttpRoutesTypes<RQty, RSty>::RouteHandler& handler,
-      const HttpMethodValue& method = HttpConstants::Methods::kAll,
-      const HttpAuthSupport& auth_support = HttpAuthSupport::kDisabled) {
-    parent->Handle(regex, handler, method, auth_support);
+  HttpControllerHandler(HttpRouter* parent, const std::regex& regex,
+                        const typename HttpRoutesTypes::Handler& handler,
+                        const HttpMethodValue& method) {
+    parent->Handle(regex, handler, method);
   }
   HttpControllerHandler(const HttpControllerHandler&) = delete;
   HttpControllerHandler(HttpControllerHandler&&) noexcept = delete;
@@ -78,6 +66,36 @@ class HttpControllerHandler {
   HttpControllerHandler& operator=(const HttpControllerHandler&) = delete;
   HttpControllerHandler& operator=(HttpControllerHandler&&) noexcept = delete;
 };
+
+// =============================================================================
+// HTTP_CONTROLLER_DEF                                                 ( macro )
+// -----------------------------------------------------------------------------
+// This macro will help creating shortcuts for handlers.
+// =============================================================================
+#define HTTP_CONTROLLER_DEF(METHOD)                                          \
+  class HttpController##METHOD : public HttpControllerHandler {              \
+   public:                                                                   \
+    HttpController##METHOD(HttpRouter* parent, const std::string& route,     \
+                           const typename HttpRoutesTypes::Handler& handler) \
+        : HttpControllerHandler(parent, route, handler,                      \
+                                HttpConstants::Methods::k##METHOD) {}        \
+    HttpController##METHOD(HttpRouter* parent, const std::regex& regex,      \
+                           const typename HttpRoutesTypes::Handler& handler) \
+        : HttpControllerHandler(parent, regex, handler,                      \
+                                HttpConstants::Methods::k##METHOD) {}        \
+  };
+// =============================================================================
+// Helpers (shortcuts)
+// =============================================================================
+HTTP_CONTROLLER_DEF(Options)
+HTTP_CONTROLLER_DEF(Get)
+HTTP_CONTROLLER_DEF(Head)
+HTTP_CONTROLLER_DEF(Post)
+HTTP_CONTROLLER_DEF(Put)
+HTTP_CONTROLLER_DEF(Delete)
+HTTP_CONTROLLER_DEF(Trace)
+HTTP_CONTROLLER_DEF(Connect)
+HTTP_CONTROLLER_DEF(Extension)
 }  // namespace koobika::hook::network::protocol::http::v11
 
 #endif

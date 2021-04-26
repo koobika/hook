@@ -31,6 +31,7 @@
 #ifndef koobika_hook_network_protocol_http_v11_httpheaders_h
 #define koobika_hook_network_protocol_http_v11_httpheaders_h
 
+#include <regex>
 #include <algorithm>
 
 #include "base/serializable.h"
@@ -131,34 +132,11 @@ class HttpHeaders : public base::Serializable {
   }
   // Returns header entry using its name (const reference&).
   std::optional<std::string> Get(const std::string& name) const {
-    std::size_t begin = 0, end;
-    std::string crlf(HttpConstants::Strings::kCrLf);
-    while (true) {
-      end = raw_.find(HttpConstants::Strings::kCrLf, begin);
-      if (end == std::string::npos) break;
-      auto found =
-          std::search(raw_.begin() + begin, raw_.begin() + end, name.begin(),
-                      name.end(), [](char ch1, char ch2) {
-                        return std::toupper(ch1) == std::toupper(ch2);
-                      });
-      if (found != (raw_.begin() + end)) {
-        std::size_t off = found - raw_.begin();
-        auto sep = raw_.find(HttpConstants::Strings::kHeaderFieldNameSeparator,
-                             found - raw_.begin());
-        if (sep < end) {
-          auto skipped = HttpUtil::SkipLWS(
-              &raw_.data()
-                   [sep + HttpConstants::Strings::kHeaderFieldNameSeparatorLen],
-              end - sep);
-          return std::string(
-              &raw_.data()
-                   [sep + HttpConstants::Strings::kHeaderFieldNameSeparatorLen +
-                    skipped],
-              end - sep - HttpConstants::Strings::kHeaderFieldNameSeparatorLen -
-                  skipped);
-        }
-      }
-      begin = end + HttpConstants::Strings::kCrLfLen;
+    auto found = Find(name);
+    if (found.first != std::string::npos) {
+      return std::regex_replace(
+          raw_.substr(found.first, found.second - found.first),
+          std::regex("(^[ ]+)|([ ]+$)"), "");
     }
     return {};
   }
@@ -166,43 +144,45 @@ class HttpHeaders : public base::Serializable {
   base::Stream Serialize() const override { return raw_; }
   // Checks for the specified header entry (using its name).
   bool Exist(const std::string& name) const {
-    std::size_t begin = 0, end;
-    std::string crlf(HttpConstants::Strings::kCrLf);
-    while (true) {
-      end = raw_.find(HttpConstants::Strings::kCrLf, begin);
-      if (end == std::string::npos) break;
-      auto found =
-          std::search(raw_.begin() + begin, raw_.begin() + end, name.begin(),
-                      name.end(), [](char ch1, char ch2) {
-                        return std::toupper(ch1) == std::toupper(ch2);
-                      });
-      if (found != (raw_.begin() + end)) {
-        return true;
-      }
-      begin = end + HttpConstants::Strings::kCrLfLen;
-    }
+    return Find(name).first != std::string::npos;
   }
 
  private:
   // ---------------------------------------------------------------------------
   // METHODs                                                         ( private )
   // ---------------------------------------------------------------------------
+  // Finds for the specified header field name.
+  std::pair<std::size_t, std::size_t> Find(const std::string& name) const {
+    auto fullname = name + HttpConstants::Strings::kColon;
+    // Let's split out full raw content into lines!
+    std::size_t cur = 0, end = 0;
+    std::pair<std::size_t, std::size_t> found = {std::string::npos,
+                                                 std::string::npos};
+    while (true) {
+      end = raw_.find_first_of(HttpConstants::Strings::kCrLf, cur);
+      if (end == std::string::npos) break;
+      auto sub_start = raw_.find_first_of(HttpConstants::Strings::kColon, cur);
+      if (sub_start++ != std::string::npos) {
+        auto itr = std::search(raw_.begin() + cur, raw_.begin() + end,
+                               fullname.begin(), fullname.end(),
+                               [](char ch1, char ch2) {
+                                 return std::toupper(ch1) == std::toupper(ch2);
+                               });
+        if (itr != raw_.end() && itr != raw_.begin() + end) {
+          found.first = itr - raw_.begin() + fullname.length();
+          found.second = end;
+          break;
+        }
+      }
+      cur = end + HttpConstants::Strings::kCrLfLen;
+    }
+    return found;
+  }
   // Sets header field name.
   void setFieldName(const std::string& name) {
-    std::size_t begin = 0, end;
-    std::string crlf(HttpConstants::Strings::kCrLf);
-    while (true) {
-      end = raw_.find(HttpConstants::Strings::kCrLf, begin);
-      if (end == std::string::npos) break;
-      auto found =
-          std::search(raw_.begin() + begin, raw_.begin() + end, name.begin(),
-                      name.end(), [](char ch1, char ch2) {
-                        return std::toupper(ch1) == std::toupper(ch2);
-                      });
-      if (found != (raw_.begin() + end)) {
-        raw_.erase(begin, (end - begin) + HttpConstants::Strings::kCrLfLen);
-      }
-      begin = end + HttpConstants::Strings::kCrLfLen;
+    auto found = Find(name);
+    if (found.first != std::string::npos) {
+      raw_.erase(found.first, found.second - found.first);
     }
     raw_.append(name);
     raw_.append(HttpConstants::Strings::kHeaderFieldNameSeparator);

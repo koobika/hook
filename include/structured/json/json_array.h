@@ -140,6 +140,14 @@ class JsonArrayGenericDumper : public base::Serializable {
     }
     vector_.erase(vector_.begin() + from, vector_.begin() + (to + 1));
   }
+  // Just to allow range-based iteration.
+  auto begin() { return vector_.begin(); }
+  // Just to allow range-based iteration.
+  const auto begin() const { return vector_.begin(); }
+  // Just to allow range-based iteration.
+  auto end() { return vector_.end(); }
+  // Just to allow range-based iteration.
+  const auto end() const { return vector_.end(); }
 
  private:
   // ---------------------------------------------------------------------------

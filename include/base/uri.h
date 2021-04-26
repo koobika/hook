@@ -101,6 +101,7 @@ class Uri : public UriReader {
   // ---------------------------------------------------------------------------
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
+  Uri() = default;
   Uri(const std::string& str) { parseFull(str.data(), str.length()); }
   Uri(const char* str) { parseFull(str, strlen(str)); }
   Uri(const Uri&) = default;

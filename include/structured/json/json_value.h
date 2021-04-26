@@ -351,7 +351,7 @@ class JsonValue : public base::Serializable {
       const std::string& json_content,
       const NumericParser& numeric_parser = DefaultNumericParser()) {
     std::size_t index = 0;
-    auto result = From_(json_content, index, numeric_parser, false);
+    auto result = From(json_content, index, numeric_parser, false);
     if (index != json_content.length()) {
       // ((Error)) -> unexpected value found!
       throw std::logic_error("unexpected value found!");
@@ -366,10 +366,10 @@ class JsonValue : public base::Serializable {
   // Parses (in a recursive way) the incoming string content to
   // generate a json-value.
   template <typename NumericParser>
-  static std::optional<JsonValue> from(const std::string& json_content,
-                                        std::size_t& idx,
-                                        const NumericParser& numeric_parser,
-                                        const bool& in_collection) {
+  static std::optional<JsonValue> From(const std::string& json_content,
+                                       std::size_t& idx,
+                                       const NumericParser& numeric_parser,
+                                       const bool& in_collection) {
     std::optional<JsonValue> json_value = {};
     if (idx >= json_content.length()) return json_value;
     // JSON-text = ws value ws
@@ -446,7 +446,7 @@ class JsonValue : public base::Serializable {
         JsonObject object;
         bool end_of_object_found = false;
         while (idx < json_content.length()) {
-          auto key = From_(json_content, idx, numeric_parser, true);
+          auto key = From(json_content, idx, numeric_parser, true);
           if (!key.has_value() || key->Type() != JsonValueType::kString) {
             // ((Error)) -> unexpected value found!
             throw std::logic_error("unexpected value found!");
@@ -456,7 +456,7 @@ class JsonValue : public base::Serializable {
             // ((Error)) -> unexpected value found!
             throw std::logic_error("unexpected value found!");
           }
-          auto element = From_(json_content, idx, numeric_parser, true);
+          auto element = From(json_content, idx, numeric_parser, true);
           if (!element.has_value()) {
             // ((Error)) -> unexpected value found!
             throw std::logic_error("unexpected value found!");
@@ -480,7 +480,7 @@ class JsonValue : public base::Serializable {
         JsonArray array;
         bool end_of_array_found = false;
         while (idx < json_content.length()) {
-          auto element = From_(json_content, idx, numeric_parser, true);
+          auto element = From(json_content, idx, numeric_parser, true);
           if (element.has_value()) {
             array.Add(std::move(element.value()));
           }
@@ -513,8 +513,8 @@ class JsonValue : public base::Serializable {
   }
   // Gets the next character position (within the provided) string that is
   // an structural one.
-  static std::size_t getNextStructuralCharacter(
-      const std::string& json_content, const std::size_t& index) {
+  static std::size_t getNextStructuralCharacter(const std::string& json_content,
+                                                const std::size_t& index) {
     auto i = index;
     while (i < json_content.length()) {
       auto const& ch = json_content[i];
@@ -538,14 +538,16 @@ class JsonValue : public base::Serializable {
     } else {
       auto limiter = getNextStructuralCharacter(json_content, index);
       auto str = json_content.substr(index, limiter - index);
-      if (!str.compare(kNullStr_)) {
-        return JsonValueType::kNull;
-      } else if (!str.compare(kTrueStr_)) {
-        return JsonValueType::kTrue;
-      } else if (!str.compare(kFalseStr_)) {
-        return JsonValueType::kFalse;
-      } else {
-        return JsonValueType::kNumber;
+      if (str.length()) {
+        if (!str.compare(kNullStr_)) {
+          return JsonValueType::kNull;
+        } else if (!str.compare(kTrueStr_)) {
+          return JsonValueType::kTrue;
+        } else if (!str.compare(kFalseStr_)) {
+          return JsonValueType::kFalse;
+        } else {
+          return JsonValueType::kNumber;
+        }
       }
     }
     return {};

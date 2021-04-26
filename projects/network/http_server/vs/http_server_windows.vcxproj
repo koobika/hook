@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\include\auth\controller.h" />
     <ClInclude Include="..\..\..\..\include\base\builder.h" />
     <ClInclude Include="..\..\..\..\include\base\builder_property.h" />
     <ClInclude Include="..\..\..\..\include\base\platform.h" />
@@ -32,11 +33,15 @@
     <ClInclude Include="..\..\..\..\include\encoding\base64\decoder.h" />
     <ClInclude Include="..\..\..\..\include\encoding\base64\encoder.h" />
     <ClInclude Include="..\..\..\..\include\encoding\base64\encoder_type.h" />
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\api_key.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\basic.h" />
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\decoders\json.h" />
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\encoders\json.h" />
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_auth_module.h" />
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_auth_support.h" />
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\internal\context.h" />
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\internal\context_api_key.h" />
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\internal\context_basic.h" />
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\internal\context_null.h" />
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\internal\controller.h" />
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\internal\mapper.h" />
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\no_auth.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_constants.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_controller.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_controller_handler.h" />
@@ -51,6 +56,7 @@
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_response_writer.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_router.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_node.h" />
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_performer_result.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_types.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_manager.h" />
     <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_performer.h" />
@@ -77,6 +83,42 @@
     <ClInclude Include="..\..\..\..\include\structured\json\json_value_type.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\src\examples\network\http_server_auth_api_key.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\examples\network\http_server_auth_basic.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\examples\network\http_server_auth_basic_controller_custom_checker.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\examples\network\http_server_auth_basic_custom_checker.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\examples\network\http_server_auth_basic_controller.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\examples\network\http_server_auth_custom.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\src\examples\network\http_server_controller.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -90,10 +132,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\examples\network\http_server_hello_world.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\examples\network\http_server_response_writer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

@@ -28,52 +28,33 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_v11_httpcontroller_h
-#define koobika_hook_network_protocol_http_v11_httpcontroller_h
+#ifndef koobika_hook_auth_controller_h
+#define koobika_hook_auth_controller_h
 
-#include "http_router.h"
-#include "http_controller_handler.h"
+#include <functional>
 
-namespace koobika::hook::network::protocol::http::v11 {
+namespace koobika::hook::auth {
 // =============================================================================
-// HttpController                                                      ( class )
+// Controller                                                          ( class )
 // -----------------------------------------------------------------------------
-// This class is in charge of providing the http controller class.
+// This interface is in charge of providing the authroization controller.
+// -----------------------------------------------------------------------------
+//    CXty - authorization context type being used
 // =============================================================================
-template <typename AUty = auth::NoAuth>
-class HttpController : public HttpRouter, public AUty {
+template <typename CXty>
+class Controller {
  public:
   // ---------------------------------------------------------------------------
-  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
+  // USINGs                                                           ( public )
   // ---------------------------------------------------------------------------
-  HttpController() = default;
-  HttpController(const HttpController&) = delete;
-  HttpController(HttpController&&) noexcept = delete;
-  virtual ~HttpController() = default;
+  using Context = CXty;
+  using Checker = std::function<bool(const Context&)>;
   // ---------------------------------------------------------------------------
-  // OPERATORs                                                        ( public )
+  // PROPERTIEs                                                       ( public )
   // ---------------------------------------------------------------------------
-  HttpController& operator=(const HttpController&) = delete;
-  HttpController& operator=(HttpController&&) noexcept = delete;
-
- protected:
-  // ---------------------------------------------------------------------------
-  // METHODs                                                       ( protected )
-  // ---------------------------------------------------------------------------
-  void AddToRouter(HttpRouter& router) const {
-    for (auto const& itr : this->map_) {
-      router.Handle(itr.first, itr.second.handler, itr.second.method);
-    }
-    for (auto const& itr : this->vec_) {
-      router.Handle(itr.first, itr.second.handler, itr.second.method);
-    }
-  }
-  // ---------------------------------------------------------------------------
-  // FRIENDs                                                       ( protected )
-  // ---------------------------------------------------------------------------
-  template <typename TRty, typename ROty>
-  friend class HttpServerBase;
+  // Will use the context provided information to check authorization.
+  Checker Check;
 };
-}  // namespace koobika::hook::network::protocol::http::v11
+}  // namespace koobika::hook::auth
 
 #endif

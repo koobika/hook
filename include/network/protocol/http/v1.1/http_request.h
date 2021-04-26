@@ -47,22 +47,23 @@ class HttpRequest {
   // ---------------------------------------------------------------------------
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
+  HttpRequest() = default;
   HttpRequest(base::Uri&& uri, HttpMethod&& method, HttpHeaders&& headers,
               base::Stream&& body)
       : Uri{std::move(uri)},
         Method{std::move(method)},
         Headers{std::move(headers)},
         Body{std::move(body)} {}
-  HttpRequest(const HttpRequest&) = delete;
-  HttpRequest(HttpRequest&&) noexcept = delete;
+  HttpRequest(const HttpRequest&) = default;
+  HttpRequest(HttpRequest&&) noexcept = default;
   ~HttpRequest() = default;
   // ---------------------------------------------------------------------------
   // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
-  HttpRequest& operator=(const HttpRequest&) = delete;
-  HttpRequest& operator=(HttpRequest&&) noexcept = delete;
+  HttpRequest& operator=(const HttpRequest&) = default;
+  HttpRequest& operator=(HttpRequest&&) noexcept = default;
   // ---------------------------------------------------------------------------
-  // ATTRIBUTEs                                                       ( public )
+  // PROPERTIEs                                                       ( public )
   // ---------------------------------------------------------------------------
   base::Uri Uri;
   HttpMethod Method;

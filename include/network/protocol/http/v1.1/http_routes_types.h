@@ -33,24 +33,26 @@
 
 #include <functional>
 
+#include "http_request.h"
+#include "http_response.h"
+
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
 // HttpRoutesTypes                                                     ( class )
 // -----------------------------------------------------------------------------
 // This specification holds for http routes <common> types.
 // =============================================================================
-template <typename RQty, typename RSty>
 class HttpRoutesTypes {
  public:
   // ---------------------------------------------------------------------------
   // USINGs                                                           ( public )
   // ---------------------------------------------------------------------------
   // Request parameter (read-only) type while dispatching route handlers.
-  using Request = const RQty&;
+  using Request = const HttpRequest&;
   // Response parameter (read/write) type while dispatching route handlers.
-  using Response = RSty&;
+  using Response = HttpResponse&;
   // Route handler signature (method being called on route hit).
-  using RouteHandler = std::function<void(Request, Response)>;
+  using Handler = std::function<void(Request, Response)>;
 };
 }  // namespace koobika::hook::network::protocol::http::v11
 

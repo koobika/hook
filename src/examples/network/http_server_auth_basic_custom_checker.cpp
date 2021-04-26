@@ -28,19 +28,29 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_v11_httpauthsupport_h
-#define koobika_hook_network_protocol_http_v11_httpauthsupport_h
+#include "network/protocol/http/v1.1/http_server_builder.h"
 
-namespace koobika::hook::network::protocol::http::v11 {
-// =============================================================================
-// HttpAuthSupport                                                ( enum class )
-// -----------------------------------------------------------------------------
-// This class is in charge of defining all available auth-support modes.
-// =============================================================================
-enum class HttpAuthSupport {
-  kEnabled,   // Auth mechanism is enabled for an specific route.
-  kDisabled   // Auth mechanism is disabled for an specific route.
-};
-}  // namespace koobika::hook::network::protocol::http::v11
+using namespace koobika::hook::network::protocol::http::v11;
 
-#endif
+int main() {
+  try {
+    auto server = HttpServerBuilder().Build();
+    // Here we're just creating a basic auth module with custom checker!
+    auth::Basic custom_basic_authorization(
+        [](const auth::Basic::Context& context) -> bool {
+          return context.Username == "hook" && context.Password == "rules";
+        });
+    // Let's configure our server to handle <GET> requests over '/foo/bar' uri..
+    server->Get("/foo/bar", custom_basic_authorization.Authorize(
+                                [](const HttpRequest& req, HttpResponse& res) {
+                                  res.Body.Write("Hello, World!\r\n");
+                                  res.Ok_200();
+                                }));
+    server->Start("8542");
+    return getchar();
+  } catch (std::exception exception) {
+    // ((Error)) -> while performing setup!
+    std::cout << exception.what() << std::endl;
+    return -1;
+  }
+}
