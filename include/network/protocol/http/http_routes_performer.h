@@ -28,33 +28,30 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_httproutesperformer_h
+#define koobika_hook_network_protocol_http_httproutesperformer_h
 
-#include "base/serializable.h"
+#include <string>
 
-namespace koobika::hook::structured::json {
+#include "http_routes_performer_result.h"
+#include "http_routes_types.h"
+
+namespace koobika::hook::network::protocol::http {
 // =============================================================================
-// JsonNull                                                            ( class )
+// HttpRoutesPerformer                                             ( interface )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This specification holds for http routes performer interface.
 // =============================================================================
-class JsonNull : public base::Serializable {
+class HttpRoutesPerformer {
  public:
   // ---------------------------------------------------------------------------
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
-  // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
-  // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+  // Tries to perform router enabled action.
+  virtual HttpRoutesPerformerResult Perform(
+      const std::string& route, typename HttpRoutesTypes::Request request,
+      typename HttpRoutesTypes::Response response) const = 0;
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http
 
 #endif

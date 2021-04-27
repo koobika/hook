@@ -28,33 +28,36 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_httptransferencodingtypes_h
+#define koobika_hook_network_protocol_http_httptransferencodingtypes_h
 
-#include "base/serializable.h"
-
-namespace koobika::hook::structured::json {
+namespace koobika::hook::network::protocol::http {
 // =============================================================================
-// JsonNull                                                            ( class )
+// HttpTransferEncodingTypes                                          ( struct )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This class is in charge of providing the http transfer encoding types
 // =============================================================================
-class JsonNull : public base::Serializable {
- public:
+struct HttpTransferEncodingTypes {
   // ---------------------------------------------------------------------------
-  // METHODs                                                          ( public )
+  // CONSTANTs                                                        ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
-  // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
-  // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+  // Numeric values.
+  struct Values {
+    static constexpr int kIdentity = 0;
+    static constexpr int kChunked = 1;
+    static constexpr int kCompress = 2;
+    static constexpr int kDeflate = 4;
+    static constexpr int kGzip = 8;
+  };
+  // String values.
+  struct Strings {
+    static constexpr char kIdentity[] = "identity";
+    static constexpr char kChunked[] = "chunked";
+    static constexpr char kCompress[] = "compress";
+    static constexpr char kDeflate[] = "deflate";
+    static constexpr char kGzip[] = "gzip";
+  };
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http
 
 #endif

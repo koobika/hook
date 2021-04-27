@@ -28,33 +28,30 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_auth_contextnull_h
+#define koobika_hook_network_protocol_http_auth_contextnull_h
 
-#include "base/serializable.h"
+#include "mapper.h"
+#include "context.h"
+#include "network/protocol/http/http_routes_types.h"
 
-namespace koobika::hook::structured::json {
+namespace koobika::hook::network::protocol::http::auth {
 // =============================================================================
-// JsonNull                                                            ( class )
+// ContextNull                                                         ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This specification holds for <authorization> null context module
 // =============================================================================
-class JsonNull : public base::Serializable {
+class ContextNull : public Context, public Mapper {
  public:
   // ---------------------------------------------------------------------------
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
-  // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
-  // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+  // Tries to fill-up internal structures using the provided request.
+  bool Map(typename HttpRoutesTypes::Request req) override {
+    Request = req;
+    return true;
+  }
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http::auth
 
 #endif

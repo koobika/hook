@@ -28,33 +28,16 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_httpmethodvalue_h
+#define koobika_hook_network_protocol_http_httpmethodvalue_h
 
-#include "base/serializable.h"
-
-namespace koobika::hook::structured::json {
+namespace koobika::hook::network::protocol::http {
 // =============================================================================
-// JsonNull                                                            ( class )
+// HttpMethodValue                                                     ( alias )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This type is in charge of providing the http method value type
 // =============================================================================
-class JsonNull : public base::Serializable {
- public:
-  // ---------------------------------------------------------------------------
-  // METHODs                                                          ( public )
-  // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
-  // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
-  // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
-};
-}  // namespace koobika::hook::structured::json
+using HttpMethodValue = int;
+}  // namespace koobika::hook::network::protocol::http
 
 #endif

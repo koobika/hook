@@ -47,7 +47,7 @@ class JsonTrue : public base::Serializable {
   // Gets the stored json-value.
   bool Get() const { return true; }
   // Dumps the current content to string.
-  base::Stream Serialize() const override { return kTrueStr_; }
+  base::AutoBuffer Serialize() const override { return kTrueStr_; }
 
  private:
   // ---------------------------------------------------------------------------

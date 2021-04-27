@@ -34,10 +34,10 @@
 #include <functional>
 #include <string>
 
-#include "base/stream.h"
-#include "http_constants.h"
-#include "http_encoding_type.h"
-#include "http_request.h"
+#include "base/auto_buffer.h"
+#include "network/protocol/http/http_constants.h"
+#include "network/protocol/http/http_encoding_type.h"
+#include "network/protocol/http/http_request.h"
 #include "network/transport/server_transport_decoder.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
@@ -310,7 +310,7 @@ class HttpRequestDecoder
   // body encoding type
   HttpEncodingType encoding_type_ = HttpEncodingType::kNone;
   // body content
-  base::Stream body_;
+  base::AutoBuffer body_;
   // flag used to determine if we're decoding the body segment
   bool decoding_body_part_ = false;
   // http-method

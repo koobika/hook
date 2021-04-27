@@ -28,33 +28,48 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_httprequest_h
+#define koobika_hook_network_protocol_http_httprequest_h
 
-#include "base/serializable.h"
+#include "base/auto_buffer.h"
+#include "base/uri.h"
+#include "http_headers.h"
+#include "http_method.h"
 
-namespace koobika::hook::structured::json {
+namespace koobika::hook::network::protocol::http {
 // =============================================================================
-// JsonNull                                                            ( class )
+// HttpRequest                                                         ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This class is in charge of providing the http request class
 // =============================================================================
-class JsonNull : public base::Serializable {
+class HttpRequest {
  public:
   // ---------------------------------------------------------------------------
-  // METHODs                                                          ( public )
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
+  HttpRequest() = default;
+  HttpRequest(base::Uri&& uri, HttpMethod&& method, HttpHeaders&& headers,
+              base::AutoBuffer&& body)
+      : Uri{std::move(uri)},
+        Method{std::move(method)},
+        Headers{std::move(headers)},
+        Body{std::move(body)} {}
+  HttpRequest(const HttpRequest&) = default;
+  HttpRequest(HttpRequest&&) noexcept = default;
+  ~HttpRequest() = default;
   // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+  HttpRequest& operator=(const HttpRequest&) = default;
+  HttpRequest& operator=(HttpRequest&&) noexcept = default;
+  // ---------------------------------------------------------------------------
+  // PROPERTIEs                                                       ( public )
+  // ---------------------------------------------------------------------------
+  base::Uri Uri;
+  HttpMethod Method;
+  HttpHeaders Headers;
+  base::AutoBuffer Body;
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http
 
 #endif

@@ -28,16 +28,16 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/v1.1/http_server_builder.h"
+#include "network/protocol/http/http_server_builder.h"
 
-using namespace koobika::hook::network::protocol::http::v11;
+using namespace koobika::hook::network::protocol::http;
 using namespace koobika::hook::base;
 
 // This custom serializable class will allow us to perform specific dumps!
 class SerializableClass : public Serializable {
  public:
   // We need to write this method in order to return the buffer!
-  Stream Serialize() const override { return "This is my custom content!"; }
+  AutoBuffer Serialize() const override { return "This is my custom content!"; }
 };
 
 int main() {

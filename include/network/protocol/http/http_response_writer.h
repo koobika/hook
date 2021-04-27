@@ -28,60 +28,82 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonstring_h
-#define koobika_hook_structured_json_jsonstring_h
+#ifndef koobika_hook_network_protocol_http_httpresponsewriter_h
+#define koobika_hook_network_protocol_http_httpresponsewriter_h
 
-#include "base/serializable.h"
+#include <optional>
 
-namespace koobika::hook::structured::json {
+#include "base/auto_buffer.h"
+#include "http_constants.h"
+#include "http_mime_types.h"
+#include "structured/json/json_value.h"
+
+namespace koobika::hook::network::protocol::http {
 // =============================================================================
-// JsonString                                                          ( class )
+// HttpResponseWriter                                                  ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON string default class.
+// This specification holds for http response writer class
 // =============================================================================
-class JsonString : public base::Serializable {
+class HttpResponseWriter {
  public:
   // ---------------------------------------------------------------------------
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
-  JsonString() = default;
-  JsonString(const JsonString&) = default;
-  JsonString(JsonString&&) noexcept = default;
-  JsonString(const std::string& in) : value_{in} {}
-  JsonString(const char* in) : value_{in} {}
-  ~JsonString() = default;
+  template <typename SEty>
+  HttpResponseWriter(const SEty& serializable_object,
+                     const std::string& content_type)
+      : content_type_{content_type} {
+    buffer_.Write(serializable_object.Serialize());
+  }
+  HttpResponseWriter(const structured::json::JsonValue& json)
+      : HttpResponseWriter(json, HttpMimeTypes::kJSON) {}
+  HttpResponseWriter(
+      const std::string& string_content,
+      const std::optional<std::string>& content_type = HttpMimeTypes::kTXT)
+      : content_type_{content_type} {
+    buffer_.Write(string_content);
+  }
+  HttpResponseWriter(
+      const char* c_string_content,
+      const std::optional<std::string>& content_type = HttpMimeTypes::kTXT)
+      : content_type_{content_type} {
+    buffer_.Write(c_string_content);
+  }
+  HttpResponseWriter(void* buffer, const std::size_t& length,
+                     const std::optional<std::string>& content_type)
+      : content_type_{content_type} {
+    buffer_.Write(buffer, length);
+  }
+  HttpResponseWriter(const HttpResponseWriter&) = delete;
+  HttpResponseWriter(HttpResponseWriter&&) noexcept = delete;
+  ~HttpResponseWriter() = default;
   // ---------------------------------------------------------------------------
   // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
-  JsonString& operator=(const JsonString& in) {
-    value_ = in.value_;
-    return *this;
-  }
-  JsonString& operator=(JsonString&& in) noexcept {
-    value_ = std::move(in.value_);
-    return *this;
-  }
+  HttpResponseWriter& operator=(const HttpResponseWriter&) = delete;
+  HttpResponseWriter& operator=(HttpResponseWriter&&) noexcept = delete;
   // ---------------------------------------------------------------------------
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Sets the json-value with the specified string.
-  JsonString& Set(const std::string& in) {
-    value_ = in;
-    return *this;
-  }
-  // Gets the stored json-value.
-  std::string Get() const { return value_; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override {
-    return base::AutoBuffer("\"").Write(value_).Write("\"");
+  // Tries to fill-up incoming response object with current configutation.
+  template <typename RSty>
+  RSty& Prepare(RSty& res) {
+    if (content_type_.has_value()) {
+      res.Headers.Set(HttpConstants::Headers::kContentType,
+                      content_type_.value());
+    }
+    res.Headers.Set(HttpConstants::Headers::kContentLength, buffer_.Length());
+    res.Body = std::move(buffer_);
+    return res;
   }
 
  private:
   // ---------------------------------------------------------------------------
   // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
-  std::string value_;
+  base::AutoBuffer buffer_;
+  std::optional<std::string> content_type_;
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http
 
 #endif

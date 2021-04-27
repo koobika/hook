@@ -28,33 +28,22 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_httpencodingtype_h
+#define koobika_hook_network_protocol_http_httpencodingtype_h
 
-#include "base/serializable.h"
-
-namespace koobika::hook::structured::json {
+namespace koobika::hook::network::protocol::http {
 // =============================================================================
-// JsonNull                                                            ( class )
+// HttpEncodingType                                               ( enum class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This class is in charge of enumerating the available encoding types
 // =============================================================================
-class JsonNull : public base::Serializable {
- public:
-  // ---------------------------------------------------------------------------
-  // METHODs                                                          ( public )
-  // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
-  // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
-  // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+enum class HttpEncodingType {
+  kNone,              // Data has no encoding type (not available).
+  kContentLength,     // Data is being encoded using 'Content-Length' type.
+  kTransferEncoding,  // Data is being encoded using 'Transfer-Encoding'
+                      // encoding.
+  kMultipart          // Data is being endoded as 'Multipart'.
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http
 
 #endif

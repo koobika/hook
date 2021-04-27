@@ -47,7 +47,7 @@ class JsonFalse : public base::Serializable {
   // Gets the stored json-value.
   bool Get() const { return false; }
   // Dumps the current content to string.
-  base::Stream Serialize() const override { return kFalseStr_; }
+  base::AutoBuffer Serialize() const override { return kFalseStr_; }
 
  private:
   // ---------------------------------------------------------------------------

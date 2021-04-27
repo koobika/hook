@@ -28,15 +28,15 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/v1.1/http_server_builder.h"
+#include "network/protocol/http/http_server_builder.h"
 
-using namespace koobika::hook::network::protocol::http::v11;
+using namespace koobika::hook::network::protocol::http;
 
 int main() {
   try {
     auto server = HttpServerBuilder().Build();
     // Here we're just creating the default (built-in) basic auth module!
-    auth::Basic auth;
+    auth::modules::Basic auth;
     // Adding some default (built-in) credentials!
     auth.Set("koobika", "koobika");
     // Let's configure our server to handle <GET> requests over '/foo/bar' uri..

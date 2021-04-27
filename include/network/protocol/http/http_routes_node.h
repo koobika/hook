@@ -28,33 +28,44 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_httproutesnode_h
+#define koobika_hook_network_protocol_http_httproutesnode_h
 
-#include "base/serializable.h"
+#include <functional>
+#include <string>
 
-namespace koobika::hook::structured::json {
+#include "http_constants.h"
+#include "http_method_value.h"
+#include "http_routes_types.h"
+
+namespace koobika::hook::network::protocol::http {
 // =============================================================================
-// JsonNull                                                            ( class )
+// HttpRoutesNode                                                     ( struct )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This specification holds for http routes <node> type. This class will
+// encapsulate all the information needed to perform routing.
 // =============================================================================
-class JsonNull : public base::Serializable {
- public:
+struct HttpRoutesNode {
   // ---------------------------------------------------------------------------
-  // METHODs                                                          ( public )
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
+  HttpRoutesNode() = default;
+  HttpRoutesNode(const typename HttpRoutesTypes::Handler& hdl,
+                 const HttpMethodValue& mth)
+      : handler{hdl}, method{mth} {}
+  HttpRoutesNode(const HttpRoutesNode&) = default;
+  HttpRoutesNode(HttpRoutesNode&&) noexcept = default;
   // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+  HttpRoutesNode& operator=(const HttpRoutesNode&) = default;
+  HttpRoutesNode& operator=(HttpRoutesNode&&) noexcept = default;
+  // ---------------------------------------------------------------------------
+  // PROPERTIEs                                                       ( public )
+  // ---------------------------------------------------------------------------
+  typename HttpRoutesTypes::Handler handler = nullptr;
+  HttpMethodValue method = HttpConstants::Methods::kExtension;
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http
 
 #endif

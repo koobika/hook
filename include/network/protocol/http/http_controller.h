@@ -28,33 +28,52 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_httpcontroller_h
+#define koobika_hook_network_protocol_http_httpcontroller_h
 
-#include "base/serializable.h"
+#include "http_router.h"
+#include "http_controller_handler.h"
 
-namespace koobika::hook::structured::json {
+namespace koobika::hook::network::protocol::http {
 // =============================================================================
-// JsonNull                                                            ( class )
+// HttpController                                                      ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This class is in charge of providing the http controller class.
 // =============================================================================
-class JsonNull : public base::Serializable {
+template <typename AUty = auth::modules::NoAuth>
+class HttpController : public HttpRouter, public AUty {
  public:
   // ---------------------------------------------------------------------------
-  // METHODs                                                          ( public )
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
+  HttpController() = default;
+  HttpController(const HttpController&) = delete;
+  HttpController(HttpController&&) noexcept = delete;
+  virtual ~HttpController() = default;
+  // ---------------------------------------------------------------------------
+  // OPERATORs                                                        ( public )
+  // ---------------------------------------------------------------------------
+  HttpController& operator=(const HttpController&) = delete;
+  HttpController& operator=(HttpController&&) noexcept = delete;
 
- private:
+ protected:
   // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
+  // METHODs                                                       ( protected )
   // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+  void AddToRouter(HttpRouter& router) const {
+    for (auto const& itr : this->map_) {
+      router.Handle(itr.first, itr.second.handler, itr.second.method);
+    }
+    for (auto const& itr : this->vec_) {
+      router.Handle(itr.first, itr.second.handler, itr.second.method);
+    }
+  }
+  // ---------------------------------------------------------------------------
+  // FRIENDs                                                       ( protected )
+  // ---------------------------------------------------------------------------
+  template <typename TRty, typename ROty>
+  friend class HttpServerBase;
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http
 
 #endif

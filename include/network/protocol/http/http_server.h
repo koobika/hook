@@ -28,33 +28,44 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_httpserver_h
+#define koobika_hook_network_protocol_http_httpserver_h
 
-#include "base/serializable.h"
+#include "http_request.h"
+#include "http_response.h"
+#include "http_router.h"
+#include "http_server_base.h"
+#include "v1.1/http_request_decoder.h"
+#include "network/transport/tcpip/server_transport_tcp_ip.h"
 
-namespace koobika::hook::structured::json {
+namespace koobika::hook::network::protocol::http {
 // =============================================================================
-// JsonNull                                                            ( class )
+// HttpServer                                                          ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This class is in charge of providing the default http server base class.
 // =============================================================================
-class JsonNull : public base::Serializable {
+class HttpServer
+    : public HttpServerBase<
+          transport::tcpip::ServerTransportTcpIp<v11::HttpRequestDecoder>,
+          HttpRouter> {
  public:
   // ---------------------------------------------------------------------------
-  // METHODs                                                          ( public )
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
+  HttpServer(const int& workers_number,
+             const int& maximum_number_of_connections)
+      : HttpServerBase(workers_number, maximum_number_of_connections) {}
+  HttpServer(const structured::json::JsonValue& configuration)
+      : HttpServerBase(configuration) {}
+  HttpServer(const HttpServer&) = delete;
+  HttpServer(HttpServer&&) noexcept = delete;
+  ~HttpServer() = default;
   // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
+  // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+  HttpServer& operator=(const HttpServer&) = delete;
+  HttpServer& operator=(HttpServer&&) noexcept = delete;
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http
 
 #endif

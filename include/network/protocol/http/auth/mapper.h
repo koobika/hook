@@ -28,33 +28,25 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_auth_mapper_h
+#define koobika_hook_network_protocol_http_auth_mapper_h
 
-#include "base/serializable.h"
+#include "network/protocol/http/http_routes_types.h"
 
-namespace koobika::hook::structured::json {
+namespace koobika::hook::network::protocol::http::auth {
 // =============================================================================
-// JsonNull                                                            ( class )
+// Mapper                                                          ( interface )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This specification holds for <authorization> mapper interface
 // =============================================================================
-class JsonNull : public base::Serializable {
+class Mapper {
  public:
   // ---------------------------------------------------------------------------
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
-  // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
-  // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+  // Tries to fill-up internal structures using the provided request.
+  virtual bool Map(typename HttpRoutesTypes::Request) = 0;
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http::auth
 
 #endif

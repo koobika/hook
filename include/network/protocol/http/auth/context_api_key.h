@@ -28,33 +28,48 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_auth_contextapikey_h
+#define koobika_hook_network_protocol_http_auth_contextapikey_h
 
-#include "base/serializable.h"
+#include "mapper.h"
+#include "context.h"
+#include "encoding/base64/decoder.h"
+#include "network/protocol/http/http_util.h"
+#include "network/protocol/http/http_routes_types.h"
 
-namespace koobika::hook::structured::json {
+namespace koobika::hook::network::protocol::http::auth {
 // =============================================================================
-// JsonNull                                                            ( class )
+// ContextApiKey                                                       ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This specification holds for <apikey-authorization> context module
 // =============================================================================
-class JsonNull : public base::Serializable {
+class ContextApiKey : public Context, public Mapper {
  public:
   // ---------------------------------------------------------------------------
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
+  // Tries to fill-up internal structures using the provided request.
+  bool Map(typename HttpRoutesTypes::Request req) override {
+    auto auth_field = req.Headers.Get(kApiKeyField);
+    if (!auth_field.has_value()) {
+      auth_field = req.Uri.GetQuery().Get(kApiKeyField);
+      if (!auth_field.has_value()) return false;
+    }
+    Request = req;
+    Token = auth_field.value();
+    return true;
+  }
+  // ---------------------------------------------------------------------------
+  // PROPERTIEs                                                       ( public )
+  // ---------------------------------------------------------------------------
+  std::string Token;
 
  private:
   // ---------------------------------------------------------------------------
   // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+  static constexpr char kApiKeyField[] = "x-api-key";
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http::auth
 
 #endif

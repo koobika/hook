@@ -28,9 +28,9 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/v1.1/http_server_builder.h"
+#include "network/protocol/http/http_server_builder.h"
 
-using namespace koobika::hook::network::protocol::http::v11;
+using namespace koobika::hook::network::protocol::http;
 
 int main() {
   try {
@@ -44,7 +44,7 @@ int main() {
         res.Headers.Set("Server", "Example");
         res.Headers.Set("Date", "Wed, 17 Apr 2013 12:00:00 GMT");
         res.Headers.Set("Content-Type", "text/plain; charset=UTF-8");
-        // Set the response body using the provided stream writer..
+        // Set the response body using the provided buffer writer..
         res.Body.Write("Hello, World!\r\n");
         // Set the response code and.. that's all!
         res.Ok_200();

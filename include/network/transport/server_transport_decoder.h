@@ -34,7 +34,7 @@
 #include <functional>
 #include <memory>
 
-#include "base/stream.h"
+#include "base/auto_buffer.h"
 
 namespace koobika::hook::network::transport {
 // =============================================================================
@@ -51,7 +51,7 @@ class ServerTransportDecoder {
   // ---------------------------------------------------------------------------
   // USINGs                                                           ( public )
   // ---------------------------------------------------------------------------
-  using Sender = std::function<void(const base::Stream&)>;
+  using Sender = std::function<void(const base::AutoBuffer&)>;
   using RequestHandler = std::function<void(const RQty&, const Sender&)>;
   using ErrorHandler = std::function<void()>;
   // ---------------------------------------------------------------------------

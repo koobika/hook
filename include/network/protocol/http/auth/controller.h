@@ -28,33 +28,41 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_auth_controller_h
+#define koobika_hook_network_protocol_http_auth_controller_h
 
-#include "base/serializable.h"
+#include "auth/controller_base.h"
+#include "network/protocol/http/http_routes_types.h"
 
-namespace koobika::hook::structured::json {
+namespace koobika::hook::network::protocol::http::auth {
 // =============================================================================
-// JsonNull                                                            ( class )
+// Controller                                                          ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This specification holds for <basic-auth> controller module
 // =============================================================================
-class JsonNull : public base::Serializable {
+template <typename CXty>
+class Controller : public hook::auth::ControllerBase<CXty> {
  public:
   // ---------------------------------------------------------------------------
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
-  // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
-  // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+  typename HttpRoutesTypes::Handler Authorize(
+      const typename HttpRoutesTypes::Handler handler) const {
+    return [this, handler](typename HttpRoutesTypes::Request req,
+                           typename HttpRoutesTypes::Response res) {
+      typename hook::auth::ControllerBase<CXty>::Context context;
+      if (context.Map(req)) {
+        if (this->Check == nullptr || this->Check(context)) {
+          handler(req, res);
+        } else {
+          res.Forbidden_403();
+        }
+      } else {
+        res.Forbidden_403();
+      }
+    };
+  }
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http::auth
 
 #endif

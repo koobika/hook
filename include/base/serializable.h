@@ -35,7 +35,7 @@
 #include <optional>
 #include <string>
 
-#include "stream.h"
+#include "auto_buffer.h"
 
 namespace koobika::hook::base {
 // =============================================================================
@@ -49,7 +49,7 @@ class Serializable {
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
   // Returns the string serialized version of an object.
-  virtual Stream Serialize() const = 0;
+  virtual AutoBuffer Serialize() const = 0;
 };
 }  // namespace koobika::hook::base
 

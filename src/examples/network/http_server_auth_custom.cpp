@@ -28,23 +28,22 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/v1.1/http_server_builder.h"
+#include "network/protocol/http/http_server_builder.h"
 
-using namespace koobika::hook::network::protocol::http::v11;
+using namespace koobika::hook::network::protocol::http;
 
 // This is our custom-authorization context module!
 // In this example, we need for an specific header field
 // called 'secret-word' from which we will extract the token
 // needed to store within the 'SecretWord' property.
-class ContextCustom : public auth::internal::Context,
-                      public auth::internal::Mapper {
+class ContextCustom : public auth::Context, public auth::Mapper {
  public:
   // Tries to fill-up internal structures using the provided request.
-  bool Map(typename HttpRoutesTypes::Request req) override { 
+  bool Map(typename HttpRoutesTypes::Request req) override {
     auto auth_field = req.Headers.Get(kSecretWordHeaderField);
     if (!auth_field.has_value()) return false;
     SecretWord = auth_field.value();
-    return true; 
+    return true;
   }
   // This property will hold for the 'secret-word' value!
   std::string SecretWord;
@@ -56,7 +55,7 @@ class ContextCustom : public auth::internal::Context,
 // This is our custom auth module!
 // In this example we will only authorize those contexts including
 // the word 'koobika' as 'SecretWord'.
-class CustomAuth : public auth::internal::Controller<ContextCustom> {
+class CustomAuth : public auth::Controller<ContextCustom> {
  public:
   CustomAuth() {
     Check = [](const Context& context) -> bool {

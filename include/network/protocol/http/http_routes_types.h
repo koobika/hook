@@ -28,33 +28,32 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_httproutestypes_h
+#define koobika_hook_network_protocol_http_httproutestypes_h
 
-#include "base/serializable.h"
+#include <functional>
 
-namespace koobika::hook::structured::json {
+#include "http_request.h"
+#include "http_response.h"
+
+namespace koobika::hook::network::protocol::http {
 // =============================================================================
-// JsonNull                                                            ( class )
+// HttpRoutesTypes                                                     ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This specification holds for http routes <common> types.
 // =============================================================================
-class JsonNull : public base::Serializable {
+class HttpRoutesTypes {
  public:
   // ---------------------------------------------------------------------------
-  // METHODs                                                          ( public )
+  // USINGs                                                           ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
-  // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
-  // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+  // Request parameter (read-only) type while dispatching route handlers.
+  using Request = const HttpRequest&;
+  // Response parameter (read/write) type while dispatching route handlers.
+  using Response = HttpResponse&;
+  // Route handler signature (method being called on route hit).
+  using Handler = std::function<void(Request, Response)>;
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http
 
 #endif

@@ -109,18 +109,18 @@ class JsonObjectGenericDumper : public base::Serializable {
   // Gets the object length.
   std::size_t Length() const { return map_.size(); }
   // Dumps the current content to string.
-  base::Stream Serialize() const override {
-    base::Stream stream;
-    stream.Write('{');
+  base::AutoBuffer Serialize() const override {
+    base::AutoBuffer buffer;
+    buffer.Write('{');
     for (auto itr = map_.begin(); itr != map_.end(); itr++) {
-      if (itr != map_.begin()) stream.Write(',');
-      stream.Write('\"')
+      if (itr != map_.begin()) buffer.Write(',');
+      buffer.Write('\"')
           .Write(itr->first)
           .Write("\":")
           .Write(DUty::Serialize(*itr->second));
     }
-    stream.Write('}');
-    return stream;
+    buffer.Write('}');
+    return buffer;
   }
   // Returns if the specified id exists into the current object.
   bool Exist(const JsonId& id) { return map_.find(id) != map_.end(); }

@@ -28,33 +28,24 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_auth_context_h
+#define koobika_hook_network_protocol_http_auth_context_h
 
-#include "base/serializable.h"
+#include "network/protocol/http/http_request.h"
 
-namespace koobika::hook::structured::json {
+namespace koobika::hook::network::protocol::http::auth {
 // =============================================================================
-// JsonNull                                                            ( class )
+// Context                                                             ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This specification holds for <authorization> context base class
 // =============================================================================
-class JsonNull : public base::Serializable {
+class Context {
  public:
   // ---------------------------------------------------------------------------
-  // METHODs                                                          ( public )
+  // PROPERTIEs                                                       ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
-  // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
-  // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+  HttpRequest Request;
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http::auth
 
 #endif

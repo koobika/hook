@@ -28,15 +28,15 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/v1.1/http_server_builder.h"
+#include "network/protocol/http/http_server_builder.h"
 
-using namespace koobika::hook::network::protocol::http::v11;
+using namespace koobika::hook::network::protocol::http;
 
 // This is our basic controller using basic built-in authorization!
 // In this example we're just creating three different handlers managing
 // different funcionalities. Some of them will require authorization
 // mechanism while other ones will be accessed using no credentials.
-class BasicController : public HttpController<auth::Basic> {
+class BasicController : public HttpController<auth::modules::Basic> {
  public:
   // Let's, for example, add here our default supported user/passwords!
   BasicController() { Set("koobika", "koobika"); }

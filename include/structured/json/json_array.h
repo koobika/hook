@@ -114,15 +114,15 @@ class JsonArrayGenericDumper : public base::Serializable {
     return operator[](index);
   }
   // Dumps the current content to string.
-  base::Stream Serialize() const override {
-    base::Stream stream;
-    stream.Write('[');
+  base::AutoBuffer Serialize() const override {
+    base::AutoBuffer buffer;
+    buffer.Write('[');
     for (auto itr = vector_.begin(); itr != vector_.end(); itr++) {
-      if (itr != vector_.begin()) stream.Write(',');
-      stream.Write(DUty::Serialize(*(*itr)));
+      if (itr != vector_.begin()) buffer.Write(',');
+      buffer.Write(DUty::Serialize(*(*itr)));
     }
-    stream.Write(']');
-    return stream;
+    buffer.Write(']');
+    return buffer;
   }
   // Erase the json-value stored at the specified position.
   void Erase(const std::size_t& index) {

@@ -28,33 +28,33 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_auth_controllerbase_h
+#define koobika_hook_auth_controllerbase_h
 
-#include "base/serializable.h"
+#include <functional>
 
-namespace koobika::hook::structured::json {
+namespace koobika::hook::auth {
 // =============================================================================
-// JsonNull                                                            ( class )
+// ControllerBase                                                      ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This base class is in charge of providing basic controller functionality.
+// -----------------------------------------------------------------------------
+//    CXty - authorization context type being used
 // =============================================================================
-class JsonNull : public base::Serializable {
+template <typename CXty>
+class ControllerBase {
  public:
   // ---------------------------------------------------------------------------
-  // METHODs                                                          ( public )
+  // USINGs                                                           ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
+  using Context = CXty;
+  using Checker = std::function<bool(const Context&)>;
   // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
+  // PROPERTIEs                                                       ( public )
   // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+  // Will use the context provided information to check authorization.
+  Checker Check;
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::auth
 
 #endif

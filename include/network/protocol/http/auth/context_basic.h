@@ -28,33 +28,57 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_auth_contextbasic_h
+#define koobika_hook_network_protocol_http_auth_contextbasic_h
 
-#include "base/serializable.h"
+#include "mapper.h"
+#include "context.h"
+#include "encoding/base64/decoder.h"
+#include "network/protocol/http/http_util.h"
+#include "network/protocol/http/http_routes_types.h"
 
-namespace koobika::hook::structured::json {
+namespace koobika::hook::network::protocol::http::auth {
 // =============================================================================
-// JsonNull                                                            ( class )
+// ContextBasic                                                        ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This specification holds for <basic-authorization> context module
 // =============================================================================
-class JsonNull : public base::Serializable {
+class ContextBasic : public Context, public Mapper {
  public:
   // ---------------------------------------------------------------------------
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
+  // Tries to fill-up internal structures using the provided request.
+  bool Map(typename HttpRoutesTypes::Request req) override {
+    auto auth_field = req.Headers.Get(kAuthorization);
+    if (!auth_field.has_value()) return false;
+    auto const& auth = auth_field.value();
+    std::regex reg("\\s+");
+    std::sregex_token_iterator iter(auth.begin(), auth.end(), reg, -1), end;
+    std::vector<std::string> vec(iter, end);
+    if (vec.size() != 0x2) return false;  // "Basic <base64-encoded-data>"..
+    if (!HttpUtil::Compare(vec[0], kBasic, false)) return false;
+    auto decoded = encoding::base64::Decoder::Decode(vec[1]);
+    auto colon_pos = decoded.find(HttpConstants::Characters::kColon);
+    if (colon_pos == std::string::npos) return false;
+    Request = req;
+    Username = decoded.substr(0, colon_pos);
+    Password = decoded.substr(colon_pos + 1);
+    return true;
+  }
+  // ---------------------------------------------------------------------------
+  // PROPERTIEs                                                       ( public )
+  // ---------------------------------------------------------------------------
+  std::string Username;
+  std::string Password;
 
  private:
   // ---------------------------------------------------------------------------
   // CONSTANTs                                                       ( private )
   // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+  static constexpr char kBasic[] = "Basic";
+  static constexpr char kAuthorization[] = "Authorization";
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http::auth
 
 #endif

@@ -28,33 +28,38 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_httpserverbuilder_h
+#define koobika_hook_network_protocol_http_httpserverbuilder_h
 
-#include "base/serializable.h"
+#include "base/builder.h"
+#include "base/builder_property.h"
+#include "http_server.h"
+#include "network/transport/server_transport_constants.h"
 
-namespace koobika::hook::structured::json {
+namespace koobika::hook::network::protocol::http {
 // =============================================================================
-// JsonNull                                                            ( class )
+// HttpServerBuilder                                                   ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This class is in charge of providing the http server builder
 // =============================================================================
-class JsonNull : public base::Serializable {
+class HttpServerBuilder : public base::Builder<HttpServer> {
  public:
   // ---------------------------------------------------------------------------
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
+  // Builds the target httpserver object.
+  std::shared_ptr<HttpServer> Build() const override {
+    return std::make_shared<HttpServer>(NumberOfWorkers,
+                                        MaximumNumberOfConnections);
+  }
   // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
+  // PROPERTIEs                                                       ( public )
   // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
+  base::BuilderProperty<int, HttpServerBuilder> NumberOfWorkers{
+      this, transport::ServerTransportConstants::kNumberOfWorkersValue};
+  base::BuilderProperty<int, HttpServerBuilder> MaximumNumberOfConnections{
+      this, transport::ServerTransportConstants::kMaxConnectionsValue};
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http
 
 #endif

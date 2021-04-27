@@ -141,15 +141,14 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     }
   }
   // Tries to send the specified buffer through the transport connection.
-  bool Send(const SOCKET& handler, const base::Stream& stream) override {
-    char buffer[ServerTransportConstants::kDefaultWriteBufferSize];
-    while (std::size_t length = stream.ReadSome(
-               buffer, ServerTransportConstants::kDefaultWriteBufferSize)) {
+  bool Send(const SOCKET& handler, const base::AutoBuffer& buffer) override {
+    char tmp[ServerTransportConstants::kDefaultWriteBufferSize];
+    while (std::size_t length = buffer.ReadSome(
+               tmp, ServerTransportConstants::kDefaultWriteBufferSize)) {
       std::size_t offset = 0;
       while (offset < length) {
         std::size_t len = std::min<std::size_t>(INT_MAX, length - offset);
-        auto res =
-            ::send(handler, &((const char*)buffer)[offset], (int)len, 0x0);
+        auto res = ::send(handler, &((const char*)tmp)[offset], (int)len, 0x0);
         if (res == SOCKET_ERROR) {
           if (WSAGetLastError() != WSAEWOULDBLOCK) {
             // ((Error)) -> while trying to send information to socket!
@@ -294,8 +293,8 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
                   // connection closed! let's free the associated resources!
                   closesocket(context->socket);
                 },
-                [this, context](const base::Stream& stream) {
-                  if (!Send(context->socket, stream)) {
+                [this, context](const base::AutoBuffer& buffer) {
+                  if (!Send(context->socket, buffer)) {
                     // connection closed! let's free the associated resources!
                     closesocket(context->socket);
                   }

@@ -319,7 +319,7 @@ class JsonValue : public base::Serializable {
     }
   }
   // Dumps the current content to string.
-  base::Stream Serialize() const override {
+  base::AutoBuffer Serialize() const override {
     switch (data_.index()) {
       case 0:
         return std::get<JsonNull>(data_).Serialize();
@@ -615,10 +615,10 @@ class JsonValue : public base::Serializable {
   InternalType data_;
 };
 struct ObjectDumper {
-  static base::Stream Serialize(const JsonValue& in) { return in.Serialize(); }
+  static base::AutoBuffer Serialize(const JsonValue& in) { return in.Serialize(); }
 };
 struct ArrayDumper {
-  static base::Stream Serialize(const JsonValue& in) { return in.Serialize(); }
+  static base::AutoBuffer Serialize(const JsonValue& in) { return in.Serialize(); }
 };
 }  // namespace koobika::hook::structured::json
 

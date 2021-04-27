@@ -33,7 +33,7 @@
 
 #include <functional>
 
-#include "base/stream.h"
+#include "base/auto_buffer.h"
 #include "structured/json/json_object.h"
 
 namespace koobika::hook::network::transport {
@@ -58,7 +58,7 @@ class ServerTransport {
   // Stops transport activity.
   virtual void Stop() = 0;
   // Tries to sends the specified buffer through the transport connection.
-  virtual bool Send(const HDty& handler, const base::Stream& stream) = 0;
+  virtual bool Send(const HDty& handler, const base::AutoBuffer& buffer) = 0;
 };
 }  // namespace koobika::hook::network::transport
 

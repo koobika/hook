@@ -142,7 +142,7 @@ class JsonNumber : public base::Serializable {
     }
   }
   // Dumps the current content to string.
-  base::Stream Serialize() const override {
+  base::AutoBuffer Serialize() const override {
     switch (value_.index()) {
       case 0:
         return std::to_string(std::get<unsigned char>(value_));

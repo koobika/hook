@@ -28,33 +28,16 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_httproutesperformerresult_h
+#define koobika_hook_network_protocol_http_httproutesperformerresult_h
 
-#include "base/serializable.h"
-
-namespace koobika::hook::structured::json {
+namespace koobika::hook::network::protocol::http {
 // =============================================================================
-// JsonNull                                                            ( class )
+// HttpRoutesPerformerResult                                      ( enum class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This specification holds for http routes performer result types.
 // =============================================================================
-class JsonNull : public base::Serializable {
- public:
-  // ---------------------------------------------------------------------------
-  // METHODs                                                          ( public )
-  // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
-  // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
-  // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
-};
-}  // namespace koobika::hook::structured::json
+enum class HttpRoutesPerformerResult { kOk, kNotFound };
+}  // namespace koobika::hook::network::protocol::http
 
 #endif

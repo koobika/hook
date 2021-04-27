@@ -42,14 +42,14 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="include\network\protocol\http\v1.1\auth">
-      <UniqueIdentifier>{2927dc12-e66a-4b76-8bfe-d96d52b22f87}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\network\protocol\http\v1.1\auth\internal">
-      <UniqueIdentifier>{fd70e17a-bc17-4d65-9dd3-f442757853b6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\auth">
       <UniqueIdentifier>{c44f1e0b-966a-4aa8-938a-8e3c2470966e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\network\protocol\http\auth">
+      <UniqueIdentifier>{2927dc12-e66a-4b76-8bfe-d96d52b22f87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\network\protocol\http\auth\modules">
+      <UniqueIdentifier>{09bb9caa-dc50-4f88-b4f6-e0bbdef25809}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -64,54 +64,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\encoding\base64\encoder_type.h">
       <Filter>include\encoding\base64</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_constants.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_encoding_type.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_headers.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_method.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_method_value.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_mime_types.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_request.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_request_decoder.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_response.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_response_writer.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_router.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_server.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_server_base.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_server_builder.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_transfer_encoding_types.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_util.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\network\transport\server_transport_constants.h">
       <Filter>include\network\transport</Filter>
@@ -155,15 +107,6 @@
     <ClInclude Include="..\..\..\..\include\structured\json\json_value_type.h">
       <Filter>include\structured\json</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_types.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_manager.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_performer.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\network\transport\server_transport.h">
       <Filter>include\network\transport</Filter>
     </ClInclude>
@@ -179,7 +122,7 @@
     <ClInclude Include="..\..\..\..\include\base\serializable.h">
       <Filter>include\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\base\stream.h">
+    <ClInclude Include="..\..\..\..\include\base\auto_buffer.h">
       <Filter>include\base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\base\uri.h">
@@ -197,47 +140,104 @@
     <ClInclude Include="..\..\..\..\include\network\transport\server_transport_decoder.h">
       <Filter>include\network\transport</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_controller_handler.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_node.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_controller.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_routes_performer_result.h">
-      <Filter>include\network\protocol\http\v1.1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\auth\controller.h">
+    <ClInclude Include="..\..\..\..\include\auth\controller_base.h">
       <Filter>include\auth</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\internal\context.h">
-      <Filter>include\network\protocol\http\v1.1\auth\internal</Filter>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_constants.h">
+      <Filter>include\network\protocol\http</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\internal\context_basic.h">
-      <Filter>include\network\protocol\http\v1.1\auth\internal</Filter>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_controller.h">
+      <Filter>include\network\protocol\http</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\internal\context_null.h">
-      <Filter>include\network\protocol\http\v1.1\auth\internal</Filter>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_controller_handler.h">
+      <Filter>include\network\protocol\http</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\internal\controller.h">
-      <Filter>include\network\protocol\http\v1.1\auth\internal</Filter>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_encoding_type.h">
+      <Filter>include\network\protocol\http</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\internal\mapper.h">
-      <Filter>include\network\protocol\http\v1.1\auth\internal</Filter>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_headers.h">
+      <Filter>include\network\protocol\http</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\api_key.h">
-      <Filter>include\network\protocol\http\v1.1\auth</Filter>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_method.h">
+      <Filter>include\network\protocol\http</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\basic.h">
-      <Filter>include\network\protocol\http\v1.1\auth</Filter>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_method_value.h">
+      <Filter>include\network\protocol\http</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\no_auth.h">
-      <Filter>include\network\protocol\http\v1.1\auth</Filter>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_mime_types.h">
+      <Filter>include\network\protocol\http</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\auth\internal\context_api_key.h">
-      <Filter>include\network\protocol\http\v1.1\auth\internal</Filter>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_request.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_response.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_response_writer.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_router.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_routes_manager.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_routes_node.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_routes_performer.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_routes_performer_result.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_routes_types.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_server.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_server_base.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_server_builder.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_transfer_encoding_types.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_util.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\context.h">
+      <Filter>include\network\protocol\http\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\context_api_key.h">
+      <Filter>include\network\protocol\http\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\context_basic.h">
+      <Filter>include\network\protocol\http\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\context_null.h">
+      <Filter>include\network\protocol\http\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\controller.h">
+      <Filter>include\network\protocol\http\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\mapper.h">
+      <Filter>include\network\protocol\http\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\modules\api_key.h">
+      <Filter>include\network\protocol\http\auth\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\modules\basic.h">
+      <Filter>include\network\protocol\http\auth\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\modules\no_auth.h">
+      <Filter>include\network\protocol\http\auth\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_request_decoder.h">
+      <Filter>include\network\protocol\http\v1.1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

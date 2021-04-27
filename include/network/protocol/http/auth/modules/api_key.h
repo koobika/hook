@@ -28,60 +28,88 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonstring_h
-#define koobika_hook_structured_json_jsonstring_h
+#ifndef koobika_hook_network_protocol_http_auth_modules_apikey_h
+#define koobika_hook_network_protocol_http_auth_modules_apikey_h
 
-#include "base/serializable.h"
+#include <chrono>
+#include <fstream>
+#include <functional>
+#include <iostream>
+#include <regex>
+#include <sstream>
+#include <string>
+#include <unordered_map>
 
-namespace koobika::hook::structured::json {
+#include "auth/controller.h"
+#include "encoding/base64/decoder.h"
+#include "encoding/base64/encoder.h"
+#include "network/protocol/http/auth/context_api_key.h"
+#include "network/protocol/http/auth/controller.h"
+#include "network/protocol/http/http_controller.h"
+#include "network/protocol/http/http_routes_types.h"
+#include "network/protocol/http/http_util.h"
+
+namespace koobika::hook::network::protocol::http::auth::modules {
 // =============================================================================
-// JsonString                                                          ( class )
+// ApiKey                                                              ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON string default class.
+// This specification holds for <apikey-auth> module
 // =============================================================================
-class JsonString : public base::Serializable {
+class ApiKey : public Controller<ContextApiKey> {
  public:
   // ---------------------------------------------------------------------------
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
-  JsonString() = default;
-  JsonString(const JsonString&) = default;
-  JsonString(JsonString&&) noexcept = default;
-  JsonString(const std::string& in) : value_{in} {}
-  JsonString(const char* in) : value_{in} {}
-  ~JsonString() = default;
+  ApiKey(const typename Checker& user_checker = nullptr,
+         const double session_timeout_in_seconds = kDefaultTimeout)
+      : timeout_in_seconds_{session_timeout_in_seconds} {
+    this->Check = (user_checker != nullptr)
+                      ? user_checker
+                      : [this](const Context& context) -> bool {
+      do {
+        auto itr = data_.find(context.Token);
+        if (itr == data_.end()) break;
+        if (timeout_in_seconds_ > 0.0) {
+          auto current = std::chrono::system_clock().now();
+          std::chrono::duration<double> diff = current - itr->second;
+          if (diff.count() >= timeout_in_seconds_) break;
+        }
+        return true;
+      } while (false);
+      return false;
+    };
+  }
+  ApiKey(const ApiKey&) = default;
+  ApiKey(ApiKey&&) noexcept = default;
+  ~ApiKey() = default;
   // ---------------------------------------------------------------------------
   // OPERATORs                                                        ( public )
   // ---------------------------------------------------------------------------
-  JsonString& operator=(const JsonString& in) {
-    value_ = in.value_;
-    return *this;
-  }
-  JsonString& operator=(JsonString&& in) noexcept {
-    value_ = std::move(in.value_);
-    return *this;
-  }
+  ApiKey& operator=(const ApiKey&) = default;
+  ApiKey& operator=(ApiKey&&) noexcept = default;
   // ---------------------------------------------------------------------------
   // METHODs                                                          ( public )
   // ---------------------------------------------------------------------------
-  // Sets the json-value with the specified string.
-  JsonString& Set(const std::string& in) {
-    value_ = in;
-    return *this;
+  // Sets token within the database.
+  void Set(const std::string& token) {
+    data_[token] = std::chrono::system_clock().now();
   }
-  // Gets the stored json-value.
-  std::string Get() const { return value_; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override {
-    return base::AutoBuffer("\"").Write(value_).Write("\"");
-  }
+  // Clears specific token from database.
+  void Clear(const std::string& token) { data_.erase(token); }
+  // Clears entire tokens database.
+  void Clear() { data_.clear(); }
 
- private:
+ protected:
   // ---------------------------------------------------------------------------
-  // ATTRIBUTEs                                                      ( private )
+  // CONSTANTs                                                     ( protected )
   // ---------------------------------------------------------------------------
-  std::string value_;
+  static constexpr double kDefaultTimeout = -1.0;  // disabled by default
+  // ---------------------------------------------------------------------------
+  // ATTRIBUTEs                                                    ( protected )
+  // ---------------------------------------------------------------------------
+  std::unordered_map<std::string, std::chrono::system_clock::time_point> data_;
+  double timeout_in_seconds_;
 };
-}  // namespace koobika::hook::structured::json
+}  // namespace koobika::hook::network::protocol::http::auth::modules
 
 #endif

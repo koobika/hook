@@ -28,33 +28,19 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_structured_json_jsonnull_h
-#define koobika_hook_structured_json_jsonnull_h
+#ifndef koobika_hook_network_protocol_http_auth_modules_noauth_h
+#define koobika_hook_network_protocol_http_auth_modules_noauth_h
 
-#include "base/serializable.h"
+#include "network/protocol/http/auth/controller.h"
+#include "network/protocol/http/auth/context_null.h"
 
-namespace koobika::hook::structured::json {
+namespace koobika::hook::network::protocol::http::auth::modules {
 // =============================================================================
-// JsonNull                                                            ( class )
+// NoAuth                                                              ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for JSON null default class.
+// This specification holds for <no-auth> module
 // =============================================================================
-class JsonNull : public base::Serializable {
- public:
-  // ---------------------------------------------------------------------------
-  // METHODs                                                          ( public )
-  // ---------------------------------------------------------------------------
-  // Gets the stored json-value.
-  auto Get() const { return nullptr; }
-  // Dumps the current content to string.
-  base::AutoBuffer Serialize() const override { return kNullStr_; }
-
- private:
-  // ---------------------------------------------------------------------------
-  // CONSTANTs                                                       ( private )
-  // ---------------------------------------------------------------------------
-  static constexpr char kNullStr_[] = "null";
-};
-}  // namespace koobika::hook::structured::json
+class NoAuth : public Controller<ContextNull> {};
+}  // namespace koobika::hook::network::protocol::http::auth::modules
 
 #endif
