@@ -40,7 +40,6 @@
 #include <string>
 #include <unordered_map>
 
-#include "auth/controller.h"
 #include "encoding/base64/decoder.h"
 #include "encoding/base64/encoder.h"
 #include "network/protocol/http/auth/context_api_key.h"
@@ -60,7 +59,7 @@ class ApiKey : public Controller<ContextApiKey> {
   // ---------------------------------------------------------------------------
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // ---------------------------------------------------------------------------
-  ApiKey(const typename Checker& user_checker = nullptr,
+  ApiKey(const Checker& user_checker = nullptr,
          const double session_timeout_in_seconds = kDefaultTimeout)
       : timeout_in_seconds_{session_timeout_in_seconds} {
     this->Check = (user_checker != nullptr)

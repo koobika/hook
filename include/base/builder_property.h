@@ -67,8 +67,8 @@ class BuilderProperty {
   // ---------------------------------------------------------------------------
   // ATTRIBUTEs                                                      ( private )
   // ---------------------------------------------------------------------------
+  OBty* const parent_;
   DAty data_;
-  OBty* const parent_ = nullptr;
 };
 }  // namespace koobika::hook::base
 

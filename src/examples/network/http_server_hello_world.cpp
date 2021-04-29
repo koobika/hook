@@ -55,7 +55,7 @@ int main() {
     // Start server activity..
     server->Start("8542");
     return getchar();
-  } catch (std::exception exception) {
+  } catch (const std::exception& exception) {
     // ((Error)) -> while performing setup!
     std::cout << exception.what() << std::endl;
     return -1;

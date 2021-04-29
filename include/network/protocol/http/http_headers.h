@@ -123,7 +123,8 @@ class HttpHeaders : public base::Serializable {
         // ((To-Do)) -> raise an exception?
         continue;
       }
-      setFieldValue(element_value.value().data(), i++, i == length - 1);
+      setFieldValue(element_value.value().data(), i+1, i == length - 1);
+      i++;
     }
   }
   // Sets a header entry (initializer-list version).

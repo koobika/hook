@@ -80,7 +80,8 @@ class Encoder {
       auto this_byte_mask = c_masks[i % elements];
       auto remainder_mask = r_masks[i % elements];
       auto index = ((val & this_byte_mask) >> c_disps[i % elements]) | r;
-      r = (val & remainder_mask) << r_disps[i % elements];
+      int r_i = (val & remainder_mask) << r_disps[i % elements];
+      r = (unsigned char)r_i;
       encoded += alphabet[index];
     }
     if (r) encoded += alphabet[r];

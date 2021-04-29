@@ -35,6 +35,7 @@
 #include <functional>
 #include <iostream>
 #include <stdexcept>
+#include <thread>
 
 #include "http_controller.h"
 #include "http_response_writer.h"
@@ -42,7 +43,7 @@
 #include "auth/modules/basic.h"
 #include "auth/modules/no_auth.h"
 #include "auth/modules/api_key.h"
-#include "structured/json/json_value.h"
+#include "structured/json/json_object.h"
 #include "network/transport/server_transport_constants.h"
 
 namespace koobika::hook::network::protocol::http {

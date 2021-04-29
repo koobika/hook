@@ -1,93 +1,248 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Header Files">
+    <Filter Include="include">
       <UniqueIdentifier>{e3b5d5b7-7a44-4318-8b28-ab126bbe3d09}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files">
+    <Filter Include="src">
       <UniqueIdentifier>{95fe40a6-ce67-4ead-b529-05b1e8edc728}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\base">
-      <UniqueIdentifier>{778e0aff-58ad-4829-b5d7-12dabe0d9e51}</UniqueIdentifier>
+    <Filter Include="include\auth">
+      <UniqueIdentifier>{6a820bee-49f6-49b3-b57f-9d4d45c0d472}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\console">
-      <UniqueIdentifier>{2d4ce8d8-c295-4d56-a2e5-e507b6b964b8}</UniqueIdentifier>
+    <Filter Include="include\base">
+      <UniqueIdentifier>{464c22ce-6cd8-4e36-b955-14236e4ac55c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\network">
-      <UniqueIdentifier>{049f2a07-4936-4863-98fb-952c41a3b38e}</UniqueIdentifier>
+    <Filter Include="include\encoding">
+      <UniqueIdentifier>{ac8474bf-0789-42a0-81c6-1385f60bf2df}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\threading">
-      <UniqueIdentifier>{0afe40cb-2cc3-4451-8cd4-5abe192c25b9}</UniqueIdentifier>
+    <Filter Include="include\encoding\base64">
+      <UniqueIdentifier>{32eb5e14-dcc8-4cad-b4ae-58d75f5eecdd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\utils">
-      <UniqueIdentifier>{6da2bdff-041b-4feb-9677-ce8d1a5d4ae6}</UniqueIdentifier>
+    <Filter Include="include\network">
+      <UniqueIdentifier>{b701bbe1-4c0c-4d83-9420-2c4390b045d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\network\protocol">
+      <UniqueIdentifier>{f880e1b8-0cfa-4889-b7af-203a5cc10b4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\network\protocol\http">
+      <UniqueIdentifier>{187f6558-fadd-4701-a167-1f61187d2103}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\network\protocol\http\auth">
+      <UniqueIdentifier>{92a3ce86-9ecd-4240-92df-5deb019663c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\network\protocol\http\auth\modules">
+      <UniqueIdentifier>{8d8e70af-8356-496a-a9a3-142f11d3fc85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\network\protocol\http\v1.1">
+      <UniqueIdentifier>{d6cdad3c-9af7-450d-aec0-0a16a53e8aad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\network\transport">
+      <UniqueIdentifier>{7896d5bd-ef8e-46df-b865-4e8c49af7c77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\network\transport\tcpip">
+      <UniqueIdentifier>{69cc03a7-599d-406b-bd89-a8a3ed7f8a01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\structured">
+      <UniqueIdentifier>{a687e999-0e2f-4319-b7f8-9af5ed9f02eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\structured\json">
+      <UniqueIdentifier>{492b6c01-856e-4da9-884a-0055465bbc8f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\include\base\builder.h">
-      <Filter>Header Files\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\base\builder_property.h">
-      <Filter>Header Files\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\base\common.h">
-      <Filter>Header Files\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\base\platform.h">
-      <Filter>Header Files\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\console\console.h">
-      <Filter>Header Files\console</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\console\console_linux.h">
-      <Filter>Header Files\console</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\console\console_types.h">
-      <Filter>Header Files\console</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\threading\thread_pool.h">
-      <Filter>Header Files\threading</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\utils\console_helper.h">
-      <Filter>Header Files\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\http_adapter.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\http_request.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\http_request_processor.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\http_response.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\http_server.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\http_server_builder.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\http_types.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\server.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\transport.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\transport_tcp_ip.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\transport_tcp_ip_linux.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\http_server.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\..\..\src\examples\network\http_server_hello_world.cpp">
+      <Filter>src</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\include\auth\controller_base.h">
+      <Filter>include\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\base\auto_buffer.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\base\builder.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\base\builder_property.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\base\platform.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\base\serializable.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\base\uri.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\base\uri_query.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\base\uri_reader.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\base\variant.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\encoding\base64\constants.h">
+      <Filter>include\encoding\base64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\encoding\base64\decoder.h">
+      <Filter>include\encoding\base64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\encoding\base64\encoder.h">
+      <Filter>include\encoding\base64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\encoding\base64\encoder_type.h">
+      <Filter>include\encoding\base64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\modules\api_key.h">
+      <Filter>include\network\protocol\http\auth\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\modules\basic.h">
+      <Filter>include\network\protocol\http\auth\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\modules\no_auth.h">
+      <Filter>include\network\protocol\http\auth\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\context.h">
+      <Filter>include\network\protocol\http\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\context_api_key.h">
+      <Filter>include\network\protocol\http\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\context_basic.h">
+      <Filter>include\network\protocol\http\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\context_null.h">
+      <Filter>include\network\protocol\http\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\controller.h">
+      <Filter>include\network\protocol\http\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\auth\mapper.h">
+      <Filter>include\network\protocol\http\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_constants.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_controller.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_controller_handler.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_encoding_type.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_headers.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_method.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_method_value.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_mime_types.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_request.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_response.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_response_writer.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_router.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_routes_manager.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_routes_node.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_routes_performer.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_routes_performer_result.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_routes_types.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_server.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_server_base.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_server_builder.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_transfer_encoding_types.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\http_util.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\protocol\http\v1.1\http_request_decoder.h">
+      <Filter>include\network\protocol\http\v1.1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\transport\server_transport.h">
+      <Filter>include\network\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\transport\server_transport_constants.h">
+      <Filter>include\network\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\transport\server_transport_decoder.h">
+      <Filter>include\network\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\network\transport\tcpip\server_transport_tcp_ip.h">
+      <Filter>include\network\transport\tcpip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\structured\json\json_array.h">
+      <Filter>include\structured\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\structured\json\json_false.h">
+      <Filter>include\structured\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\structured\json\json_id.h">
+      <Filter>include\structured\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\structured\json\json_null.h">
+      <Filter>include\structured\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\structured\json\json_number.h">
+      <Filter>include\structured\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\structured\json\json_number_type.h">
+      <Filter>include\structured\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\structured\json\json_object.h">
+      <Filter>include\structured\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\structured\json\json_string.h">
+      <Filter>include\structured\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\structured\json\json_true.h">
+      <Filter>include\structured\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\structured\json\json_value.h">
+      <Filter>include\structured\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\structured\json\json_value_type.h">
+      <Filter>include\structured\json</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\include\network\transport\tcpip\server_transport_tcp_ip_linux.h">
+      <Filter>include\network\transport\tcpip</Filter>
+    </None>
   </ItemGroup>
 </Project>

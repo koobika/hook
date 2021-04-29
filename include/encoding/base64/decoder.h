@@ -84,8 +84,8 @@ class Decoder {
       }
       auto l = in[l_idx] == pad ? pad : l_itr->second;
       auto r = in[r_idx] == pad ? pad : r_itr->second;
-      char fB = ((l & 0b00111111) << 2) | ((r & 0b00110000) >> 4);
-      decoded += fB;
+      int fB_i = ((l & 0b00111111) << 2) | ((r & 0b00110000) >> 4);
+      decoded += (char)fB_i;
       // [second] byte extraction..
       r_idx = i + 2;
       if (in[r_idx] == Constants::kPadCh) break;
@@ -96,8 +96,8 @@ class Decoder {
       }
       l = r;
       r = in[r_idx] == pad ? pad : r_itr->second;
-      char sB = ((l & 0b00001111) << 4) | ((r & 0b00111100) >> 2);
-      decoded += sB;
+      int sB_i = ((l & 0b00001111) << 4) | ((r & 0b00111100) >> 2);
+      decoded += (char)sB_i;
       // [third] byte extraction..
       r_idx = i + 3;
       if (in[r_idx] == Constants::kPadCh) break;
@@ -108,8 +108,8 @@ class Decoder {
       }
       l = r;
       r = in[r_idx] == pad ? pad : r_itr->second;
-      char tB = ((l & 0b00000011) << 6) | (r & 0b00111111);
-      decoded += tB;
+      int tB_i = ((l & 0b00000011) << 6) | (r & 0b00111111);
+      decoded += (char)tB_i;
     }
     return decoded;
   }

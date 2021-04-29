@@ -33,6 +33,7 @@
 
 #include "http_router.h"
 #include "http_controller_handler.h"
+#include "auth/modules/no_auth.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================

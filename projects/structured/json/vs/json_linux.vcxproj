@@ -34,6 +34,21 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\include\base\auto_buffer.h" />
+    <ClInclude Include="..\..\..\..\include\base\builder.h" />
+    <ClInclude Include="..\..\..\..\include\base\builder_property.h" />
+    <ClInclude Include="..\..\..\..\include\base\platform.h" />
+    <ClInclude Include="..\..\..\..\include\base\serializable.h" />
+    <ClInclude Include="..\..\..\..\include\base\uri.h" />
+    <ClInclude Include="..\..\..\..\include\base\uri_query.h" />
+    <ClInclude Include="..\..\..\..\include\base\uri_reader.h" />
+    <ClInclude Include="..\..\..\..\include\base\variant.h" />
+    <ClInclude Include="..\..\..\..\include\structured\json\value.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\src\examples\structured\json_hello_world.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{048404c6-8441-474e-af78-65e990eb879f}</ProjectGuid>
     <Keyword>Linux</Keyword>
@@ -43,7 +58,7 @@
     <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
     <TargetLinuxPlatform>Generic</TargetLinuxPlatform>
     <LinuxProjectType>{2238F9CD-F817-4ECC-BD14-2524D2669B35}</LinuxProjectType>
-    <ProjectName>httpserver</ProjectName>
+    <ProjectName>json_linux</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
@@ -75,36 +90,45 @@
   <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
-  <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\include\base\builder.h" />
-    <ClInclude Include="..\..\..\..\..\include\base\builder_property.h" />
-    <ClInclude Include="..\..\..\..\..\include\base\common.h" />
-    <ClInclude Include="..\..\..\..\..\include\base\platform.h" />
-    <ClInclude Include="..\..\..\..\..\include\console\console.h" />
-    <ClInclude Include="..\..\..\..\..\include\console\console_linux.h" />
-    <ClInclude Include="..\..\..\..\..\include\console\console_types.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\http_adapter.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\http_request.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\http_request_processor.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\http_response.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\http_server.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\http_server_builder.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\http_types.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\server.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\transport.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\transport_tcp_ip.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\transport_tcp_ip_linux.h" />
-    <ClInclude Include="..\..\..\..\..\include\threading\thread_pool.h" />
-    <ClInclude Include="..\..\..\..\utils\console_helper.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\http_server.cpp" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <OutDir>$(ProjectDir)$(ProjectName)\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(ProjectName)\obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <OutDir>$(ProjectDir)$(ProjectName)\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(ProjectName)\obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <OutDir>$(ProjectDir)$(ProjectName)\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(ProjectName)\obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <OutDir>$(ProjectDir)$(ProjectName)\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(ProjectName)\obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(ProjectDir)$(ProjectName)\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(ProjectName)\obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(ProjectDir)$(ProjectName)\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(ProjectName)\obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <OutDir>$(ProjectDir)$(ProjectName)\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(ProjectName)\obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <OutDir>$(ProjectDir)$(ProjectName)\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(ProjectName)\obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../../../../include;../../../../../apps;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>
       </PreprocessorDefinitions>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
+      <Verbose>true</Verbose>
     </ClCompile>
     <Link>
       <LibraryDependencies>pthread</LibraryDependencies>
@@ -112,8 +136,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../../../../include;../../../../../apps;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
+      <Verbose>true</Verbose>
     </ClCompile>
     <Link>
       <LibraryDependencies>pthread</LibraryDependencies>
@@ -121,9 +147,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../../../../include;../../../../../apps;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>
       </PreprocessorDefinitions>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
+      <Verbose>true</Verbose>
     </ClCompile>
     <Link>
       <LibraryDependencies>pthread</LibraryDependencies>
@@ -131,8 +159,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../../../../include;../../../../../apps;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
+      <Verbose>true</Verbose>
     </ClCompile>
     <Link>
       <LibraryDependencies>pthread</LibraryDependencies>
@@ -140,9 +170,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../../../../include;../../../../../apps;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>
       </PreprocessorDefinitions>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
+      <Verbose>true</Verbose>
     </ClCompile>
     <Link>
       <LibraryDependencies>pthread</LibraryDependencies>
@@ -150,8 +182,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../../../../include;../../../../../apps;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
+      <Verbose>true</Verbose>
     </ClCompile>
     <Link>
       <LibraryDependencies>pthread</LibraryDependencies>
@@ -159,9 +193,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../../../../include;../../../../../apps;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>
       </PreprocessorDefinitions>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
+      <Verbose>true</Verbose>
     </ClCompile>
     <Link>
       <LibraryDependencies>pthread</LibraryDependencies>
@@ -169,8 +205,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../../../../include;../../../../../apps;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
+      <Verbose>true</Verbose>
     </ClCompile>
     <Link>
       <LibraryDependencies>pthread</LibraryDependencies>

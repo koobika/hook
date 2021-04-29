@@ -9,28 +9,63 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "linux", "linux", "{2E367DB4
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "http_server", "http_server_windows.vcxproj", "{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "httpserver", "http_server_linux.vcxproj", "{048404C6-8441-474E-AF78-65E990EB879F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|ARM64 = Debug|ARM64
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|ARM = Release|ARM
+		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}.Debug|ARM.ActiveCfg = Debug|Win32
+		{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}.Debug|ARM64.ActiveCfg = Debug|Win32
 		{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}.Debug|x64.ActiveCfg = Debug|x64
 		{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}.Debug|x64.Build.0 = Debug|x64
 		{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}.Debug|x86.ActiveCfg = Debug|Win32
 		{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}.Debug|x86.Build.0 = Debug|Win32
+		{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}.Release|ARM.ActiveCfg = Release|Win32
+		{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}.Release|ARM64.ActiveCfg = Release|Win32
 		{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}.Release|x64.ActiveCfg = Release|x64
 		{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}.Release|x64.Build.0 = Release|x64
 		{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}.Release|x86.ActiveCfg = Release|Win32
 		{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}.Release|x86.Build.0 = Release|Win32
+		{048404C6-8441-474E-AF78-65E990EB879F}.Debug|ARM.ActiveCfg = Debug|ARM
+		{048404C6-8441-474E-AF78-65E990EB879F}.Debug|ARM.Build.0 = Debug|ARM
+		{048404C6-8441-474E-AF78-65E990EB879F}.Debug|ARM.Deploy.0 = Debug|ARM
+		{048404C6-8441-474E-AF78-65E990EB879F}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{048404C6-8441-474E-AF78-65E990EB879F}.Debug|ARM64.Build.0 = Debug|ARM64
+		{048404C6-8441-474E-AF78-65E990EB879F}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{048404C6-8441-474E-AF78-65E990EB879F}.Debug|x64.ActiveCfg = Debug|x64
+		{048404C6-8441-474E-AF78-65E990EB879F}.Debug|x64.Build.0 = Debug|x64
+		{048404C6-8441-474E-AF78-65E990EB879F}.Debug|x64.Deploy.0 = Debug|x64
+		{048404C6-8441-474E-AF78-65E990EB879F}.Debug|x86.ActiveCfg = Debug|x86
+		{048404C6-8441-474E-AF78-65E990EB879F}.Debug|x86.Build.0 = Debug|x86
+		{048404C6-8441-474E-AF78-65E990EB879F}.Debug|x86.Deploy.0 = Debug|x86
+		{048404C6-8441-474E-AF78-65E990EB879F}.Release|ARM.ActiveCfg = Release|ARM
+		{048404C6-8441-474E-AF78-65E990EB879F}.Release|ARM.Build.0 = Release|ARM
+		{048404C6-8441-474E-AF78-65E990EB879F}.Release|ARM.Deploy.0 = Release|ARM
+		{048404C6-8441-474E-AF78-65E990EB879F}.Release|ARM64.ActiveCfg = Release|ARM64
+		{048404C6-8441-474E-AF78-65E990EB879F}.Release|ARM64.Build.0 = Release|ARM64
+		{048404C6-8441-474E-AF78-65E990EB879F}.Release|ARM64.Deploy.0 = Release|ARM64
+		{048404C6-8441-474E-AF78-65E990EB879F}.Release|x64.ActiveCfg = Release|x64
+		{048404C6-8441-474E-AF78-65E990EB879F}.Release|x64.Build.0 = Release|x64
+		{048404C6-8441-474E-AF78-65E990EB879F}.Release|x64.Deploy.0 = Release|x64
+		{048404C6-8441-474E-AF78-65E990EB879F}.Release|x86.ActiveCfg = Release|x86
+		{048404C6-8441-474E-AF78-65E990EB879F}.Release|x86.Build.0 = Release|x86
+		{048404C6-8441-474E-AF78-65E990EB879F}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5} = {0FC1A879-2B63-4D3E-9FF8-81F0D6E91AF0}
+		{048404C6-8441-474E-AF78-65E990EB879F} = {2E367DB4-F17D-41A9-AC2B-D81F4ECFEAF0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F465CF84-B29B-46DD-92DC-975C373B7F86}

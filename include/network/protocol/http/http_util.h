@@ -87,14 +87,14 @@ class HttpUtil {
   // Token = 1*<any CHAR except CTLs or separators>
   static bool IsToken(const std::string& str) {
     if (!str.length()) return false;
-    for (auto i = 0; i < str.length(); i++) {
+    for (std::size_t i = 0; i < str.length(); i++) {
       if (IsCTL(str[i]) || IsSeparator(str[i])) return false;
     }
     return true;
   }
   // TEXT = <any OCTET except CTLs, but including LWS>
   static bool IsTEXT(const std::string& str) {
-    for (auto i = 0; i < str.length(); i++) {
+    for (std::size_t i = 0; i < str.length(); i++) {
       if (IsCTL(str[i])) return false;
     }
     return true;

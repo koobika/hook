@@ -20,28 +20,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\include\base\buffer.h">
+    <ClInclude Include="..\..\..\..\include\base\auto_buffer.h">
       <Filter>include\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\base\builder_interface.h">
+    <ClInclude Include="..\..\..\..\include\base\builder.h">
       <Filter>include\base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\base\builder_property.h">
       <Filter>include\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\base\key_value_store.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\base\platform.h">
       <Filter>include\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\base\repository_interface.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\base\repository_memory.h">
-      <Filter>include\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\base\string_export_interface.h">
+    <ClInclude Include="..\..\..\..\include\base\serializable.h">
       <Filter>include\base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\base\uri.h">
@@ -50,60 +41,18 @@
     <ClInclude Include="..\..\..\..\include\base\uri_query.h">
       <Filter>include\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\base\uri_reader_interface.h">
+    <ClInclude Include="..\..\..\..\include\base\uri_reader.h">
       <Filter>include\base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\base\variant.h">
       <Filter>include\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\structured\json\json_array.h">
-      <Filter>include\structured\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\structured\json\json_false.h">
-      <Filter>include\structured\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\structured\json\json_id.h">
-      <Filter>include\structured\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\structured\json\json_null.h">
-      <Filter>include\structured\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\structured\json\json_number.h">
-      <Filter>include\structured\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\structured\json\json_number_type.h">
-      <Filter>include\structured\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\structured\json\json_object.h">
-      <Filter>include\structured\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\structured\json\json_string.h">
-      <Filter>include\structured\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\structured\json\json_true.h">
-      <Filter>include\structured\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\structured\json\json_value.h">
-      <Filter>include\structured\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\structured\json\json_value_type.h">
+    <ClInclude Include="..\..\..\..\include\structured\json\value.h">
       <Filter>include\structured\json</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\src\examples\structured\json\hello_world.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\examples\structured\json\basic_types.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\examples\structured\json\objects.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\examples\structured\json\arrays.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\examples\structured\json\import.cpp">
+    <ClCompile Include="..\..\..\..\src\examples\structured\json_hello_world.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

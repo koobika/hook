@@ -33,6 +33,8 @@
 
 #include <stdio.h>
 
+#include <sstream>
+#include <cstring>
 #include <mutex>
 #include <string>
 #include <variant>
@@ -236,8 +238,8 @@ class AutoBuffer {
     static std::mutex counter_lock_;
     static char filename[kMaxFilenameLength] = {0};
     std::unique_lock<std::mutex> unique{counter_lock_};
-    auto result = snprintf(filename, kMaxFilenameLength, "%s%010d.%s",
-                           kFilenameBase_, counter_++, kFilenameExt_);
+    std::size_t result = snprintf(filename, kMaxFilenameLength, "%s%010d.%s",
+                                  kFilenameBase_, counter_++, kFilenameExt_);
     if (result <= 0 || result >= kMaxFilenameLength) {
       // ((Error)) -> trying to build filename!
       // ((To-Do)) -> raise an exception?
@@ -267,9 +269,8 @@ class AutoBuffer {
     if (memory_mode_) {
       if ((data_.write_cursor + length) > kDefaultMemoryBufferLimit) {
         auto filename = getNextFilename();
-        FILE* file = nullptr;
-        errno_t result = fopen_s(&file, filename.c_str(), "w+b");
-        if (!result) {
+        FILE* file = fopen(filename.c_str(), "w+b");
+        if (file) {
           auto old_buffer = data_.buffer;
           auto old_length = Length();
           memory_mode_ = false;
@@ -289,10 +290,9 @@ class AutoBuffer {
         }
       }
     } else if (data_.file == nullptr) {
-      FILE* file = nullptr;
       auto filename = getNextFilename();
-      errno_t result = fopen_s(&file, filename.c_str(), "w+b");
-      if (!result) {
+      FILE* file = fopen(filename.c_str(), "w+b");
+      if (file) {
         data_.file = file;
         data_.filename = filename;
       } else {
