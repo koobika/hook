@@ -1,13 +1,18 @@
 ﻿// /////////////////////////////////////////////////////////////////////////////
-//   ██░ ██  ▒█████   ▒█████   ██ ▄█▀
-//  ▓██░ ██▒▒██▒  ██▒▒██▒  ██▒ ██▄█▒
-//  ▒██▀▀██░▒██░  ██▒▒██░  ██▒▓███▄░
-//  ░▓█ ░██ ▒██   ██░▒██   ██░▓██ █▄
-//  ░▓█▒░██▓░ ████▓▒░░ ████▓▒░▒██▒ █▄
-//   ▒ ░░▒░▒░ ▒░▒░▒░ ░ ▒░▒░▒░ ▒ ▒▒ ▓▒
-//   ▒ ░▒░ ░  ░ ▒ ▒░   ░ ▒ ▒░ ░ ░▒ ▒░
-//   ░  ░░ ░░ ░ ░ ▒  ░ ░ ░ ▒  ░ ░░ ░
-//   ░  ░  ░    ░ ░      ░ ░  ░  ░
+//
+//       ╓▄▓▓▓▓▓▓▓▄╖      ╓▄▓▓▓▓▓▓▓▄╖
+//    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
+//  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
+//  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
+// ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
+// ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
+//  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
+//   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`  ╒▓▓▓▓▓▓▓▓▓▓▓▓▓'
+//      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
+//          `"""`            `"""`
+// -----------------------------------------------------------------------------
+// base/uri_query.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -31,8 +36,7 @@
 #ifndef koobika_hook_base_uriquery_h
 #define koobika_hook_base_uriquery_h
 
-#include <optional>
-#include <string>
+#include "base/platform.h"
 
 namespace koobika::hook::base {
 // =============================================================================
@@ -42,23 +46,23 @@ namespace koobika::hook::base {
 // =============================================================================
 class UriQuery {
  public:
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // ---------------------------------------------------------------------------
+  //
   UriQuery() = default;
   UriQuery(const std::string& content) : content_{content} {}
   UriQuery(const char* content) : content_{content} {}
   UriQuery(const UriQuery&) = default;
   UriQuery(UriQuery&&) noexcept = default;
   ~UriQuery() = default;
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // ---------------------------------------------------------------------------
+  //
   UriQuery& operator=(const UriQuery&) = default;
   UriQuery& operator=(UriQuery&&) noexcept = default;
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // ---------------------------------------------------------------------------
+  //
   // Sets the stored content.
   void Set(const std::string& content) { content_ = content; }
   // Returns the stored content as an string.
@@ -68,10 +72,10 @@ class UriQuery {
     std::size_t pos = 1;
     do {
       if (pos >= content_.length()) break;
-      auto amp_pos = content_.find(kAmpersand, pos);
+      auto amp_pos = content_.find(kAmpersand_, pos);
       if (amp_pos == std::string::npos) amp_pos = content_.length();
       auto sub = content_.substr(pos, amp_pos - pos);
-      auto equ_pos = sub.find(kEquals);
+      auto equ_pos = sub.find(kEquals_);
       if (equ_pos != std::string::npos) {
         auto nam = sub.substr(0, equ_pos);
         auto val = sub.substr(equ_pos + 1);
@@ -85,14 +89,14 @@ class UriQuery {
   }
 
  private:
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // CONSTANTs                                                       ( private )
-  // ---------------------------------------------------------------------------
-  static constexpr char kAmpersand = '&';
-  static constexpr char kEquals = '=';
-  // ---------------------------------------------------------------------------
+  //
+  static constexpr char kAmpersand_ = '&';
+  static constexpr char kEquals_ = '=';
+  // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
-  // ---------------------------------------------------------------------------
+  //
   std::string content_;
 };
 }  // namespace koobika::hook::base

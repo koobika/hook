@@ -1,16 +1,18 @@
 ﻿// /////////////////////////////////////////////////////////////////////////////
-//   ██░ ██  ▒█████   ▒█████   ██ ▄█▀
-//  ▓██░ ██▒▒██▒  ██▒▒██▒  ██▒ ██▄█▒
-//  ▒██▀▀██░▒██░  ██▒▒██░  ██▒▓███▄░
-//  ░▓█ ░██ ▒██   ██░▒██   ██░▓██ █▄
-//  ░▓█▒░██▓░ ████▓▒░░ ████▓▒░▒██▒ █▄
-//   ▒ ░░▒░▒░ ▒░▒░▒░ ░ ▒░▒░▒░ ▒ ▒▒ ▓▒
-//   ▒ ░▒░ ░  ░ ▒ ▒░   ░ ▒ ▒░ ░ ░▒ ▒░
-//   ░  ░░ ░░ ░ ░ ▒  ░ ░ ░ ▒  ░ ░░ ░
-//   ░  ░  ░    ░ ░      ░ ░  ░  ░
+//
+//       ╓▄▓▓▓▓▓▓▓▄╖      ╓▄▓▓▓▓▓▓▓▄╖
+//    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
+//  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
+//  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
+// ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
+// ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
+//  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
+//   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`  ╒▓▓▓▓▓▓▓▓▓▓▓▓▓'
+//      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
+//          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// Copyright (c) 2021 koobika corporation. All rights reserved.
-// Author: Marcos Rojas (mrojas@koobika.org).
+// base/platform.h
 // -----------------------------------------------------------------------------
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -40,10 +42,12 @@
 #include <mstcpip.h>
 #include <iostream>
 #include <wbemidl.h>
+#pragma warning(disable : 4996)
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "wbemuuid.lib")
 #pragma comment(lib, "Mswsock.lib")
 #elif __linux__
+#include <fcntl.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -56,5 +60,14 @@
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
 #endif
+
+#include <memory>
+#include <cstring>
+#include <iostream>
+#include <mutex>
+#include <sstream>
+#include <string>
+#include <variant>
+#include <optional>
 
 #endif

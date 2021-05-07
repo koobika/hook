@@ -1,13 +1,18 @@
 ﻿// /////////////////////////////////////////////////////////////////////////////
-//   ██░ ██  ▒█████   ▒█████   ██ ▄█▀
-//  ▓██░ ██▒▒██▒  ██▒▒██▒  ██▒ ██▄█▒
-//  ▒██▀▀██░▒██░  ██▒▒██░  ██▒▓███▄░
-//  ░▓█ ░██ ▒██   ██░▒██   ██░▓██ █▄
-//  ░▓█▒░██▓░ ████▓▒░░ ████▓▒░▒██▒ █▄
-//   ▒ ░░▒░▒░ ▒░▒░▒░ ░ ▒░▒░▒░ ▒ ▒▒ ▓▒
-//   ▒ ░▒░ ░  ░ ▒ ▒░   ░ ▒ ▒░ ░ ░▒ ▒░
-//   ░  ░░ ░░ ░ ░ ▒  ░ ░ ░ ▒  ░ ░░ ░
-//   ░  ░  ░    ░ ░      ░ ░  ░  ░
+//
+//       ╓▄▓▓▓▓▓▓▓▄╖      ╓▄▓▓▓▓▓▓▓▄╖
+//    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
+//  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
+//  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
+// ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
+// ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
+//  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
+//   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`  ╒▓▓▓▓▓▓▓▓▓▓▓▓▓'
+//      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
+//          `"""`            `"""`
+// -----------------------------------------------------------------------------
+// network/protocol/http/http_encoding_types.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -40,8 +45,7 @@ namespace koobika::hook::network::protocol::http {
 enum class HttpEncodingType {
   kNone,              // Data has no encoding type (not available).
   kContentLength,     // Data is being encoded using 'Content-Length' type.
-  kTransferEncoding,  // Data is being encoded using 'Transfer-Encoding'
-                      // encoding.
+  kTransferEncoding,  // Data is being encoded using 'Transfer-Encoding'.
   kMultipart          // Data is being endoded as 'Multipart'.
 };
 }  // namespace koobika::hook::network::protocol::http

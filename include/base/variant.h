@@ -1,13 +1,18 @@
 ﻿// /////////////////////////////////////////////////////////////////////////////
-//   ██░ ██  ▒█████   ▒█████   ██ ▄█▀
-//  ▓██░ ██▒▒██▒  ██▒▒██▒  ██▒ ██▄█▒
-//  ▒██▀▀██░▒██░  ██▒▒██░  ██▒▓███▄░
-//  ░▓█ ░██ ▒██   ██░▒██   ██░▓██ █▄
-//  ░▓█▒░██▓░ ████▓▒░░ ████▓▒░▒██▒ █▄
-//   ▒ ░░▒░▒░ ▒░▒░▒░ ░ ▒░▒░▒░ ▒ ▒▒ ▓▒
-//   ▒ ░▒░ ░  ░ ▒ ▒░   ░ ▒ ▒░ ░ ░▒ ▒░
-//   ░  ░░ ░░ ░ ░ ▒  ░ ░ ░ ▒  ░ ░░ ░
-//   ░  ░  ░    ░ ░      ░ ░  ░  ░
+//
+//       ╓▄▓▓▓▓▓▓▓▄╖      ╓▄▓▓▓▓▓▓▓▄╖
+//    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
+//  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
+//  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
+// ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
+// ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
+//  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
+//   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`  ╒▓▓▓▓▓▓▓▓▓▓▓▓▓'
+//      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
+//          `"""`            `"""`
+// -----------------------------------------------------------------------------
+// base/variant.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -31,9 +36,7 @@
 #ifndef koobika_hook_base_variant_h
 #define koobika_hook_base_variant_h
 
-#include <optional>
-#include <string>
-#include <variant>
+#include "base/platform.h"
 
 namespace koobika::hook::base {
 // =============================================================================
@@ -43,9 +46,9 @@ namespace koobika::hook::base {
 // =============================================================================
 class Variant {
  public:
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // ---------------------------------------------------------------------------
+  //
   Variant() : data_{} {}
   Variant(const Variant& in) { set(in); }
   Variant(Variant&& in) noexcept { set(std::move(in)); }
@@ -63,9 +66,9 @@ class Variant {
   Variant(const char* in) { operator=(in); }
   Variant(const std::string& in) { operator=(in); }
   ~Variant() = default;
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // ---------------------------------------------------------------------------
+  //
   Variant& operator=(const Variant& in) { return set(in); }
   Variant& operator=(Variant&& in) noexcept { return set(std::move(in)); }
   Variant& operator=(const bool& value) { return set(value); }
@@ -81,9 +84,9 @@ class Variant {
   Variant& operator=(const double& value) { return set(value); }
   Variant& operator=(const char* value) { return set(value); }
   Variant& operator=(const std::string& value) { return set(value); }
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // ---------------------------------------------------------------------------
+  //
   // Returns the stored value (if any) using the provided type specifier.
   template <typename OUty>
   std::optional<OUty> Get() const {
@@ -122,9 +125,9 @@ class Variant {
   }
 
  private:
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // METHODs                                                         ( private )
-  // ---------------------------------------------------------------------------
+  //
   // Copies provided variant to the internal one.
   Variant& set(const Variant& in) {
     data_ = in.data_;
@@ -151,9 +154,9 @@ class Variant {
     data_ = in;
     return *this;
   }
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // CONSTANTs                                                       ( private )
-  // ---------------------------------------------------------------------------
+  //
   static constexpr int kMonostate_ = 0;
   static constexpr int kBool_ = 1;
   static constexpr int kUnsignedChar_ = 2;
@@ -167,9 +170,9 @@ class Variant {
   static constexpr int kFloat_ = 10;
   static constexpr int kDouble_ = 11;
   static constexpr int kString_ = 12;
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
-  // ---------------------------------------------------------------------------
+  //
   std::variant<std::monostate, bool, unsigned char, char, unsigned short, short,
                unsigned int, int, unsigned long, long, float, double,
                std::string>

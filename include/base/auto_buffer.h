@@ -1,13 +1,18 @@
 ﻿// /////////////////////////////////////////////////////////////////////////////
-//   ██░ ██  ▒█████   ▒█████   ██ ▄█▀
-//  ▓██░ ██▒▒██▒  ██▒▒██▒  ██▒ ██▄█▒
-//  ▒██▀▀██░▒██░  ██▒▒██░  ██▒▓███▄░
-//  ░▓█ ░██ ▒██   ██░▒██   ██░▓██ █▄
-//  ░▓█▒░██▓░ ████▓▒░░ ████▓▒░▒██▒ █▄
-//   ▒ ░░▒░▒░ ▒░▒░▒░ ░ ▒░▒░▒░ ▒ ▒▒ ▓▒
-//   ▒ ░▒░ ░  ░ ▒ ▒░   ░ ▒ ▒░ ░ ░▒ ▒░
-//   ░  ░░ ░░ ░ ░ ▒  ░ ░ ░ ▒  ░ ░░ ░
-//   ░  ░  ░    ░ ░      ░ ░  ░  ░
+//
+//       ╓▄▓▓▓▓▓▓▓▄╖      ╓▄▓▓▓▓▓▓▓▄╖
+//    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
+//  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
+//  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
+// ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
+// ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
+//  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
+//   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`  ╒▓▓▓▓▓▓▓▓▓▓▓▓▓'
+//      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
+//          `"""`            `"""`
+// -----------------------------------------------------------------------------
+// base/auto_buffer.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -31,13 +36,7 @@
 #ifndef koobika_hook_base_autobuffer_h
 #define koobika_hook_base_autobuffer_h
 
-#include <stdio.h>
-
-#include <sstream>
-#include <cstring>
-#include <mutex>
-#include <string>
-#include <variant>
+#include "base/platform.h"
 
 namespace koobika::hook::base {
 // =============================================================================
@@ -47,9 +46,9 @@ namespace koobika::hook::base {
 // =============================================================================
 class AutoBuffer {
  public:
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // ---------------------------------------------------------------------------
+  //
   AutoBuffer() = default;
   AutoBuffer(const std::string& str) { Write(str); }
   AutoBuffer(const char& character) { Write(character); }
@@ -59,9 +58,9 @@ class AutoBuffer {
   AutoBuffer(const AutoBuffer& buffer) { operator=(buffer); }
   AutoBuffer(AutoBuffer&& buffer) noexcept { operator=(std::move(buffer)); }
   ~AutoBuffer() { Close(); }
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // ---------------------------------------------------------------------------
+  //
   AutoBuffer& operator=(const AutoBuffer& buffer) {
     data_.read_cursor = 0;
     data_.write_cursor = 0;
@@ -79,39 +78,39 @@ class AutoBuffer {
     buffer.data_.write_cursor = 0;
     buffer.data_.file = nullptr;
     buffer.data_.filename.clear();
-    buffer.memory_limit_ = kDefaultMemoryBufferLimit;
+    buffer.memory_limit_ = kDefaultMemoryBufferLimit_;
     buffer.memory_mode_ = true;
     return *this;
   }
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // ---------------------------------------------------------------------------
+  //
   // Writes the specified AutoBuffer to the internal buffer.
   AutoBuffer& Write(const AutoBuffer& buffer) {
     buffer.Flush();
-    char tmp_buffer[kReadSomeBufferSize];
-    while (auto sz = buffer.ReadSome(tmp_buffer, kReadSomeBufferSize)) {
-      Write_(tmp_buffer, sz);
+    char tmp_buffer[kReadSomeBufferSize_];
+    while (auto sz = buffer.ReadSome(tmp_buffer, kReadSomeBufferSize_)) {
+      write(tmp_buffer, sz);
     }
     return *this;
   }
   // Writes the specified std::string to the internal buffer.
   AutoBuffer& Write(const std::string& str) {
-    return Write_((void*)str.data(), str.length());
+    return write((void*)str.data(), str.length());
   }
   // Writes the specified char to the internal buffer.
   AutoBuffer& Write(const char& character) {
-    return Write_((void*)&character, 0x1);
+    return write((void*)&character, 0x1);
   }
   // Writes the specified char* to the internal buffer.
-  AutoBuffer& Write(const char* str) { return Write_((void*)str, strlen(str)); }
+  AutoBuffer& Write(const char* str) { return write((void*)str, strlen(str)); }
   // Writes the specified char* + length to the internal buffer.
   AutoBuffer& Write(const char* str, const std::size_t& length) {
-    return Write_((void*)str, length);
+    return write((void*)str, length);
   }
   // Writes the specified void* + length to the internal buffer.
   AutoBuffer& Write(void* buffer, const std::size_t& length) {
-    return Write_(buffer, length);
+    return write(buffer, length);
   }
   // Closes current AutoBuffer.
   void Close() {
@@ -181,15 +180,15 @@ class AutoBuffer {
   }
   // Reads all the stored bytes (if available).
   void ReadAll(std::string& out) const {
-    char tmp_buffer[kReadSomeBufferSize];
-    while (auto sz = ReadSome(tmp_buffer, kReadSomeBufferSize)) {
+    char tmp_buffer[kReadSomeBufferSize_];
+    while (auto sz = ReadSome(tmp_buffer, kReadSomeBufferSize_)) {
       out.append(tmp_buffer, sz);
     }
   }
   // Reads all the stored bytes (if available).
   void ReadAll(std::stringstream& out) const {
-    char tmp_buffer[kReadSomeBufferSize];
-    while (auto sz = ReadSome(tmp_buffer, kReadSomeBufferSize)) {
+    char tmp_buffer[kReadSomeBufferSize_];
+    while (auto sz = ReadSome(tmp_buffer, kReadSomeBufferSize_)) {
       out << std::string_view{tmp_buffer, sz};
     }
   }
@@ -204,21 +203,21 @@ class AutoBuffer {
   }
 
  private:
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // CONSTANTs                                                       ( private )
-  // ---------------------------------------------------------------------------
-  static constexpr std::size_t kDefaultMemoryBufferLimit = 65536;
-  static constexpr std::size_t kReadSomeBufferSize = 4096;
-  static constexpr std::size_t kMaxFilenameLength = 32;
+  //
+  static constexpr std::size_t kDefaultMemoryBufferLimit_ = 65536;
+  static constexpr std::size_t kReadSomeBufferSize_ = 4096;
+  static constexpr std::size_t kMaxFilenameLength_ = 32;
   static constexpr char kFilenameBase_[] = "autobuffer_tmp_";
   static constexpr char kFilenameExt_[] = "dat";
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // STATIC-ATTRIBUTEs                                               ( private )
-  // ---------------------------------------------------------------------------
+  //
   static inline int32_t counter_ = 0;
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // TYPEs                                                           ( private )
-  // ---------------------------------------------------------------------------
+  //
   struct Data {
     // Memory buffer.
     void* buffer = nullptr;
@@ -236,11 +235,11 @@ class AutoBuffer {
   // Gets next buffer filename.
   static std::string getNextFilename() {
     static std::mutex counter_lock_;
-    static char filename[kMaxFilenameLength] = {0};
+    static char filename[kMaxFilenameLength_] = {0};
     std::unique_lock<std::mutex> unique{counter_lock_};
-    std::size_t result = snprintf(filename, kMaxFilenameLength, "%s%010d.%s",
+    std::size_t result = snprintf(filename, kMaxFilenameLength_, "%s%010d.%s",
                                   kFilenameBase_, counter_++, kFilenameExt_);
-    if (result <= 0 || result >= kMaxFilenameLength) {
+    if (result <= 0 || result >= kMaxFilenameLength_) {
       // ((Error)) -> trying to build filename!
       // ((To-Do)) -> raise an exception?
     }
@@ -267,7 +266,7 @@ class AutoBuffer {
   // Checks for the current size (in memory) and switches to disk (if needed).
   void checkAndSwitch(const std::size_t& length) {
     if (memory_mode_) {
-      if ((data_.write_cursor + length) > kDefaultMemoryBufferLimit) {
+      if ((data_.write_cursor + length) > kDefaultMemoryBufferLimit_) {
         auto filename = getNextFilename();
         FILE* file = fopen(filename.c_str(), "w+b");
         if (file) {
@@ -279,7 +278,7 @@ class AutoBuffer {
           data_.read_cursor = 0;
           data_.write_cursor = 0;
           if (old_buffer != nullptr) {
-            Write_(old_buffer, old_length);
+            write(old_buffer, old_length);
             free(old_buffer);
           }
           data_.buffer = nullptr;
@@ -302,7 +301,7 @@ class AutoBuffer {
     }
   }
   // Adds the specified buffer fragment to the internal decoder data.
-  AutoBuffer& Write_(void* buffer, const std::size_t& length) {
+  AutoBuffer& write(void* buffer, const std::size_t& length) {
     checkAndSwitch(length);
     if (memory_mode_) {
       allocate(length);
@@ -322,13 +321,12 @@ class AutoBuffer {
     data_.write_cursor += length;
     return *this;
   }
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
-  // ---------------------------------------------------------------------------
-  // Controls the current mode (memory/disk). By default: memory.
+  //
   bool memory_mode_ = true;
   // Memory buffer limit.
-  std::size_t memory_limit_ = kDefaultMemoryBufferLimit;
+  std::size_t memory_limit_ = kDefaultMemoryBufferLimit_;
   // Stores the information withing this AutoBuffer.
   mutable Data data_;
 };

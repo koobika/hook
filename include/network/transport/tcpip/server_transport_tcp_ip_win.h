@@ -1,13 +1,18 @@
 ﻿// /////////////////////////////////////////////////////////////////////////////
-//   ██░ ██  ▒█████   ▒█████   ██ ▄█▀
-//  ▓██░ ██▒▒██▒  ██▒▒██▒  ██▒ ██▄█▒
-//  ▒██▀▀██░▒██░  ██▒▒██░  ██▒▓███▄░
-//  ░▓█ ░██ ▒██   ██░▒██   ██░▓██ █▄
-//  ░▓█▒░██▓░ ████▓▒░░ ████▓▒░▒██▒ █▄
-//   ▒ ░░▒░▒░ ▒░▒░▒░ ░ ▒░▒░▒░ ▒ ▒▒ ▓▒
-//   ▒ ░▒░ ░  ░ ▒ ▒░   ░ ▒ ▒░ ░ ░▒ ▒░
-//   ░  ░░ ░░ ░ ░ ▒  ░ ░ ░ ▒  ░ ░░ ░
-//   ░  ░  ░    ░ ░      ░ ░  ░  ░
+//
+//       ╓▄▓▓▓▓▓▓▓▄╖      ╓▄▓▓▓▓▓▓▓▄╖
+//    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
+//  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
+//  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
+// ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
+// ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
+//  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
+//   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`  ╒▓▓▓▓▓▓▓▓▓▓▓▓▓'
+//      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
+//          `"""`            `"""`
+// -----------------------------------------------------------------------------
+// network/transport/tcpip/server_transport_tcp_ip_win.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -54,47 +59,47 @@ namespace koobika::hook::network::transport::tcpip {
 // =============================================================================
 template <typename DEty>
 class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // USINGs                                                          ( private )
-  // ---------------------------------------------------------------------------
+  // 
   using Interface = ServerTransport<SOCKET, DEty>;
 
  public:
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // ---------------------------------------------------------------------------
+  // 
   ServerTransportTcpIp() = default;
   ServerTransportTcpIp(const ServerTransportTcpIp&) = delete;
   ServerTransportTcpIp(ServerTransportTcpIp&&) noexcept = delete;
   ~ServerTransportTcpIp() { Stop(); };
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // ---------------------------------------------------------------------------
+  // 
   ServerTransportTcpIp& operator=(const ServerTransportTcpIp&) = delete;
   ServerTransportTcpIp& operator=(ServerTransportTcpIp&&) noexcept = delete;
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // ---------------------------------------------------------------------------
+  // 
   // Starts current transport activity using the provided (json) configuration.
-  void Start(const structured::json::JsonObject& configuration,
+  void Start(const structured::json::Object& configuration,
              const typename DEty::RequestHandler& request_handler) override {
     if (io_port_ != INVALID_HANDLE_VALUE) {
       // ((Error)) -> transport already initialized!
       throw std::logic_error("Already initialized transport!");
     }
     // let's retrieve all needed parameters for this transport..
-    auto const& port = (const structured::json::JsonString&)
+    std::string port =
         configuration[transport::ServerTransportConstants::kPortKey];
-    auto const& number_of_workers = (const structured::json::JsonNumber&)
+    int number_of_workers =
         configuration[transport::ServerTransportConstants::kNumberOfWorkersKey];
-    auto const& max_connections = (const structured::json::JsonNumber&)
+    int max_connections =
         configuration[transport::ServerTransportConstants::kMaxConnectionsKey];
     // let's assign the user-specified request handler function..
     request_handler_ = request_handler;
     // let's setup all the required resources..
     setupWinsock();
-    setupListener(port.Get(), number_of_workers.Get<int>());
-    setupWorkers(number_of_workers.Get<int>());
+    setupListener(port, number_of_workers);
+    setupWorkers(number_of_workers);
     // let's start incoming connections loop!
     while (true) {
       SOCKET client = WSAAccept(accept_socket_, NULL, NULL, NULL, NULL);
@@ -164,9 +169,9 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
   }
 
  private:
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // TYPEs                                                           ( private )
-  // ---------------------------------------------------------------------------
+  // 
   struct Context {
     WSAOVERLAPPED overlapped;
     WSABUF data;
@@ -181,9 +186,9 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     }
     ~Context() { delete[] data.buf; }
   };
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // METHODs                                                         ( private )
-  // ---------------------------------------------------------------------------
+  // 
   // Sets-up winsock resources.
   void setupWinsock() {
     struct WsaInitializer_ {
@@ -316,9 +321,9 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
       }));
     }
   }
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
-  // ---------------------------------------------------------------------------
+  // 
   HANDLE io_port_ = INVALID_HANDLE_VALUE;
   SOCKET accept_socket_ = INVALID_SOCKET;
   std::queue<std::shared_ptr<std::thread>> threads_;

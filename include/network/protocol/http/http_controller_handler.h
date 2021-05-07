@@ -1,13 +1,18 @@
 ﻿// /////////////////////////////////////////////////////////////////////////////
-//   ██░ ██  ▒█████   ▒█████   ██ ▄█▀
-//  ▓██░ ██▒▒██▒  ██▒▒██▒  ██▒ ██▄█▒
-//  ▒██▀▀██░▒██░  ██▒▒██░  ██▒▓███▄░
-//  ░▓█ ░██ ▒██   ██░▒██   ██░▓██ █▄
-//  ░▓█▒░██▓░ ████▓▒░░ ████▓▒░▒██▒ █▄
-//   ▒ ░░▒░▒░ ▒░▒░▒░ ░ ▒░▒░▒░ ▒ ▒▒ ▓▒
-//   ▒ ░▒░ ░  ░ ▒ ▒░   ░ ▒ ▒░ ░ ░▒ ▒░
-//   ░  ░░ ░░ ░ ░ ▒  ░ ░ ░ ▒  ░ ░░ ░
-//   ░  ░  ░    ░ ░      ░ ░  ░  ░
+//
+//       ╓▄▓▓▓▓▓▓▓▄╖      ╓▄▓▓▓▓▓▓▓▄╖
+//    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
+//  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
+//  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
+// ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
+// ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
+//  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
+//   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`  ╒▓▓▓▓▓▓▓▓▓▓▓▓▓'
+//      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
+//          `"""`            `"""`
+// -----------------------------------------------------------------------------
+// network/protocol/http/http_controller_handler.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -44,9 +49,9 @@ namespace koobika::hook::network::protocol::http {
 // =============================================================================
 class HttpControllerHandler {
  public:
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // ---------------------------------------------------------------------------
+  // 
   HttpControllerHandler(HttpRouter* parent, const std::string& route,
                         const typename HttpRoutesTypes::Handler& handler,
                         const HttpMethodValue& method) {
@@ -60,9 +65,9 @@ class HttpControllerHandler {
   HttpControllerHandler(const HttpControllerHandler&) = delete;
   HttpControllerHandler(HttpControllerHandler&&) noexcept = delete;
   virtual ~HttpControllerHandler() = default;
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // ---------------------------------------------------------------------------
+  // 
   HttpControllerHandler& operator=(const HttpControllerHandler&) = delete;
   HttpControllerHandler& operator=(HttpControllerHandler&&) noexcept = delete;
 };

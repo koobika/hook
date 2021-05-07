@@ -1,13 +1,18 @@
 ﻿// /////////////////////////////////////////////////////////////////////////////
-//   ██░ ██  ▒█████   ▒█████   ██ ▄█▀
-//  ▓██░ ██▒▒██▒  ██▒▒██▒  ██▒ ██▄█▒
-//  ▒██▀▀██░▒██░  ██▒▒██░  ██▒▓███▄░
-//  ░▓█ ░██ ▒██   ██░▒██   ██░▓██ █▄
-//  ░▓█▒░██▓░ ████▓▒░░ ████▓▒░▒██▒ █▄
-//   ▒ ░░▒░▒░ ▒░▒░▒░ ░ ▒░▒░▒░ ▒ ▒▒ ▓▒
-//   ▒ ░▒░ ░  ░ ▒ ▒░   ░ ▒ ▒░ ░ ░▒ ▒░
-//   ░  ░░ ░░ ░ ░ ▒  ░ ░ ░ ▒  ░ ░░ ░
-//   ░  ░  ░    ░ ░      ░ ░  ░  ░
+//
+//       ╓▄▓▓▓▓▓▓▓▄╖      ╓▄▓▓▓▓▓▓▓▄╖
+//    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
+//  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
+//  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
+// ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
+// ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
+//  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
+//   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`  ╒▓▓▓▓▓▓▓▓▓▓▓▓▓'
+//      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
+//          `"""`            `"""`
+// -----------------------------------------------------------------------------
+// network/protocol/http/http_server_base.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -43,7 +48,7 @@
 #include "auth/modules/basic.h"
 #include "auth/modules/no_auth.h"
 #include "auth/modules/api_key.h"
-#include "structured/json/json_object.h"
+#include "structured/json/value.h"
 #include "network/transport/server_transport_constants.h"
 
 namespace koobika::hook::network::protocol::http {
@@ -61,9 +66,9 @@ namespace koobika::hook::network::protocol::http {
 template <typename TRty, typename ROty>
 class HttpServerBase : public HttpRoutesManager {
  public:
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // ---------------------------------------------------------------------------
+  // 
   HttpServerBase(
       const int& workers_number =
           transport::ServerTransportConstants::kNumberOfWorkersValue,
@@ -74,19 +79,19 @@ class HttpServerBase : public HttpRoutesManager {
     configuration_[transport::ServerTransportConstants::kMaxConnectionsKey] =
         maximum_number_of_connections;
   }
-  HttpServerBase(const structured::json::JsonObject& configuration)
-      : configuration_{configuration} {}
+  HttpServerBase(const structured::json::Object& configuration)
+      : configuration_(configuration) {}
   HttpServerBase(const HttpServerBase&) = delete;
   HttpServerBase(HttpServerBase&&) noexcept = delete;
   ~HttpServerBase() { Stop(); }
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // ---------------------------------------------------------------------------
+  // 
   HttpServerBase& operator=(const HttpServerBase&) = delete;
   HttpServerBase& operator=(HttpServerBase&&) noexcept = delete;
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // ---------------------------------------------------------------------------
+  // 
   // Starts server activity uwing the provided port.
   void Start(const std::string& port) {
     if (transport_ != nullptr) {
@@ -238,13 +243,13 @@ class HttpServerBase : public HttpRoutesManager {
   }
 
  private:
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
-  // ---------------------------------------------------------------------------
+  // 
   ROty router_;
   std::shared_ptr<TRty> transport_;
   std::shared_ptr<std::thread> transport_thread_;
-  structured::json::JsonObject configuration_;
+  structured::json::Object configuration_;
 };
 }  // namespace koobika::hook::network::protocol::http
 

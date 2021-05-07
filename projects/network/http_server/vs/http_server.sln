@@ -7,9 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "windows", "windows", "{0FC1
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "linux", "linux", "{2E367DB4-F17D-41A9-AC2B-D81F4ECFEAF0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "http_server", "http_server_windows.vcxproj", "{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "http_server_windows", "windows\http_server_windows.vcxproj", "{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "httpserver", "http_server_linux.vcxproj", "{048404C6-8441-474E-AF78-65E990EB879F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "http_server_linux", "linux\http_server_linux.vcxproj", "{048404C6-8441-474E-AF78-65E990EB879F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

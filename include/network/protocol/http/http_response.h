@@ -1,13 +1,18 @@
 ﻿// /////////////////////////////////////////////////////////////////////////////
-//   ██░ ██  ▒█████   ▒█████   ██ ▄█▀
-//  ▓██░ ██▒▒██▒  ██▒▒██▒  ██▒ ██▄█▒
-//  ▒██▀▀██░▒██░  ██▒▒██░  ██▒▓███▄░
-//  ░▓█ ░██ ▒██   ██░▒██   ██░▓██ █▄
-//  ░▓█▒░██▓░ ████▓▒░░ ████▓▒░▒██▒ █▄
-//   ▒ ░░▒░▒░ ▒░▒░▒░ ░ ▒░▒░▒░ ▒ ▒▒ ▓▒
-//   ▒ ░▒░ ░  ░ ▒ ▒░   ░ ▒ ▒░ ░ ░▒ ▒░
-//   ░  ░░ ░░ ░ ░ ▒  ░ ░ ░ ▒  ░ ░░ ░
-//   ░  ░  ░    ░ ░      ░ ░  ░  ░
+//
+//       ╓▄▓▓▓▓▓▓▓▄╖      ╓▄▓▓▓▓▓▓▓▄╖
+//    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
+//  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
+//  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
+// ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
+// ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
+//  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
+//   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`  ╒▓▓▓▓▓▓▓▓▓▓▓▓▓'
+//      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
+//          `"""`            `"""`
+// -----------------------------------------------------------------------------
+// network/protocol/http/http_response.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -48,23 +53,23 @@ namespace koobika::hook::network::protocol::http {
 // =============================================================================
 class HttpResponse : public base::Serializable {
  public:
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // ---------------------------------------------------------------------------
+  // 
   HttpResponse()
       : StatusCode{HttpConstants::StatusCodes::k000},
         ReasonPhrase{HttpConstants::StatusCodes::kUnkStr} {}
   HttpResponse(const HttpResponse&) = delete;
   HttpResponse(HttpResponse&&) noexcept = delete;
   ~HttpResponse() = default;
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // ---------------------------------------------------------------------------
+  // 
   HttpResponse& operator=(const HttpResponse&) = delete;
   HttpResponse& operator=(HttpResponse&&) noexcept = delete;
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // ---------------------------------------------------------------------------
+  // 
   // 100 - Continue.
   void Continue_100(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(HttpConstants::StatusCodes::k100,
@@ -310,18 +315,18 @@ class HttpResponse : public base::Serializable {
     // We're done! Let's return our stream!
     return buffer;
   }
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // PROPERTIEs                                                       ( public )
-  // ---------------------------------------------------------------------------
+  // 
   unsigned short StatusCode = HttpConstants::StatusCodes::k000;
   std::string ReasonPhrase = HttpConstants::StatusCodes::kUnkStr;
   HttpHeaders Headers;
   base::AutoBuffer Body;
 
  private:
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // METHODs                                                         ( private )
-  // ---------------------------------------------------------------------------
+  // 
   // Sets the status code and reason phrase.
   void setStatusCodeAndReasonPhrase(
       const unsigned short& status_code,

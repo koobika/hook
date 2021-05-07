@@ -1,13 +1,18 @@
 ﻿// /////////////////////////////////////////////////////////////////////////////
-//   ██░ ██  ▒█████   ▒█████   ██ ▄█▀
-//  ▓██░ ██▒▒██▒  ██▒▒██▒  ██▒ ██▄█▒
-//  ▒██▀▀██░▒██░  ██▒▒██░  ██▒▓███▄░
-//  ░▓█ ░██ ▒██   ██░▒██   ██░▓██ █▄
-//  ░▓█▒░██▓░ ████▓▒░░ ████▓▒░▒██▒ █▄
-//   ▒ ░░▒░▒░ ▒░▒░▒░ ░ ▒░▒░▒░ ▒ ▒▒ ▓▒
-//   ▒ ░▒░ ░  ░ ▒ ▒░   ░ ▒ ▒░ ░ ░▒ ▒░
-//   ░  ░░ ░░ ░ ░ ▒  ░ ░ ░ ▒  ░ ░░ ░
-//   ░  ░  ░    ░ ░      ░ ░  ░  ░
+//
+//       ╓▄▓▓▓▓▓▓▓▄╖      ╓▄▓▓▓▓▓▓▓▄╖
+//    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
+//  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
+//  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
+// ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
+// ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
+//  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
+//   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`  ╒▓▓▓▓▓▓▓▓▓▓▓▓▓'
+//      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
+//          `"""`            `"""`
+// -----------------------------------------------------------------------------
+// network/protocol/http/http_response_writer.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -36,7 +41,7 @@
 #include "base/auto_buffer.h"
 #include "http_constants.h"
 #include "http_mime_types.h"
-#include "structured/json/json_value.h"
+#include "structured/json/value.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
@@ -46,16 +51,16 @@ namespace koobika::hook::network::protocol::http {
 // =============================================================================
 class HttpResponseWriter {
  public:
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // ---------------------------------------------------------------------------
+  // 
   template <typename SEty>
   HttpResponseWriter(const SEty& serializable_object,
                      const std::string& content_type)
       : content_type_{content_type} {
     buffer_.Write(serializable_object.Serialize());
   }
-  HttpResponseWriter(const structured::json::JsonValue& json)
+  HttpResponseWriter(const structured::json::Value& json)
       : HttpResponseWriter(json, HttpMimeTypes::kJSON) {}
   HttpResponseWriter(
       const std::string& string_content,
@@ -77,14 +82,14 @@ class HttpResponseWriter {
   HttpResponseWriter(const HttpResponseWriter&) = delete;
   HttpResponseWriter(HttpResponseWriter&&) noexcept = delete;
   ~HttpResponseWriter() = default;
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // ---------------------------------------------------------------------------
+  // 
   HttpResponseWriter& operator=(const HttpResponseWriter&) = delete;
   HttpResponseWriter& operator=(HttpResponseWriter&&) noexcept = delete;
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // ---------------------------------------------------------------------------
+  // 
   // Tries to fill-up incoming response object with current configutation.
   template <typename RSty>
   RSty& Prepare(RSty& res) {
@@ -98,9 +103,9 @@ class HttpResponseWriter {
   }
 
  private:
-  // ---------------------------------------------------------------------------
+  // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
-  // ---------------------------------------------------------------------------
+  // 
   base::AutoBuffer buffer_;
   std::optional<std::string> content_type_;
 };
