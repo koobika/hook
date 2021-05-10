@@ -61,83 +61,99 @@ template <typename DEty>
 class ServerTransportTcpIp : public ServerTransport<int, DEty> {
   // ___________________________________________________________________________
   // USINGs                                                          ( private )
-  // 
+  //
   using Interface = ServerTransport<int, DEty>;
 
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // 
+  //
   ServerTransportTcpIp() = default;
   ServerTransportTcpIp(const ServerTransportTcpIp&) = delete;
   ServerTransportTcpIp(ServerTransportTcpIp&&) noexcept = delete;
   ~ServerTransportTcpIp() { Stop(); };
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // 
+  //
   ServerTransportTcpIp& operator=(const ServerTransportTcpIp&) = delete;
   ServerTransportTcpIp& operator=(ServerTransportTcpIp&&) noexcept = delete;
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Starts current transport activity using the provided (json) configuration.
   void Start(const structured::json::Object& configuration,
              const typename DEty::RequestHandler& request_handler) override {
     // let's retrieve all needed parameters for this transport..
-    std::string port = configuration[transport::ServerTransportConstants::kPortKey];
+    std::string port =
+        configuration[transport::ServerTransportConstants::kPortKey];
     int number_of_workers =
         configuration[transport::ServerTransportConstants::kNumberOfWorkersKey];
-    int max_connections = configuration[transport::ServerTransportConstants::kMaxConnectionsKey];
     // let's assign the user-specified request handler function..
     request_handler_ = request_handler;
     // let's setup all the required resources..
     setupListener(port, number_of_workers);
     setupWorkers(number_of_workers);
     // let's start incoming connections loop!
-    sockaddr clientaddress;
-    socklen_t address_len = sizeof(clientaddress);
-    epoll_event events[kEpollMaxEventsAtOnce_];
-    while (running_) {
-      int n_fds = epoll_wait(epoll_fd_, events, kEpollMaxEventsAtOnce_,
-                             kEpollTimeoutMS_);
-      if (n_fds >= 0) {
-        for (auto i = 0; i < n_fds; i++) {
-          Context* context = (Context*)events[i].data.ptr;
-          int client = accept(context->fd, &clientaddress, &address_len);
-
-          int a = 0x0;
-        }
-      } else {
-        // ((Error)) -> trying to accept a new connection: shutting down?
+    int next = 0;
+    sockaddr client_address;
+    socklen_t address_len = sizeof(client_address);
+    epoll_event events[kEpollMaxEvents_];
+    while (keep_running_) {
+      int n_fds =
+          epoll_wait(epoll_fd_, events, kEpollMaxEvents_, kEpollTimeout_);
+      if (n_fds < 0) {
+        // ((Error)) -> trying to read epoll events!
         break;
+      }
+      for (auto i = 0; i < n_fds; i++) {
+        Context* context = (Context*)events[i].data.ptr;
+        if (events[i].events & EPOLLIN) {
+          int fd = accept(context->fd, &client_address, &address_len);
+          if (fd < 0) {
+            // ((Error)) -> trying to accept a new connection!
+            continue;
+          }
+          auto flags = fcntl(fd, F_GETFL, 0);
+          if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0) {
+            // ((Error)) -> trying to set socket mode to non-blocking!
+            shutdown(fd, SHUT_RDWR);
+            close(fd);
+            continue;
+          }
+          if (addToEpoll(workers_[next++].first, fd) == nullptr) {
+            // ((Error)) -> trying to add socket to epoll handlers list!
+            shutdown(fd, SHUT_RDWR);
+            close(fd);
+          }
+          if (next == number_of_workers) next = 0;
+        }
       }
     }
     close(accept_socket_);
     close(epoll_fd_);
-    epoll_fd_ = -1;
-    accept_socket_ = -1;
-    while (threads_.size()) {
-      auto& thread = threads_.front();
-      if (thread->joinable()) {
-        thread->join();
+    epoll_fd_ = INVALID_SOCKET;
+    accept_socket_ = INVALID_SOCKET;
+    for (auto& worker : workers_) {
+      if (worker.second->joinable()) {
+        worker.second->join();
       }
-      threads_.pop();
     }
+    delete accept_ctx_;
   }
   // Stops current transport activity.
-  void Stop(void) override { running_ = false; }
+  void Stop(void) override { keep_running_ = false; }
   // Tries to send the specified buffer through the transport connection.
   bool Send(const SOCKET& handler, const base::AutoBuffer& buffer) override {
     char tmp[ServerTransportConstants::kDefaultWriteBufferSize];
-    while (std::size_t length =
-               buffer.ReadSome(tmp, ServerTransportConstants::kDefaultWriteBufferSize)) {
+    while (std::size_t length = buffer.ReadSome(
+               tmp, ServerTransportConstants::kDefaultWriteBufferSize)) {
       std::size_t offset = 0;
       while (offset < length) {
         std::size_t len = std::min<std::size_t>(INT_MAX, length - offset);
-        auto res = ::send(handler, &((const char*)tmp)[offset], (int)len, 0x0);
-        if (res == SOCKET_ERROR) {
+        auto res =
+            send(handler, &((const char*)tmp)[offset], (int)len, MSG_NOSIGNAL);
+        if (res == SOCKET_ERROR && errno != EAGAIN && errno != EWOULDBLOCK) {
           // ((Error)) -> while trying to send information to socket!
-          // ((To-Do)) -> inform user back?
           return false;
         } else {
           offset += res;
@@ -150,11 +166,11 @@ class ServerTransportTcpIp : public ServerTransport<int, DEty> {
  private:
   // ___________________________________________________________________________
   // TYPEs                                                           ( private )
-  // 
+  //
   struct Context {
     SOCKET fd;
     std::shared_ptr<DEty> decoder;
-    Context(const int& in = -1) {
+    Context(const int& in = INVALID_SOCKET) {
       decoder = std::make_shared<DEty>();
       fd = in;
     }
@@ -162,11 +178,11 @@ class ServerTransportTcpIp : public ServerTransport<int, DEty> {
   };
   // ___________________________________________________________________________
   // METHODs                                                         ( private )
-  // 
+  //
   // Sets-up listener socket resources.
   void setupListener(const std::string& port, const int& number_of_workers) {
     int accept_fd, epoll_fd;
-    sockaddr_in addr = {0};  
+    sockaddr_in addr = {0};
     memset(&addr, 0, sizeof(addr));
     if ((accept_fd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
       // ((Error)) -> could not create socket!
@@ -184,54 +200,107 @@ class ServerTransportTcpIp : public ServerTransport<int, DEty> {
       close(accept_fd);
       throw std::runtime_error("could not bind to listening socket!");
     }
-
-    /*
-    pepe
-    */
-
-    /*
-    auto flags = fcntl(fd, F_GETFL, 0);
-    if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0) {
-      close(fd);
+    auto flags = fcntl(accept_fd, F_GETFL, 0);
+    if (fcntl(accept_fd, F_SETFL, flags | O_NONBLOCK) < 0) {
+      close(accept_fd);
       throw std::runtime_error("could not set socket to non-blocking!");
     }
-    */
-
-    /*
-    pepe fin
-    */
-
     if ((epoll_fd = epoll_create1(0)) < 0) {
-      close(epoll_fd);
       throw std::runtime_error("could not create epoll handler!");
     }
-    epoll_event event;
-    event.events = EPOLLIN | EPOLLOUT | EPOLLRDHUP | EPOLLERR;
-    event.data.ptr = new Context(accept_fd);
-    if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, accept_fd, &event) < 0) {
-      close(accept_fd);
-      throw std::runtime_error("could add socket to epoll handler!");
+    if ((accept_ctx_ = addToEpoll(epoll_fd, accept_fd)) != nullptr) {
+      epoll_fd_ = epoll_fd;
+      accept_socket_ = accept_fd;
+    } else {
+      throw std::runtime_error("could add accept-socket to epoll handler!");
     }
-    epoll_fd_ = epoll_fd;
-    accept_socket_ = accept_fd;
   }
   // Sets-up all needed workers within this transport.
   void setupWorkers(const int& number_of_workers) {
     for (int i = 0; i < number_of_workers; i++) {
+      int efd = epoll_create1(0);
+      if (efd < 0) {
+        // ((Error)) -> trying to create epoll handler!
+        throw std::runtime_error(
+            "could not create private (per-thread) epoll handler!");
+      }
+      workers_.push_back(std::make_pair(
+          efd, std::make_shared<std::thread>([efd, this]() {
+            epoll_event ev[kEpollMaxEvents_];
+            char buffer[ServerTransportConstants::kDefaultReadBufferSize];
+            while (keep_running_) {
+              int n_fds = epoll_wait(efd, ev, kEpollMaxEvents_, kEpollTimeout_);
+              if (n_fds < 0) {
+                // ((Error)) -> trying to complete wait: shutting down?
+                break;
+              }
+              for (auto i = 0; i < n_fds; i++) {
+                Context* ctx = (Context*)ev[i].data.ptr;
+                if (ev[i].events & EPOLLIN) {
+                  auto bytes_returned =
+                      read(ctx->fd, buffer,
+                           ServerTransportConstants::kDefaultReadBufferSize);
+                  if (bytes_returned < 0 && errno != EAGAIN &&
+                      errno != EWOULDBLOCK) {
+                    removeFromEpollAndClose(efd, ctx);
+                    continue;
+                  }
+                  ctx->decoder->Add(buffer, bytes_returned);
+                  ctx->decoder->Decode(
+                      request_handler_,
+                      [this, ctx, efd]() {
+                        removeFromEpollAndClose(efd, ctx);
+                      },
+                      [this, ctx, efd](const base::AutoBuffer& buffer) {
+                        if (!Send(ctx->fd, buffer)) {
+                          removeFromEpollAndClose(efd, ctx);
+                        }
+                      });
+                }
+                if (ev[i].events & EPOLLHUP || ev[i].events & EPOLLRDHUP ||
+                    ev[i].events & EPOLLERR) {
+                  removeFromEpollAndClose(efd, ctx);
+                }
+              }
+            }
+          })));
     }
+  }
+  // Adds the specifed socket to the epoll handlers list.
+  Context* addToEpoll(const int& efd, const int& fd) {
+    epoll_event event;
+    Context* ctx = new Context(fd);
+    event.events = EPOLLIN | EPOLLHUP | EPOLLRDHUP | EPOLLERR;
+    event.data.ptr = ctx;
+    if (epoll_ctl(efd, EPOLL_CTL_ADD, fd, &event) < 0) {
+      // ((Error)) -> trying to register within the internal handlers list!
+      delete ctx;
+      ctx = nullptr;
+    }
+    return ctx;
+  }
+  // Removes the associated context from epoll (closing resources).
+  void removeFromEpollAndClose(const int& efd, const Context* ctx) {
+    if (epoll_ctl(efd, EPOLL_CTL_DEL, ctx->fd, NULL) < 0) {
+      // ((Error)) -> trying to de-register from internal handlers list!
+    }
+    shutdown(ctx->fd, SHUT_RDWR);
+    close(ctx->fd);
+    delete ctx;
   }
   // ___________________________________________________________________________
   // CONSTANTs                                                       ( private )
-  // 
-  static constexpr int kEpollTimeoutMS_ = 1000;
-  static constexpr int kEpollMaxEventsAtOnce_ = 256;
+  //
+  static constexpr int kEpollTimeout_ = 1000;
+  static constexpr int kEpollMaxEvents_ = 256;
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
-  // 
-  bool running_ = true;
-  int epoll_fd_ = -1;
-  int accept_socket_ = -1;
-  std::queue<std::shared_ptr<std::thread>> threads_;
+  //
+  int epoll_fd_ = INVALID_SOCKET;
+  int accept_socket_ = INVALID_SOCKET;
+  Context* accept_ctx_ = nullptr;
+  bool keep_running_ = true;
+  std::vector<std::pair<int, std::shared_ptr<std::thread>>> workers_;
   typename DEty::RequestHandler request_handler_;
 };
 }  // namespace koobika::hook::network::transport::tcpip

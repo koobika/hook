@@ -54,16 +54,13 @@ class HttpServerBuilder : public base::Builder<HttpServer> {
   // 
   // Builds the target httpserver object.
   std::shared_ptr<HttpServer> Build() const override {
-    return std::make_shared<HttpServer>(NumberOfWorkers,
-                                        MaximumNumberOfConnections);
+    return std::make_shared<HttpServer>(NumberOfWorkers);
   }
   // ___________________________________________________________________________
   // PROPERTIEs                                                       ( public )
   // 
   base::BuilderProperty<int, HttpServerBuilder> NumberOfWorkers{
       this, transport::ServerTransportConstants::kNumberOfWorkersValue};
-  base::BuilderProperty<int, HttpServerBuilder> MaximumNumberOfConnections{
-      this, transport::ServerTransportConstants::kMaxConnectionsValue};
 };
 }  // namespace koobika::hook::network::protocol::http
 

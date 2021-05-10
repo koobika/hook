@@ -247,10 +247,9 @@ class AutoBuffer {
   }
   // Allocates the needed space to allow required length.
   void allocate(const std::size_t& length) {
-    constexpr std::size_t kDefaultBufferChunkSize = 4096;
     std::size_t off = data_.write_cursor + length;
     if (off > data_.buffer_size) {
-      auto amount = std::max(off - data_.buffer_size, kDefaultBufferChunkSize);
+      auto amount = std::max(off - data_.buffer_size, kDefaultBufferChunkSize_);
       auto new_buffer = (data_.buffer == nullptr)
                             ? malloc(amount)
                             : realloc(data_.buffer, data_.buffer_size + amount);
@@ -321,6 +320,11 @@ class AutoBuffer {
     data_.write_cursor += length;
     return *this;
   }
+  // ___________________________________________________________________________
+  // CONSTANTs                                                       ( private )
+  //
+  static constexpr std::size_t kDefaultBufferChunkSize_ = 4096;
+
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
   //

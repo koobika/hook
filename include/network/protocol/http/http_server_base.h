@@ -71,13 +71,9 @@ class HttpServerBase : public HttpRoutesManager {
   // 
   HttpServerBase(
       const int& workers_number =
-          transport::ServerTransportConstants::kNumberOfWorkersValue,
-      const int& maximum_number_of_connections =
-          transport::ServerTransportConstants::kMaxConnectionsValue) {
+          transport::ServerTransportConstants::kNumberOfWorkersValue) {
     configuration_[transport::ServerTransportConstants::kNumberOfWorkersKey] =
         workers_number;
-    configuration_[transport::ServerTransportConstants::kMaxConnectionsKey] =
-        maximum_number_of_connections;
   }
   HttpServerBase(const structured::json::Object& configuration)
       : configuration_(configuration) {}

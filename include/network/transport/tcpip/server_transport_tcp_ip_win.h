@@ -92,8 +92,6 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
         configuration[transport::ServerTransportConstants::kPortKey];
     int number_of_workers =
         configuration[transport::ServerTransportConstants::kNumberOfWorkersKey];
-    int max_connections =
-        configuration[transport::ServerTransportConstants::kMaxConnectionsKey];
     // let's assign the user-specified request handler function..
     request_handler_ = request_handler;
     // let's setup all the required resources..
