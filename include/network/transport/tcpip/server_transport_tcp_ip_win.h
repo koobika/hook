@@ -126,22 +126,20 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
         // ((To-Do)) -> raise an exception?
       }
     }
-  }
-  // Stops current transport activity.
-  void Stop(void) override {
     if (io_port_ != INVALID_HANDLE_VALUE) {
-      CloseHandle(io_port_);
-      closesocket(accept_socket_);
+      for (auto& worker : workers_) {
+        if (worker->joinable()) {
+          worker->join();
+        }
+      }
       io_port_ = INVALID_HANDLE_VALUE;
       accept_socket_ = INVALID_SOCKET;
-      while (threads_.size()) {
-        auto& thread = threads_.front();
-        if (thread->joinable()) {
-          thread->join();
-        }
-        threads_.pop();
-      }
     }
+  }
+  // Stops current transport activity.
+  void Stop(void) override { 
+    CloseHandle(io_port_);
+    closesocket(accept_socket_);
   }
   // Tries to send the specified buffer through the transport connection.
   bool Send(const SOCKET& handler, const base::AutoBuffer& buffer) override {
@@ -262,7 +260,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
   // Sets-up all needed workers within this transport.
   void setupWorkers(const int& number_of_workers) {
     for (int i = 0; i < number_of_workers; i++) {
-      threads_.push(std::make_shared<std::thread>([this]() {
+      workers_.push_back(std::make_shared<std::thread>([this]() {
         ULONG_PTR completion_key = NULL;
         LPOVERLAPPED overlapped = NULL;
         DWORD bytes_returned = 0;
@@ -324,7 +322,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
   // 
   HANDLE io_port_ = INVALID_HANDLE_VALUE;
   SOCKET accept_socket_ = INVALID_SOCKET;
-  std::queue<std::shared_ptr<std::thread>> threads_;
+  std::vector<std::shared_ptr<std::thread>> workers_;
   typename DEty::RequestHandler request_handler_;
 };
 }  // namespace koobika::hook::network::transport::tcpip
