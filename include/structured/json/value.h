@@ -4,7 +4,7 @@
 //    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
 //  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
 //  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
-// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓  
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
 // ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
 // ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
 //  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
@@ -60,6 +60,7 @@ class Object;
 class Array;
 void copy(Container&, const Object&);
 void copy(Container&, const Array&);
+void copy(Container&, const Value&);
 // =============================================================================
 // Value                                                               ( class )
 // -----------------------------------------------------------------------------
@@ -69,34 +70,19 @@ class Value : public base::Serializable {
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // 
+  //
   Value() = default;
   template <typename DAty>
   Value(const DAty& in) {
     assign(in);
   }
-  Value(const Value& in) { *data_ = *in.data_; }
-  Value(Value&& in) noexcept {
-    data_ = in.data_;
-    in.data_ = std::make_shared<Container>();
-  }
-
   virtual ~Value() = default;
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // 
+  //
   template <typename DAty>
   Value& operator=(const DAty& in) {
     assign(in);
-    return *this;
-  }
-  Value& operator=(const Value& in) {
-    *data_ = *in.data_;
-    return *this;
-  }
-  Value& operator=(Value&& in) noexcept {
-    data_ = in.data_;
-    in.data_ = std::make_shared<Container>();
     return *this;
   }
   template <typename DAty>
@@ -119,81 +105,40 @@ class Value : public base::Serializable {
   bool operator>=(const DAty& in) const {
     return !operator<(in);
   }
-  template <typename DAty>
-  operator DAty() const {
-    long double internal_value;
-    switch (data_->index()) {
-      case kBool_:
-        internal_value = std::get<bool>(*data_);
-        break;
-      case kUnsignedChar_:
-        internal_value = std::get<unsigned char>(*data_);
-        break;
-      case kChar_:
-        internal_value = std::get<char>(*data_);
-        break;
-      case kUnsignedShort_:
-        internal_value = std::get<unsigned short>(*data_);
-        break;
-      case kShort_:
-        internal_value = std::get<short>(*data_);
-        break;
-      case kUnsignedInt_:
-        internal_value = std::get<unsigned int>(*data_);
-        break;
-      case kInt_:
-        internal_value = std::get<int>(*data_);
-        break;
-      case kUnsignedLong_:
-        internal_value = std::get<unsigned long>(*data_);
-        break;
-      case kLong_:
-        internal_value = std::get<long>(*data_);
-        break;
-      case kFloat_:
-        internal_value = std::get<float>(*data_);
-        break;
-      case kDouble_:
-        internal_value = std::get<double>(*data_);
-        break;
-      case kMonostate_:
-      case kString_:
-      case kVector_:
-      case kMap_:
-      default:
-        throw std::logic_error("Stored datatype is not a number!");
-        break;
-    }
-    constexpr auto min_value = std::numeric_limits<DAty>::min();
-    constexpr auto max_value = std::numeric_limits<DAty>::max();
-    if (internal_value < min_value || internal_value > max_value) {
-      throw std::logic_error("Stored value will underflow/overflow target!");
-    }
-    return (DAty)internal_value;
-  }
+  operator bool() const { return get<bool>({}); }
+  operator unsigned char() const { return get<unsigned char>({}); }
+  operator char() const { return get<char>({}); }
+  operator unsigned short() const { return get<unsigned short>({}); }
+  operator short() const { return get<short>({}); }
+  operator unsigned int() const { return get<unsigned int>({}); }
+  operator int() const { return get<int>({}); }
+  operator unsigned long() const { return get<unsigned long>({}); }
+  operator long() const { return get<long>({}); }
+  operator float() const { return get<float>({}); }
+  operator double() const { return get<double>({}); }
   operator std::string() const {
     if (data_->index() != kString_) {
-      throw std::logic_error("Stored datatype is not an string!");
+      throw std::logic_error("Not an string!");
     }
     return std::get<std::string>(*data_);
   }
   operator Vector() const {
     if (data_->index() != kVector_) {
-      throw std::logic_error("Stored datatype is not an array!");
+      throw std::logic_error("Not an array!");
     }
     return std::get<Vector>(*data_);
   }
   operator Map() const {
     if (data_->index() != kMap_) {
-      throw std::logic_error("Stored datatype is not an object!");
+      throw std::logic_error("Not an object!");
     }
     return std::get<Map>(*data_);
   }
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Checks if the current value is a 'null' one.
-  bool IsNull() const { return data_->index() == kMonostate_; }
+  bool IsNull() const { return data_->index() == kNull_; }
   // Checks if the current value is a 'boolean' one.
   bool IsBool() const { return data_->index() == kBool_; }
   // Checks if the current value is a 'numeric' one.
@@ -230,7 +175,7 @@ class Value : public base::Serializable {
   base::AutoBuffer Serialize() const override {
     base::AutoBuffer buffer;
     switch (data_->index()) {
-      case kMonostate_:
+      case kNull_:
         buffer.Write(kNullStr_);
         break;
       case kBool_:
@@ -301,12 +246,11 @@ class Value : public base::Serializable {
  protected:
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                    ( protected )
-  // 
-  std::shared_ptr<Container> data_ =
-      std::make_shared<Container>(std::monostate());
+  //
+  std::shared_ptr<Container> data_ = std::make_shared<Container>();
   // ___________________________________________________________________________
   // METHODs                                                       ( protected )
-  // 
+  //
   // Assigns the incoming generic type to the current data storage.
   template <typename DAty>
   void assign(const DAty& in) {
@@ -317,13 +261,64 @@ class Value : public base::Serializable {
   // Assigns the incoming 'c-style' string to the current data storage.
   void assign(const char* in) { *data_ = std::string{in}; }
   // Assigns the incoming array to the current data storage.
+  void assign(const Value& value) { copy(*data_, value); }
+  // Assigns the incoming array to the current data storage.
   void assign(const Array& array) { copy(*data_, array); }
   // Assigns the incoming object to the current data storage.
   void assign(const Object& object) { copy(*data_, object); }
-  // Gets the stored element using its type.
-  template <typename DAty>
-  void get(DAty& out) const {
-    out = std::get<DAty>(*data_);
+  // Returns the stored (numeric) element using its type.
+  template <typename OUty>
+  OUty get(OUty&& in) const {
+    long double up_sized_value = {};
+    switch (data_->index()) {
+      case kBool_:
+        up_sized_value = std::get<bool>(*data_);
+        break;
+      case kUnsignedChar_:
+        up_sized_value = std::get<unsigned char>(*data_);
+        break;
+      case kChar_:
+        up_sized_value = std::get<char>(*data_);
+        break;
+      case kUnsignedShort_:
+        up_sized_value = std::get<unsigned short>(*data_);
+        break;
+      case kShort_:
+        up_sized_value = std::get<short>(*data_);
+        break;
+      case kUnsignedInt_:
+        up_sized_value = std::get<unsigned int>(*data_);
+        break;
+      case kInt_:
+        up_sized_value = std::get<int>(*data_);
+        break;
+      case kUnsignedLong_:
+        up_sized_value = std::get<unsigned long>(*data_);
+        break;
+      case kLong_:
+        up_sized_value = std::get<long>(*data_);
+        break;
+      case kFloat_:
+        up_sized_value = std::get<float>(*data_);
+        break;
+      case kDouble_:
+        up_sized_value = std::get<double>(*data_);
+        break;
+      case kNull_:
+      case kString_:
+      case kVector_:
+      case kMap_:
+      default:
+        // ((Error)) -> while trying to process a non-number value!
+        throw std::logic_error("Not a number!");
+        break;
+    }
+    constexpr long double min_value = std::numeric_limits<OUty>::min();
+    constexpr long double max_value = std::numeric_limits<OUty>::max();
+    if (up_sized_value < min_value || up_sized_value > max_value) {
+      throw std::logic_error("Stored value will underflow/overflow target!");
+    }
+    return (OUty)up_sized_value;
   }
   // Checks for the provided value to be equal than the stored one.
   template <typename DAty>
@@ -331,17 +326,19 @@ class Value : public base::Serializable {
     return this->operator DAty() == in;
   }
   // Checks for the provided value to be equal than the stored one.
-  bool isEqual(const Value& in) const { return *data_ == *in.data_; }
+  bool isEqual(const Value& in) const {
+    return data_ != nullptr && *data_ == *in.data_;
+  }
   // Checks for the provided value to be less than the stored one.
   template <typename DAty>
   bool isLessThan(const DAty& in) const {
-    return this->operator DAty() < in;
+    return data_ != nullptr && this->operator DAty() < in;
   }
   // Checks for the provided value to be less than the stored one.
   bool isLessThan(const Value& in) const {
     bool less_than = false;
     if (IsNumber() && in.IsNumber()) {
-      less_than = this->operator long double() < in.operator long double();
+      less_than = this->operator double() < in.operator double();
     } else if (IsString() && in.IsString()) {
       less_than = this->operator std::string() < in.operator std::string();
     } else {
@@ -370,9 +367,9 @@ class Value : public base::Serializable {
   }
   // ___________________________________________________________________________
   // CONSTANTs                                                     ( protected )
-  // 
+  //
   // Variant integral values.
-  static const std::size_t kMonostate_ = 0;
+  static const std::size_t kNull_ = 0;
   static const std::size_t kBool_ = 1;
   static const std::size_t kUnsignedChar_ = 2;
   static const std::size_t kChar_ = 3;
@@ -393,9 +390,10 @@ class Value : public base::Serializable {
   static constexpr char kTrueStr_[] = "true";
   // ___________________________________________________________________________
   // FRIENDs                                                       ( protected )
-  // 
+  //
   friend void copy(Container&, const Object&);
   friend void copy(Container&, const Array&);
+  friend void copy(Container&, const Value&);
 };
 // =============================================================================
 // Object                                                              ( class )
@@ -406,11 +404,10 @@ class Object : public Value {
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // 
+  //
   Object() { *data_ = Map(); }
-  Object(const Object&) = default;
-  Object(Object&&) noexcept = default;
-  Object(const std::initializer_list<std::pair<std::string, Value>>& list) {
+  Object(const std::initializer_list<std::pair<std::string, Value>>& list)
+      : Object() {
     for (auto const& element : list) {
       operator[](element.first) = element.second;
     }
@@ -418,7 +415,7 @@ class Object : public Value {
   virtual ~Object() = default;
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // 
+  //
   Object& operator=(
       const std::initializer_list<std::pair<std::string, Value>>& list) {
     for (auto const& element : list) {
@@ -426,16 +423,16 @@ class Object : public Value {
     }
     return *this;
   }
-  Object& operator=(const Object&) = default;
-  Object& operator=(Object&&) noexcept = default;
+  const Value& operator[](const char* key) const { return Get(key); }
+  Value& operator[](const char* key) { return Get(key); }
   const Value& operator[](const std::string& key) const { return Get(key); }
   Value& operator[](const std::string& key) { return Get(key); }
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Checks for an existent key.
   bool Exist(const std::string& key) const {
-    auto& container = std::get<Map>(*data_);
+    auto const& container = std::get<Map>(*data_);
     return container.find(key) != container.end();
   }
   // Returns the associated value for an existent key.
@@ -444,15 +441,12 @@ class Object : public Value {
     auto itr = container.find(key);
     if (itr == container.end()) {
       // ((Error)) -> while querying for a non-existent key!
-      throw std::logic_error("Key not found into json object!");
+      throw std::logic_error("Key not found!");
     }
     return itr->second;
   }
   // Returns the associated value for an existent key.
-  Value& Get(const std::string& key) {
-    if (data_->index() != kMap_) *data_ = Map();
-    return std::get<Map>(*data_)[key];
-  }
+  Value& Get(const std::string& key) { return std::get<Map>(*data_)[key]; }
 };
 // =============================================================================
 // Array                                                               ( class )
@@ -463,11 +457,9 @@ class Array : public Value {
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // 
+  //
   Array() { *data_ = Vector(); }
-  Array(const Array&) = default;
-  Array(Array&&) noexcept = default;
-  Array(const std::initializer_list<Value>& list) {
+  Array(const std::initializer_list<Value>& list) : Array() {
     for (auto const& element : list) {
       operator<<(element);
     }
@@ -475,31 +467,28 @@ class Array : public Value {
   virtual ~Array() = default;
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // 
+  //
   Array& operator=(const std::initializer_list<Value>& list) {
     for (auto const& element : list) {
       operator<<(element);
     }
     return *this;
   }
-  Array& operator=(const Array&) = default;
-  Array& operator=(Array&&) noexcept = default;
   const Value& operator[](const std::size_t& idx) const { return Get(idx); }
   Value& operator[](const std::size_t& idx) { return Get(idx); }
   Value& operator<<(const Value& in) {
-    if (data_->index() != kVector_) *data_ = Vector();
     std::get<Vector>(*data_).push_back(in);
     return *this;
   }
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Returns the associated value for an existent index.
   const Value& Get(const std::size_t& idx) const {
     auto const& container = std::get<Vector>(*data_);
     if (idx >= container.size()) {
       // ((Error)) -> while querying for an out-of-bounds index!
-      throw std::logic_error("Index out of json array bounds!");
+      throw std::logic_error("Out of bounds!");
     }
     return container.at(idx);
   }
@@ -508,7 +497,7 @@ class Array : public Value {
     auto& container = std::get<Vector>(*data_);
     if (idx >= container.size()) {
       // ((Error)) -> while querying for an out-of-bounds index!
-      throw std::logic_error("Index out of json array bounds!");
+      throw std::logic_error("Out of bounds!");
     }
     return container[idx];
   }
@@ -517,8 +506,9 @@ class Array : public Value {
 // =============================================================================
 // FUNCTIONs-IMPLEMENTATIONs
 // =============================================================================
-void copy(Container& out, const Object& in) { out = *in.data_; }
-void copy(Container& out, const Array& in) { out = *in.data_; }
+void copy(Container& out, const Object& in) { copy(out, (const Value&)in); }
+void copy(Container& out, const Array& in) { copy(out, (const Value&)in); }
+void copy(Container& out, const Value& in) { out = *in.data_; }
 }  // namespace koobika::hook::structured::json
 
 #endif

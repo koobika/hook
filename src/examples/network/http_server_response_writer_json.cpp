@@ -1,13 +1,18 @@
 ﻿// /////////////////////////////////////////////////////////////////////////////
-//   ██░ ██  ▒█████   ▒█████   ██ ▄█▀
-//  ▓██░ ██▒▒██▒  ██▒▒██▒  ██▒ ██▄█▒
-//  ▒██▀▀██░▒██░  ██▒▒██░  ██▒▓███▄░
-//  ░▓█ ░██ ▒██   ██░▒██   ██░▓██ █▄
-//  ░▓█▒░██▓░ ████▓▒░░ ████▓▒░▒██▒ █▄
-//   ▒ ░░▒░▒░ ▒░▒░▒░ ░ ▒░▒░▒░ ▒ ▒▒ ▓▒
-//   ▒ ░▒░ ░  ░ ▒ ▒░   ░ ▒ ▒░ ░ ░▒ ▒░
-//   ░  ░░ ░░ ░ ░ ▒  ░ ░ ░ ▒  ░ ░░ ░
-//   ░  ░  ░    ░ ░      ░ ░  ░  ░
+//
+//       ╓▄▓▓▓▓▓▓▓▄╖      ╓▄▓▓▓▓▓▓▓▄╖
+//    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
+//  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
+//  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
+// ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
+// ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
+//  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
+//   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`  ╒▓▓▓▓▓▓▓▓▓▓▓▓▓'
+//      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
+//          `"""`            `"""`
+// -----------------------------------------------------------------------------
+// http_server_response_writer_json.cpp
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -31,7 +36,7 @@
 #include "network/protocol/http/http_server_builder.h"
 
 using namespace koobika::hook::network::protocol::http;
-using namespace koobika::hook::structured::json;
+using namespace koobika::hook::structured;
 
 int main() {
   try {
@@ -39,7 +44,11 @@ int main() {
     server->Handle("/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
       if (req.Method.IsGet()) {
         // Let's directly write JSON content using 'HttpResponseWriter' class!
-        HttpResponseWriter(JsonArray{"Hello", "World"}).Prepare(res).Ok_200();
+        HttpResponseWriter(
+            json::Object{{"My value", json::Array{"Some string value...", true,
+                                                  nullptr, 123.45}}})
+            .Prepare(res)
+            .Ok_200();
       } else {
         // Let's directly write TEXT content using 'HttpResponseWriter' class!
         HttpResponseWriter("Not supported!").Prepare(res).Forbidden_403();
@@ -47,7 +56,7 @@ int main() {
     });
     server->Start("8542");
     return getchar();
-  } catch (std::exception exception) {
+  } catch (const std::exception& exception) {
     // ((Error)) -> while performing setup!
     std::cout << exception.what() << std::endl;
     return -1;
