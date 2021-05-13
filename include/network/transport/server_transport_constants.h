@@ -56,7 +56,6 @@ struct ServerTransportConstants {
   static constexpr char kPortValue[] = "8542";
   // Number of workers.
   static constexpr char kNumberOfWorkersKey[] = "number_of_workers";
-  static constexpr int kNumberOfWorkersValue = 3;
 };
 }  // namespace koobika::hook::network::transport
 

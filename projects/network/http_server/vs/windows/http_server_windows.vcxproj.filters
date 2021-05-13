@@ -51,6 +51,12 @@
     <Filter Include="include\network\protocol\http\auth\modules">
       <UniqueIdentifier>{09bb9caa-dc50-4f88-b4f6-e0bbdef25809}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\network\protocol\http\constants">
+      <UniqueIdentifier>{502d7542-fe84-42fb-8315-50e6a1933c70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\network\protocol\http\controllers">
+      <UniqueIdentifier>{f9c828ca-ceac-4440-b934-09ffe4c33ad9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_auth_api_key.cpp">
@@ -87,6 +93,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_response_writer_serializable.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_static_files_server.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -154,9 +163,6 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\v1.1\http_request_decoder.h">
       <Filter>include\network\protocol\http\v1.1</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_constants.h">
-      <Filter>include\network\protocol\http</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_controller.h">
       <Filter>include\network\protocol\http</Filter>
     </ClInclude>
@@ -173,9 +179,6 @@
       <Filter>include\network\protocol\http</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_method_value.h">
-      <Filter>include\network\protocol\http</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_mime_types.h">
       <Filter>include\network\protocol\http</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_request.h">
@@ -197,9 +200,6 @@
       <Filter>include\network\protocol\http</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routes_performer.h">
-      <Filter>include\network\protocol\http</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routes_performer_result.h">
       <Filter>include\network\protocol\http</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routes_types.h">
@@ -246,6 +246,30 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\auth\modules\no_auth.h">
       <Filter>include\network\protocol\http\auth\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\limits.h">
+      <Filter>include\network\protocol\http\constants</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\strings.h">
+      <Filter>include\network\protocol\http\constants</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\characters.h">
+      <Filter>include\network\protocol\http\constants</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\headers.h">
+      <Filter>include\network\protocol\http\constants</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\methods.h">
+      <Filter>include\network\protocol\http\constants</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\status_codes.h">
+      <Filter>include\network\protocol\http\constants</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\controllers\static_files_server.h">
+      <Filter>include\network\protocol\http\controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\mime.h">
+      <Filter>include\network\protocol\http\constants</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -12,7 +12,7 @@
 //      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
 //          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// examples/network/http_server_controller.cpp
+// network/protocol/http/constants/methods.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -33,30 +33,45 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/http_server_builder.h"
+#ifndef koobika_hook_network_protocol_http_constants_methods_h
+#define koobika_hook_network_protocol_http_constants_methods_h
 
-using namespace koobika::hook::network::protocol::http;
+#include "network/protocol/http/http_method_value.h"
 
-// This is our custom controller with only one handler!
-class CustomController : public HttpController<> {
- protected:
-  // This |GET| handler will return the 'hello world' message!
-  HttpControllerGet myCurrentValueHandler{
-      this, "/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
-        res.Body.Write("Hello, World!\r\n");
-        res.Ok_200();
-      }};
+namespace koobika::hook::network::protocol::http::constants {
+// =============================================================================
+// Methods                                                             ( class )
+// -----------------------------------------------------------------------------
+// This specification holds for all <methods> constants.
+// =============================================================================
+class Methods {
+ public:
+  // ___________________________________________________________________________
+  // CONSTANTs                                                        ( public )
+  //
+  // Options.
+  static constexpr HttpMethodValue kOptions = 1;
+  // Get.
+  static constexpr HttpMethodValue kGet = 2;
+  // Head.
+  static constexpr HttpMethodValue kHead = 4;
+  // Post.
+  static constexpr HttpMethodValue kPost = 8;
+  // Put.
+  static constexpr HttpMethodValue kPut = 16;
+  // Delete.
+  static constexpr HttpMethodValue kDelete = 32;
+  // Trace.
+  static constexpr HttpMethodValue kTrace = 64;
+  // Connect.
+  static constexpr HttpMethodValue kConnect = 128;
+  // Extension.
+  static constexpr HttpMethodValue kExtension = 256;
+  // All.
+  static constexpr HttpMethodValue kAll = kOptions | kGet | kHead | kPost |
+                                          kPut | kDelete | kTrace | kConnect |
+                                          kExtension;
 };
+}  // namespace koobika::hook::network::protocol::http::constants
 
-int main() {
-  try {
-    auto server = HttpServerBuilder().Build();
-    server->Handle<CustomController>();
-    server->Start("8542");
-    return getchar();
-  } catch (const std::exception& exception) {
-    // ((Error)) -> while performing setup!
-    std::cout << exception.what() << std::endl;
-    return -1;
-  }
-}
+#endif

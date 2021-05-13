@@ -42,14 +42,15 @@
 #include <stdexcept>
 #include <thread>
 
+#include "auth/modules/api_key.h"
+#include "auth/modules/basic.h"
+#include "auth/modules/no_auth.h"
+#include "constants/methods.h"
 #include "http_controller.h"
 #include "http_response_writer.h"
 #include "http_router.h"
-#include "auth/modules/basic.h"
-#include "auth/modules/no_auth.h"
-#include "auth/modules/api_key.h"
-#include "structured/json/value.h"
 #include "network/transport/server_transport_constants.h"
+#include "structured/json/value.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
@@ -68,10 +69,8 @@ class HttpServerBase : public HttpRoutesManager {
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // 
-  HttpServerBase(
-      const int& workers_number =
-          transport::ServerTransportConstants::kNumberOfWorkersValue) {
+  //
+  HttpServerBase(const unsigned int& workers_number) {
     configuration_[transport::ServerTransportConstants::kNumberOfWorkersKey] =
         workers_number;
   }
@@ -82,12 +81,12 @@ class HttpServerBase : public HttpRoutesManager {
   ~HttpServerBase() { Stop(); }
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // 
+  //
   HttpServerBase& operator=(const HttpServerBase&) = delete;
   HttpServerBase& operator=(HttpServerBase&&) noexcept = delete;
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Starts server activity uwing the provided port.
   void Start(const std::string& port) {
     if (transport_ != nullptr) {
@@ -105,14 +104,10 @@ class HttpServerBase : public HttpRoutesManager {
               configuration, [&router](auto const& req, auto const& sender) {
                 HttpResponse res;
                 try {
-                  switch (router.Perform(req.Uri.GetPath(), req, res)) {
-                    case HttpRoutesPerformerResult::kNotFound:
-                      // ((Error)) -> route is not registered!
-                      // ((To-Do)) -> inform user back?
-                      res.NotFound_404();
-                      break;
-                    case HttpRoutesPerformerResult::kOk:
-                      break;
+                  if (!router.Perform(req.Uri.GetPath(), req, res)) {
+                    // ((Error)) -> route is not registered!
+                    // ((To-Do)) -> inform user back?
+                    res.NotFound_404();
                   }
                 } catch (std::exception& e) {
                   // ((Error)) -> a known exception was thrown!
@@ -148,100 +143,100 @@ class HttpServerBase : public HttpRoutesManager {
   void Handle(
       const std::string& route,
       const typename HttpRoutesTypes::Handler& handler,
-      const HttpMethodValue& method = HttpConstants::Methods::kAll) override {
+      const HttpMethodValue& method = constants::Methods::kAll) override {
     router_.Handle(route, handler, method);
   }
   // Adds a new <generic> route to 'regular-expressions' router structures.
   void Handle(
       const std::regex& regex, const typename HttpRoutesTypes::Handler& handler,
-      const HttpMethodValue& method = HttpConstants::Methods::kAll) override {
+      const HttpMethodValue& method = constants::Methods::kAll) override {
     router_.Handle(regex, handler, method);
   }
   // Adds a new <options> route to the 'nominal' router structures
   void Options(const std::string& route,
                const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(route, handler, HttpConstants::Methods::kOptions);
+    Handle(route, handler, constants::Methods::kOptions);
   }
   // Adds a new <options> route to the 'regex' router structures
   void Options(const std::regex& regex,
                const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, HttpConstants::Methods::kOptions);
+    Handle(regex, handler, constants::Methods::kOptions);
   }
   // Adds a new <get> route to the 'nominal' router structures
   void Get(const std::string& route,
            const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(route, handler, HttpConstants::Methods::kGet);
+    Handle(route, handler, constants::Methods::kGet);
   }
   // Adds a new <get> route to the 'regex' router structures
   void Get(const std::regex& regex,
            const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, HttpConstants::Methods::kGet);
+    Handle(regex, handler, constants::Methods::kGet);
   }
   // Adds a new <head> route to the 'nominal' router structures
   void Head(const std::string& route,
             const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(route, handler, HttpConstants::Methods::kHead);
+    Handle(route, handler, constants::Methods::kHead);
   }
   // Adds a new <head> route to the 'regex' router structures
   void Head(const std::regex& regex,
             const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, HttpConstants::Methods::kHead);
+    Handle(regex, handler, constants::Methods::kHead);
   }
   // Adds a new <post> route to the 'nominal' router structures
   void Post(const std::string& route,
             const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(route, handler, HttpConstants::Methods::kPost);
+    Handle(route, handler, constants::Methods::kPost);
   }
   // Adds a new <post> route to the 'regex' router structures
   void Post(const std::regex& regex,
             const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, HttpConstants::Methods::kPost);
+    Handle(regex, handler, constants::Methods::kPost);
   }
   // Adds a new <put> route to the 'nominal' router structures
   void Put(const std::string& route,
            const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(route, handler, HttpConstants::Methods::kPut);
+    Handle(route, handler, constants::Methods::kPut);
   }
   // Adds a new <put> route to the 'regex' router structures
   void Put(const std::regex& regex,
            const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, HttpConstants::Methods::kPut);
+    Handle(regex, handler, constants::Methods::kPut);
   }
   // Adds a new <delete> route to the 'nominal' router structures
   void Delete(const std::string& route,
               const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(route, handler, HttpConstants::Methods::kDelete);
+    Handle(route, handler, constants::Methods::kDelete);
   }
   // Adds a new <delete> route to the 'regex' router structures
   void Delete(const std::regex& regex,
               const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, HttpConstants::Methods::kDelete);
+    Handle(regex, handler, constants::Methods::kDelete);
   }
   // Adds a new <trace> route to the 'nominal' router structures
   void Trace(const std::string& route,
              const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(route, handler, HttpConstants::Methods::kTrace);
+    Handle(route, handler, constants::Methods::kTrace);
   }
   // Adds a new <trace> route to the 'regex' router structures
   void Trace(const std::regex& regex,
              const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, HttpConstants::Methods::kTrace);
+    Handle(regex, handler, constants::Methods::kTrace);
   }
   // Adds a new <connect> route to the 'nominal' router structures
   void Connect(const std::string& route,
                const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(route, handler, HttpConstants::Methods::kConnect);
+    Handle(route, handler, constants::Methods::kConnect);
   }
   // Adds a new <connect> route to the 'regex' router structures
   void Connect(const std::regex& regex,
                const typename HttpRoutesTypes::Handler& handler) {
-    Handle(regex, handler, HttpConstants::Methods::kConnect);
+    Handle(regex, handler, constants::Methods::kConnect);
   }
 
  private:
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
-  // 
+  //
   ROty router_;
   std::shared_ptr<TRty> transport_;
   std::shared_ptr<std::thread> transport_thread_;

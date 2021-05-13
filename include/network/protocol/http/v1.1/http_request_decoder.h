@@ -40,7 +40,10 @@
 #include <string>
 
 #include "base/auto_buffer.h"
-#include "network/protocol/http/http_constants.h"
+#include "network/protocol/http/constants/characters.h"
+#include "network/protocol/http/constants/headers.h"
+#include "network/protocol/http/constants/limits.h"
+#include "network/protocol/http/constants/strings.h"
 #include "network/protocol/http/http_encoding_type.h"
 #include "network/protocol/http/http_request.h"
 #include "network/transport/server_transport_decoder.h"
@@ -70,32 +73,32 @@ namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
 // GET_HEADER_FIELD_NAME                                               ( macro )
 // =============================================================================
-#define GET_HEADER_FIELD_NAME(name)                            \
-  {                                                            \
-    auto ptr = searchFor(&buffer_[cursor], end - cursor,       \
-                         HttpConstants::Strings::kColon,       \
-                         HttpConstants::Strings::kColonLen);   \
-    if (ptr == nullptr) PERFORM_ERROR_HANDLING                 \
-    name = {cursor, ptr - &buffer_[cursor]};                   \
-    cursor += name.second + HttpConstants::Strings::kColonLen; \
+#define GET_HEADER_FIELD_NAME(name)                                           \
+  {                                                                           \
+    auto ptr =                                                                \
+        searchFor(&buffer_[cursor], end - cursor, constants::Strings::kColon, \
+                  constants::Strings::kColonLen);                             \
+    if (ptr == nullptr) PERFORM_ERROR_HANDLING                                \
+    name = {cursor, ptr - &buffer_[cursor]};                                  \
+    cursor += name.second + constants::Strings::kColonLen;                    \
   }
 // =============================================================================
 // GET_HEADER_FIELD_VALUES                                             ( macro )
 // =============================================================================
-#define GET_HEADER_FIELD_VALUES(values)                              \
-  values.clear();                                                    \
-  while (cursor < end) {                                             \
-    auto ptr = searchFor(&buffer_[cursor], end - cursor,             \
-                         HttpConstants::Strings::kCrLf,              \
-                         HttpConstants::Strings::kCrLfLen);          \
-    if (ptr == nullptr) PERFORM_ERROR_HANDLING                       \
-    Indices field_value = {cursor, ptr - &buffer_[cursor]};          \
-    cursor += field_value.second + HttpConstants::Strings::kCrLfLen; \
-    if (field_value.second) {                                        \
-      trim(field_value);                                             \
-      values.push_back(field_value);                                 \
-    }                                                                \
-    if (!HttpUtil::SkipLWS(&buffer_[cursor], end - cursor)) break;   \
+#define GET_HEADER_FIELD_VALUES(values)                                      \
+  values.clear();                                                            \
+  while (cursor < end) {                                                     \
+    auto ptr =                                                               \
+        searchFor(&buffer_[cursor], end - cursor, constants::Strings::kCrLf, \
+                  constants::Strings::kCrLfLen);                             \
+    if (ptr == nullptr) PERFORM_ERROR_HANDLING                               \
+    Indices field_value = {cursor, ptr - &buffer_[cursor]};                  \
+    cursor += field_value.second + constants::Strings::kCrLfLen;             \
+    if (field_value.second) {                                                \
+      trim(field_value);                                                     \
+      values.push_back(field_value);                                         \
+    }                                                                        \
+    if (!HttpUtil::SkipLWS(&buffer_[cursor], end - cursor)) break;           \
   }
 // =============================================================================
 // HttpRequestDecoder                                                  ( class )
@@ -106,31 +109,31 @@ class HttpRequestDecoder
     : public transport::ServerTransportDecoder<HttpRequest> {
   // ___________________________________________________________________________
   // USINGs                                                          ( private )
-  // 
+  //
   using Indices = std::pair<std::size_t, std::size_t>;
 
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // 
+  //
   HttpRequestDecoder() = default;
   HttpRequestDecoder(const HttpRequestDecoder&) = delete;
   HttpRequestDecoder(HttpRequestDecoder&&) noexcept = delete;
   ~HttpRequestDecoder() = default;
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // 
+  //
   HttpRequestDecoder& operator=(const HttpRequestDecoder&) = delete;
   HttpRequestDecoder& operator=(HttpRequestDecoder&&) noexcept = delete;
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Adds the specified buffer fragment to the internal decoder data.
   bool Add(void* buffer, const std::size_t& length) override {
     if (!decoding_body_part_) {
       // if required buffer size is greater than the maximum supported let's
       // return false in order to notify caller for error!
-      if ((used_ + length) >= HttpConstants::Limits::kMaxHttpMessageLength) {
+      if ((used_ + length) >= constants::Limits::kMaxHttpMessageLength) {
         return false;
       }
       memcpy(&buffer_[used_], buffer, length);
@@ -152,21 +155,21 @@ class HttpRequestDecoder
     if (!decoding_body_part_) {
       std::size_t cursor = 0, end = 0;
       auto empty_line_ptr = searchFor(&buffer_[cursor], used_ - cursor,
-                                      HttpConstants::Strings::kEmptyLine,
-                                      HttpConstants::Strings::kEmptyLineLen);
+                                      constants::Strings::kEmptyLine,
+                                      constants::Strings::kEmptyLineLen);
       // if empty-line sequence (\r\n\r\n) was not found, let's
       // return control and wait for more data to arrive!
       if (empty_line_ptr == nullptr) return;
       // update main section limtis (request-line + headers)!
       end += (empty_line_ptr - &buffer_[cursor]) +
-             HttpConstants::Strings::kEmptyLineLen;
+             constants::Strings::kEmptyLineLen;
       // let's decode the <request-line> section!
-      GET_REQUEST_LINE_FIELD(method_, HttpConstants::Strings::kSpace,
-                             HttpConstants::Strings::kSpaceLen)
-      GET_REQUEST_LINE_FIELD(request_uri_, HttpConstants::Strings::kSpace,
-                             HttpConstants::Strings::kSpaceLen)
-      GET_REQUEST_LINE_FIELD(http_version_, HttpConstants::Strings::kCrLf,
-                             HttpConstants::Strings::kCrLfLen)
+      GET_REQUEST_LINE_FIELD(method_, constants::Strings::kSpace,
+                             constants::Strings::kSpaceLen)
+      GET_REQUEST_LINE_FIELD(request_uri_, constants::Strings::kSpace,
+                             constants::Strings::kSpaceLen)
+      GET_REQUEST_LINE_FIELD(http_version_, constants::Strings::kCrLf,
+                             constants::Strings::kCrLfLen)
       // let's decode the <headers> section!
       headers_.assign(&buffer_[cursor], end - cursor);
       Indices field_name;
@@ -175,16 +178,15 @@ class HttpRequestDecoder
         GET_HEADER_FIELD_NAME(field_name)
         GET_HEADER_FIELD_VALUES(field_values)
         for (auto const& value : field_values) {
-          if (isHeaderFieldName(field_name,
-                                HttpConstants::Headers::kContentLength,
-                                HttpConstants::Headers::kContentLengthLen)) {
+          if (isHeaderFieldName(field_name, constants::Headers::kContentLength,
+                                constants::Headers::kContentLengthLen)) {
             // [content-length]
             encoding_type_ = HttpEncodingType::kContentLength;
             auto val = std::string(&buffer_[value.first], value.second);
             content_length_ = atol(val.data());
-          } else if (isHeaderFieldName(
-                         field_name, HttpConstants::Headers::kContentType,
-                         HttpConstants::Headers::kContentTypeLen)) {
+          } else if (isHeaderFieldName(field_name,
+                                       constants::Headers::kContentType,
+                                       constants::Headers::kContentTypeLen)) {
             // [content-type]
             // ((To-Do)) implement it!
           }
@@ -237,7 +239,7 @@ class HttpRequestDecoder
  private:
   // ___________________________________________________________________________
   // METHODs                                                         ( private )
-  // 
+  //
   // Searchs for the required string content within the provided buffer.
   const char* searchFor(const char* buffer, const std::size_t& length,
                         const char* str, const std::size_t& str_len) const {
@@ -276,8 +278,8 @@ class HttpRequestDecoder
     std::size_t i = 0;
     while (i < original_length && (perform_ltrim || perform_rtrim)) {
       if (perform_ltrim) {
-        if (buffer_[original_offset + i] != HttpConstants::Characters::kSpace &&
-            buffer_[original_offset + i] != HttpConstants::Characters::kHt) {
+        if (buffer_[original_offset + i] != constants::Characters::kSpace &&
+            buffer_[original_offset + i] != constants::Characters::kHt) {
           perform_ltrim = false;
         } else {
           delimiters.first++;
@@ -286,9 +288,9 @@ class HttpRequestDecoder
       }
       if (perform_rtrim) {
         if (buffer_[original_offset + (original_length - 1 - i)] !=
-                HttpConstants::Characters::kSpace &&
+                constants::Characters::kSpace &&
             buffer_[original_offset + (original_length - 1 - i)] !=
-                HttpConstants::Characters::kHt) {
+                constants::Characters::kHt) {
           perform_rtrim = false;
         } else {
           delimiters.second--;
@@ -305,9 +307,9 @@ class HttpRequestDecoder
   }
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
-  // 
+  //
   // internal buffer
-  char buffer_[HttpConstants::Limits::kMaxHttpMessageLength] = {0};
+  char buffer_[constants::Limits::kMaxHttpMessageLength] = {0};
   // internal buffer used size
   std::size_t used_ = 0;
   // content-length

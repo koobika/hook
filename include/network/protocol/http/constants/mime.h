@@ -12,7 +12,7 @@
 //      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
 //          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// network/protocol/http/http_mime_types.h
+// network/protocol/http/constants/mime.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -33,20 +33,22 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_httpmimetypes_h
-#define koobika_hook_network_protocol_http_httpmimetypes_h
+#ifndef koobika_hook_network_protocol_http_constants_mime_h
+#define koobika_hook_network_protocol_http_constants_mime_h
 
-namespace koobika::hook::network::protocol::http {
+#include <memory>
+
+namespace koobika::hook::network::protocol::http::constants {
 // =============================================================================
-// HttpMimeTypes                                                       ( class )
+// Mime                                                                ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for http method writer interface
+// This specification holds for all <mime> constants.
 // =============================================================================
-class HttpMimeTypes {
+class Mime {
  public:
   // ___________________________________________________________________________
   // CONSTANTs                                                        ( public )
-  // 
+  //
   // Aac: AAC audio | audio/aac.
   static constexpr char kAAC[] = "audio/aac";
   // Abw: AbiWord document | application/x-abiword.
@@ -220,6 +222,6 @@ class HttpMimeTypes {
   // 7z: 7-zip archive | application/x-7z-compressed.
   static constexpr char k7Z[] = "application/x-7z-compressed";
 };
-}  // namespace koobika::hook::network::protocol::http
+}  // namespace koobika::hook::network::protocol::http::constants
 
 #endif

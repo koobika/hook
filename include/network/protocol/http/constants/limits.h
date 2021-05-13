@@ -12,7 +12,7 @@
 //      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
 //          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// examples/network/http_server_controller.cpp
+// network/protocol/http/constants/limits.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -33,30 +33,25 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/http_server_builder.h"
+#ifndef koobika_hook_network_protocol_http_constants_limits_h
+#define koobika_hook_network_protocol_http_constants_limits_h
 
-using namespace koobika::hook::network::protocol::http;
+#include <memory>
 
-// This is our custom controller with only one handler!
-class CustomController : public HttpController<> {
- protected:
-  // This |GET| handler will return the 'hello world' message!
-  HttpControllerGet myCurrentValueHandler{
-      this, "/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
-        res.Body.Write("Hello, World!\r\n");
-        res.Ok_200();
-      }};
+namespace koobika::hook::network::protocol::http::constants {
+// =============================================================================
+// Limits                                                              ( class )
+// -----------------------------------------------------------------------------
+// This specification holds for all <limits> constants.
+// =============================================================================
+class Limits {
+ public:
+  // ___________________________________________________________________________
+  // CONSTANTs                                                        ( public )
+  // 
+  // Maximum length for the http message section (body excluded)! (in bytes).
+  static constexpr std::size_t kMaxHttpMessageLength = 16384;
 };
+}  // namespace koobika::hook::network::protocol::http::constants
 
-int main() {
-  try {
-    auto server = HttpServerBuilder().Build();
-    server->Handle<CustomController>();
-    server->Start("8542");
-    return getchar();
-  } catch (const std::exception& exception) {
-    // ((Error)) -> while performing setup!
-    std::cout << exception.what() << std::endl;
-    return -1;
-  }
-}
+#endif

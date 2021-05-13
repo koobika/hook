@@ -12,7 +12,7 @@
 //      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
 //          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// network/protocol/http/http_routes_performer_result.h
+// network/protocol/http/constants/headers.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -33,16 +33,32 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_httproutesperformerresult_h
-#define koobika_hook_network_protocol_http_httproutesperformerresult_h
+#ifndef koobika_hook_network_protocol_http_constants_headers_h
+#define koobika_hook_network_protocol_http_constants_headers_h
 
-namespace koobika::hook::network::protocol::http {
+#include <memory>
+
+namespace koobika::hook::network::protocol::http::constants {
 // =============================================================================
-// HttpRoutesPerformerResult                                      ( enum class )
+// Headers                                                             ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for http routes performer result types.
+// This specification holds for all <headers> constants.
 // =============================================================================
-enum class HttpRoutesPerformerResult { kOk, kNotFound };
-}  // namespace koobika::hook::network::protocol::http
+class Headers {
+ public:
+  // ___________________________________________________________________________
+  // CONSTANTs                                                        ( public )
+  //
+  // Content-type.
+  static constexpr char kContentType[] = "Content-Type";
+  static constexpr std::size_t kContentTypeLen = 12;
+  // Content-length.
+  static constexpr char kContentLength[] = "Content-Length";
+  static constexpr std::size_t kContentLengthLen = 14;
+  // Transfer-encoding.
+  static constexpr char kTransferEncoding[] = "Transfer-Encoding";
+  static constexpr std::size_t kTransferEncodingLen = 17;
+};
+}  // namespace koobika::hook::network::protocol::http::constants
 
 #endif

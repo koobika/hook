@@ -12,7 +12,7 @@
 //      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
 //          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// examples/network/http_server_controller.cpp
+// network/protocol/http/constants/limits.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -33,30 +33,31 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/http_server_builder.h"
+#ifndef koobika_hook_network_protocol_http_constants_characters_h
+#define koobika_hook_network_protocol_http_constants_characters_h
 
-using namespace koobika::hook::network::protocol::http;
-
-// This is our custom controller with only one handler!
-class CustomController : public HttpController<> {
- protected:
-  // This |GET| handler will return the 'hello world' message!
-  HttpControllerGet myCurrentValueHandler{
-      this, "/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
-        res.Body.Write("Hello, World!\r\n");
-        res.Ok_200();
-      }};
+namespace koobika::hook::network::protocol::http::constants {
+// =============================================================================
+// Characters                                                          ( class )
+// -----------------------------------------------------------------------------
+// This specification holds for all <characters> constants.
+// =============================================================================
+class Characters {
+ public:
+  // ___________________________________________________________________________
+  // CONSTANTs                                                        ( public )
+  //
+  // Space.
+  static constexpr char kSpace = ' ';
+  // Tab.
+  static constexpr char kHt = '\t';
+  // Carriage return.
+  static constexpr char kCr = '\r';
+  // Line feed.
+  static constexpr char kLf = '\n';
+  // Colon.
+  static constexpr char kColon = ':';
 };
+}  // namespace koobika::hook::network::protocol::http::constants
 
-int main() {
-  try {
-    auto server = HttpServerBuilder().Build();
-    server->Handle<CustomController>();
-    server->Start("8542");
-    return getchar();
-  } catch (const std::exception& exception) {
-    // ((Error)) -> while performing setup!
-    std::cout << exception.what() << std::endl;
-    return -1;
-  }
-}
+#endif

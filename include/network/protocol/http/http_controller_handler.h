@@ -51,7 +51,7 @@ class HttpControllerHandler {
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // 
+  //
   HttpControllerHandler(HttpRouter* parent, const std::string& route,
                         const typename HttpRoutesTypes::Handler& handler,
                         const HttpMethodValue& method) {
@@ -67,7 +67,7 @@ class HttpControllerHandler {
   virtual ~HttpControllerHandler() = default;
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // 
+  //
   HttpControllerHandler& operator=(const HttpControllerHandler&) = delete;
   HttpControllerHandler& operator=(HttpControllerHandler&&) noexcept = delete;
 };
@@ -83,11 +83,11 @@ class HttpControllerHandler {
     HttpController##METHOD(HttpRouter* parent, const std::string& route,     \
                            const typename HttpRoutesTypes::Handler& handler) \
         : HttpControllerHandler(parent, route, handler,                      \
-                                HttpConstants::Methods::k##METHOD) {}        \
+                                constants::Methods::k##METHOD) {}            \
     HttpController##METHOD(HttpRouter* parent, const std::regex& regex,      \
                            const typename HttpRoutesTypes::Handler& handler) \
         : HttpControllerHandler(parent, regex, handler,                      \
-                                HttpConstants::Methods::k##METHOD) {}        \
+                                constants::Methods::k##METHOD) {}            \
   };
 // =============================================================================
 // Helpers (shortcuts)

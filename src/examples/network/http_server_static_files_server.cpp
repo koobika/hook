@@ -34,24 +34,15 @@
 // /////////////////////////////////////////////////////////////////////////////
 
 #include "network/protocol/http/http_server_builder.h"
+#include "network/protocol/http/controllers/static_files_server.h"
 
 using namespace koobika::hook::network::protocol::http;
-
-// This is our custom controller with only one handler!
-class CustomController : public HttpController<> {
- protected:
-  // This |GET| handler will return the 'hello world' message!
-  HttpControllerGet myCurrentValueHandler{
-      this, "/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
-        res.Body.Write("Hello, World!\r\n");
-        res.Ok_200();
-      }};
-};
 
 int main() {
   try {
     auto server = HttpServerBuilder().Build();
-    server->Handle<CustomController>();
+    server->Handle<controllers::StaticFilesServer<>>(
+        "/", "D:\\projects\\koobika\\resources\\JPGs\\");
     server->Start("8542");
     return getchar();
   } catch (const std::exception& exception) {

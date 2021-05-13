@@ -58,9 +58,9 @@ using Container =
 // =============================================================================
 class Object;
 class Array;
-void copy(Container&, const Object&);
-void copy(Container&, const Array&);
-void copy(Container&, const Value&);
+static void copy(Container&, const Object&);
+static void copy(Container&, const Array&);
+static void copy(Container&, const Value&);
 // =============================================================================
 // Value                                                               ( class )
 // -----------------------------------------------------------------------------
@@ -408,9 +408,7 @@ class Object : public Value {
   Object() { *data_ = Map(); }
   Object(const std::initializer_list<std::pair<std::string, Value>>& list)
       : Object() {
-    for (auto const& element : list) {
-      operator[](element.first) = element.second;
-    }
+    assign(list);
   }
   virtual ~Object() = default;
   // ___________________________________________________________________________
@@ -418,9 +416,7 @@ class Object : public Value {
   //
   Object& operator=(
       const std::initializer_list<std::pair<std::string, Value>>& list) {
-    for (auto const& element : list) {
-      operator[](element.first) = element.second;
-    }
+    assign(list);
     return *this;
   }
   const Value& operator[](const char* key) const { return Get(key); }
@@ -447,6 +443,18 @@ class Object : public Value {
   }
   // Returns the associated value for an existent key.
   Value& Get(const std::string& key) { return std::get<Map>(*data_)[key]; }
+
+ protected:
+  // ___________________________________________________________________________
+  // METHODs                                                       ( protected )
+  //
+  // Assigns a list of elements.
+  void assign(
+      const std::initializer_list<std::pair<std::string, Value>>& list) {
+    for (auto const& element : list) {
+      operator[](element.first) = element.second;
+    }
+  }
 };
 // =============================================================================
 // Array                                                               ( class )
@@ -459,19 +467,13 @@ class Array : public Value {
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
   Array() { *data_ = Vector(); }
-  Array(const std::initializer_list<Value>& list) : Array() {
-    for (auto const& element : list) {
-      operator<<(element);
-    }
-  }
+  Array(const std::initializer_list<Value>& list) : Array() { assign(list); }
   virtual ~Array() = default;
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
   //
   Array& operator=(const std::initializer_list<Value>& list) {
-    for (auto const& element : list) {
-      operator<<(element);
-    }
+    assign(list);
     return *this;
   }
   const Value& operator[](const std::size_t& idx) const { return Get(idx); }
@@ -500,6 +502,17 @@ class Array : public Value {
       throw std::logic_error("Out of bounds!");
     }
     return container[idx];
+  }
+
+ protected:
+  // ___________________________________________________________________________
+  // METHODs                                                       ( protected )
+  //
+  // Assigns a list of elements.
+  void assign(const std::initializer_list<Value>& list) {
+    for (auto const& element : list) {
+      operator<<(element);
+    }
   }
 };
 

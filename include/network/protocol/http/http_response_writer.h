@@ -39,8 +39,8 @@
 #include <optional>
 
 #include "base/auto_buffer.h"
-#include "http_constants.h"
-#include "http_mime_types.h"
+#include "constants/headers.h"
+#include "constants/mime.h"
 #include "structured/json/value.h"
 
 namespace koobika::hook::network::protocol::http {
@@ -53,7 +53,7 @@ class HttpResponseWriter {
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // 
+  //
   template <typename SEty>
   HttpResponseWriter(const SEty& serializable_object,
                      const std::string& content_type)
@@ -61,16 +61,16 @@ class HttpResponseWriter {
     buffer_.Write(serializable_object.Serialize());
   }
   HttpResponseWriter(const structured::json::Value& json)
-      : HttpResponseWriter(json, HttpMimeTypes::kJSON) {}
+      : HttpResponseWriter(json, constants::Mime::kJSON) {}
   HttpResponseWriter(
       const std::string& string_content,
-      const std::optional<std::string>& content_type = HttpMimeTypes::kTXT)
+      const std::optional<std::string>& content_type = constants::Mime::kTXT)
       : content_type_{content_type} {
     buffer_.Write(string_content);
   }
   HttpResponseWriter(
       const char* c_string_content,
-      const std::optional<std::string>& content_type = HttpMimeTypes::kTXT)
+      const std::optional<std::string>& content_type = constants::Mime::kTXT)
       : content_type_{content_type} {
     buffer_.Write(c_string_content);
   }
@@ -84,20 +84,19 @@ class HttpResponseWriter {
   ~HttpResponseWriter() = default;
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // 
+  //
   HttpResponseWriter& operator=(const HttpResponseWriter&) = delete;
   HttpResponseWriter& operator=(HttpResponseWriter&&) noexcept = delete;
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Tries to fill-up incoming response object with current configutation.
   template <typename RSty>
   RSty& Prepare(RSty& res) {
     if (content_type_.has_value()) {
-      res.Headers.Set(HttpConstants::Headers::kContentType,
-                      content_type_.value());
+      res.Headers.Set(constants::Headers::kContentType, content_type_.value());
     }
-    res.Headers.Set(HttpConstants::Headers::kContentLength, buffer_.Length());
+    res.Headers.Set(constants::Headers::kContentLength, buffer_.Length());
     res.Body = std::move(buffer_);
     return res;
   }
@@ -105,7 +104,7 @@ class HttpResponseWriter {
  private:
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
-  // 
+  //
   base::AutoBuffer buffer_;
   std::optional<std::string> content_type_;
 };

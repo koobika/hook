@@ -38,7 +38,8 @@
 
 #include <string>
 
-#include "http_constants.h"
+#include "constants/characters.h"
+#include "constants/strings.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
@@ -60,8 +61,8 @@ class HttpUtil {
            character == '"' || character == '/' || character == '[' ||
            character == ']' || character == '?' || character == '=' ||
            character == '{' || character == '}' ||
-           character == HttpConstants::Characters::kSpace ||
-           character == HttpConstants::Characters::kHt;
+           character == constants::Characters::kSpace ||
+           character == constants::Characters::kHt;
   }
   // CTL = <any US-ASCII control character (octets 0 - 31) and DEL (127)>
   static bool IsCTL(const char& character) {
@@ -72,16 +73,16 @@ class HttpUtil {
     std::size_t i = 0;
     do {
       if (length > 1) {
-        if (str[0] == HttpConstants::Characters::kCr) {
-          if (str[1] != HttpConstants::Characters::kLf) {
+        if (str[0] == constants::Characters::kCr) {
+          if (str[1] != constants::Characters::kLf) {
             break;
           }
           i += 2;
         }
       }
       while (i < length) {
-        if (str[i] != HttpConstants::Characters::kSpace &&
-            str[i] != HttpConstants::Characters::kHt) {
+        if (str[i] != constants::Characters::kSpace &&
+            str[i] != constants::Characters::kHt) {
           break;
         }
         i++;
@@ -107,11 +108,11 @@ class HttpUtil {
   // LWS = [CRLF] 1*( SP | HT )
   static std::string& RemoveCRLFs(std::string&& str) {
     while (true) {
-      auto crlf = str.find(HttpConstants::Strings::kCrLf);
+      auto crlf = str.find(constants::Strings::kCrLf);
       if (crlf == std::string::npos) break;
-      auto start = crlf + strlen(HttpConstants::Strings::kCrLf), src = start;
-      while (str[src] == HttpConstants::Characters::kSpace ||
-             str[src] == HttpConstants::Characters::kHt) {
+      auto start = crlf + strlen(constants::Strings::kCrLf), src = start;
+      while (str[src] == constants::Characters::kSpace ||
+             str[src] == constants::Characters::kHt) {
         src++;
       }
       str.erase(crlf, src - crlf);

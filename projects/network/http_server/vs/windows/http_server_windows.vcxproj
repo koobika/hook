@@ -80,10 +80,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_response_writer_json.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_response_writer_serializable.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -91,6 +91,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_static_files_server.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\include\auth\controller_base.h" />
@@ -116,14 +117,20 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\auth\modules\api_key.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\auth\modules\basic.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\auth\modules\no_auth.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_constants.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\characters.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\headers.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\limits.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\methods.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\mime.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\status_codes.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\strings.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\controllers\static_files_server.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_controller.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_controller_handler.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_encoding_type.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_headers.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_method.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_method_value.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_mime_types.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_request.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_response.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_response_writer.h" />
@@ -131,7 +138,6 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routes_manager.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routes_node.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routes_performer.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routes_performer_result.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routes_types.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_server.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_server_base.h" />

@@ -38,7 +38,6 @@
 
 #include <string>
 
-#include "http_routes_performer_result.h"
 #include "http_routes_types.h"
 
 namespace koobika::hook::network::protocol::http {
@@ -51,11 +50,11 @@ class HttpRoutesPerformer {
  public:
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Tries to perform router enabled action.
-  virtual HttpRoutesPerformerResult Perform(
-      const std::string& route, typename HttpRoutesTypes::Request request,
-      typename HttpRoutesTypes::Response response) const = 0;
+  virtual bool Perform(const std::string& route,
+                       typename HttpRoutesTypes::Request request,
+                       typename HttpRoutesTypes::Response response) const = 0;
 };
 }  // namespace koobika::hook::network::protocol::http
 

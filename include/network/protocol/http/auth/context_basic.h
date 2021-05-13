@@ -41,6 +41,7 @@
 #include "encoding/base64/decoder.h"
 #include "network/protocol/http/http_util.h"
 #include "network/protocol/http/http_routes_types.h"
+#include "network/protocol/http/constants/characters.h"
 
 namespace koobika::hook::network::protocol::http::auth {
 // =============================================================================
@@ -64,7 +65,7 @@ class ContextBasic : public Context, public Mapper {
     if (vec.size() != 0x2) return false;  // "Basic <base64-encoded-data>"..
     if (!HttpUtil::Compare(vec[0], kBasic, false)) return false;
     auto decoded = encoding::base64::Decoder::Decode(vec[1]);
-    auto colon_pos = decoded.find(HttpConstants::Characters::kColon);
+    auto colon_pos = decoded.find(constants::Characters::kColon);
     if (colon_pos == std::string::npos) return false;
     Request = req;
     Username = decoded.substr(0, colon_pos);

@@ -57,7 +57,8 @@ class HttpServer
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // 
-  HttpServer(const int& workers_number) : HttpServerBase(workers_number) {}
+  HttpServer(const unsigned int& workers_number)
+      : HttpServerBase(workers_number) {}
   HttpServer(const structured::json::Object& configuration)
       : HttpServerBase(configuration) {}
   HttpServer(const HttpServer&) = delete;

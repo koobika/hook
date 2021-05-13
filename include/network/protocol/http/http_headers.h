@@ -41,7 +41,7 @@
 
 #include "base/serializable.h"
 #include "base/variant.h"
-#include "http_constants.h"
+#include "constants/strings.h"
 #include "http_util.h"
 
 namespace koobika::hook::network::protocol::http {
@@ -159,15 +159,15 @@ class HttpHeaders : public base::Serializable {
   // 
   // Finds for the specified header field name.
   std::pair<std::size_t, std::size_t> Find(const std::string& name) const {
-    auto fullname = name + HttpConstants::Strings::kColon;
+    auto fullname = name + constants::Strings::kColon;
     // Let's split out full raw content into lines!
     std::size_t cur = 0, end = 0;
     std::pair<std::size_t, std::size_t> found = {std::string::npos,
                                                  std::string::npos};
     while (true) {
-      end = raw_.find_first_of(HttpConstants::Strings::kCrLf, cur);
+      end = raw_.find_first_of(constants::Strings::kCrLf, cur);
       if (end == std::string::npos) break;
-      auto sub_start = raw_.find_first_of(HttpConstants::Strings::kColon, cur);
+      auto sub_start = raw_.find_first_of(constants::Strings::kColon, cur);
       if (sub_start++ != std::string::npos) {
         auto itr = std::search(raw_.begin() + cur, raw_.begin() + end,
                                fullname.begin(), fullname.end(),
@@ -180,7 +180,7 @@ class HttpHeaders : public base::Serializable {
           break;
         }
       }
-      cur = end + HttpConstants::Strings::kCrLfLen;
+      cur = end + constants::Strings::kCrLfLen;
     }
     return found;
   }
@@ -191,19 +191,19 @@ class HttpHeaders : public base::Serializable {
       raw_.erase(found.first, found.second - found.first);
     }
     raw_.append(name);
-    raw_.append(HttpConstants::Strings::kHeaderFieldNameSeparator);
-    raw_.append(HttpConstants::Strings::kSpace);
+    raw_.append(constants::Strings::kHeaderFieldNameSeparator);
+    raw_.append(constants::Strings::kSpace);
   }
   // Sets header field value.
   void setFieldValue(const std::string& val, const bool& add_pre_comma = false,
                      const bool& add_trailing_crlf = true) {
     if (add_pre_comma) {
-      raw_.append(HttpConstants::Strings::kHeaderFieldValueSeparator);
-      raw_.append(HttpConstants::Strings::kSpace);
+      raw_.append(constants::Strings::kHeaderFieldValueSeparator);
+      raw_.append(constants::Strings::kSpace);
     }
     raw_.append(HttpUtil::RemoveCRLFs(std::move(std::string(val))).data());
     if (add_trailing_crlf) {
-      raw_.append(HttpConstants::Strings::kCrLf);
+      raw_.append(constants::Strings::kCrLf);
     }
   }
   // ___________________________________________________________________________

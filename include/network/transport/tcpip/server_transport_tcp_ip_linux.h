@@ -86,7 +86,7 @@ class ServerTransportTcpIp : public ServerTransport<int, DEty> {
     // let's retrieve all needed parameters for this transport..
     std::string port =
         configuration[transport::ServerTransportConstants::kPortKey];
-    int number_of_workers =
+    unsigned int number_of_workers =
         configuration[transport::ServerTransportConstants::kNumberOfWorkersKey];
     // let's assign the user-specified request handler function..
     request_handler_ = request_handler;
@@ -94,7 +94,7 @@ class ServerTransportTcpIp : public ServerTransport<int, DEty> {
     setupListener(port, number_of_workers);
     setupWorkers(number_of_workers);
     // let's start incoming connections loop!
-    int next = 0;
+    unsigned int next = 0;
     sockaddr client_address;
     socklen_t address_len = sizeof(client_address);
     epoll_event events[kEpollMaxEvents_];
@@ -180,7 +180,8 @@ class ServerTransportTcpIp : public ServerTransport<int, DEty> {
   // METHODs                                                         ( private )
   //
   // Sets-up listener socket resources.
-  void setupListener(const std::string& port, const int& number_of_workers) {
+  void setupListener(const std::string& port,
+                     const unsigned int& number_of_workers) {
     int accept_fd, epoll_fd;
     sockaddr_in addr = {0};
     memset(&addr, 0, sizeof(addr));

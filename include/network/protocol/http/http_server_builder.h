@@ -59,8 +59,9 @@ class HttpServerBuilder : public base::Builder<HttpServer> {
   // ___________________________________________________________________________
   // PROPERTIEs                                                       ( public )
   // 
-  base::BuilderProperty<int, HttpServerBuilder> NumberOfWorkers{
-      this, transport::ServerTransportConstants::kNumberOfWorkersValue};
+  // By default, we will choose the total number of available cores.
+  base::BuilderProperty<unsigned int, HttpServerBuilder> NumberOfWorkers{
+      this, std::thread::hardware_concurrency()};
 };
 }  // namespace koobika::hook::network::protocol::http
 

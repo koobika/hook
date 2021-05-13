@@ -67,11 +67,14 @@ class HttpController : public HttpRouter, public AUty {
   // METHODs                                                       ( protected )
   // 
   void AddToRouter(HttpRouter& router) const {
-    for (auto const& itr : this->map_) {
-      router.Handle(itr.first, itr.second.handler, itr.second.method);
-    }
-    for (auto const& itr : this->vec_) {
-      router.Handle(itr.first, itr.second.handler, itr.second.method);
+    for (auto const& itr : this->routes_) {
+      if (!itr.first.index()) {
+        router.Handle(std ::get<std::string>(itr.first), itr.second.handler,
+                      itr.second.method);
+      } else {
+        router.Handle(std ::get<std::regex>(itr.first), itr.second.handler,
+                      itr.second.method);
+      }
     }
   }
   // ___________________________________________________________________________

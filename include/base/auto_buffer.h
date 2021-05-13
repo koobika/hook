@@ -51,6 +51,7 @@ class AutoBuffer {
   //
   AutoBuffer() = default;
   AutoBuffer(const std::string& str) { Write(str); }
+  AutoBuffer(std::istream& input_stream) { Write(input_stream); }
   AutoBuffer(const char& character) { Write(character); }
   AutoBuffer(const char* str) { Write(str); }
   AutoBuffer(const char* str, const std::size_t& length) { Write(str, length); }
@@ -94,6 +95,8 @@ class AutoBuffer {
     }
     return *this;
   }
+  // Writes the specified std::istream to the internal buffer.
+  AutoBuffer& Write(std::istream& input_stream) { return write(input_stream); }
   // Writes the specified std::string to the internal buffer.
   AutoBuffer& Write(const std::string& str) {
     return write((void*)str.data(), str.length());
@@ -318,6 +321,17 @@ class AutoBuffer {
       }
     }
     data_.write_cursor += length;
+    return *this;
+  }
+  // Adds the specified buffer fragment to the internal decoder data.
+  AutoBuffer& write(std::istream& input_stream) {
+    input_stream.seekg(0, input_stream.end);
+    auto length = input_stream.tellg();
+    input_stream.seekg(0, input_stream.beg);
+    char* buffer = new char[length];
+    input_stream.read(buffer, length);
+    write(buffer, length);
+    delete[] buffer;
     return *this;
   }
   // ___________________________________________________________________________

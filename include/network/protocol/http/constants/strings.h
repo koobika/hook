@@ -12,7 +12,7 @@
 //      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
 //          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// examples/network/http_server_controller.cpp
+// network/protocol/http/constants/limits.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -33,30 +33,46 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/http_server_builder.h"
+#ifndef koobika_hook_network_protocol_http_constants_strings_h
+#define koobika_hook_network_protocol_http_constants_strings_h
 
-using namespace koobika::hook::network::protocol::http;
+#include <memory>
 
-// This is our custom controller with only one handler!
-class CustomController : public HttpController<> {
- protected:
-  // This |GET| handler will return the 'hello world' message!
-  HttpControllerGet myCurrentValueHandler{
-      this, "/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
-        res.Body.Write("Hello, World!\r\n");
-        res.Ok_200();
-      }};
+namespace koobika::hook::network::protocol::http::constants {
+// =============================================================================
+// Strings                                                             ( class )
+// -----------------------------------------------------------------------------
+// This specification holds for all <strings> constants.
+// =============================================================================
+class Strings {
+ public:
+  // ___________________________________________________________________________
+  // CONSTANTs                                                        ( public )
+  //
+  // Http-version.
+  static constexpr char kHttpVersion[] = "HTTP/1.1";
+  // CrLf.
+  static constexpr char kCrLf[] = "\r\n";
+  static constexpr std::size_t kCrLfLen = 2;
+  // Empty-line.
+  static constexpr char kEmptyLine[] = "\r\n\r\n";
+  static constexpr std::size_t kEmptyLineLen = 4;
+  // Space.
+  static constexpr char kSpace[] = " ";
+  static constexpr std::size_t kSpaceLen = 1;
+  // Colon.
+  static constexpr char kColon[] = ":";
+  static constexpr std::size_t kColonLen = 1;
+  // Header (field-name) separator.
+  static constexpr char kHeaderFieldNameSeparator[] = ":";
+  static constexpr std::size_t kHeaderFieldNameSeparatorLen = 1;
+  // Header (field-value) separator.
+  static constexpr char kHeaderFieldValueSeparator[] = ",";
+  static constexpr std::size_t kHeaderFieldValueSeparatorLen = 1;
+  // Header (chunked-content) end delimiter.
+  static constexpr char kHeaderChunkedContentEnd[] = "0\r\n\r\n";
+  static constexpr std::size_t kHeaderChunkedContentEndLen = 5;
 };
+}  // namespace koobika::hook::network::protocol::http::constants
 
-int main() {
-  try {
-    auto server = HttpServerBuilder().Build();
-    server->Handle<CustomController>();
-    server->Start("8542");
-    return getchar();
-  } catch (const std::exception& exception) {
-    // ((Error)) -> while performing setup!
-    std::cout << exception.what() << std::endl;
-    return -1;
-  }
-}
+#endif

@@ -39,8 +39,7 @@
 #include <functional>
 #include <string>
 
-#include "http_constants.h"
-#include "http_method_value.h"
+#include "constants/methods.h"
 #include "http_routes_types.h"
 
 namespace koobika::hook::network::protocol::http {
@@ -69,7 +68,7 @@ struct HttpRoutesNode {
   // PROPERTIEs                                                       ( public )
   // 
   typename HttpRoutesTypes::Handler handler = nullptr;
-  HttpMethodValue method = HttpConstants::Methods::kExtension;
+  HttpMethodValue method = constants::Methods::kExtension;
 };
 }  // namespace koobika::hook::network::protocol::http
 

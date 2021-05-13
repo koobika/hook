@@ -40,8 +40,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "http_constants.h"
-#include "http_method_value.h"
+#include "constants/methods.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
@@ -53,62 +52,62 @@ class HttpMethod {
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // 
+  //
   HttpMethod() = default;
   HttpMethod(const std::string& method) {
     static const std::unordered_map<std::string, int> known_methods = {
-        {kOptStr_, HttpConstants::Methods::kOptions},
-        {kGetStr_, HttpConstants::Methods::kGet},
-        {kHeaStr_, HttpConstants::Methods::kHead},
-        {kPosStr_, HttpConstants::Methods::kPost},
-        {kPutStr_, HttpConstants::Methods::kPut},
-        {kDelStr_, HttpConstants::Methods::kDelete},
-        {kTraStr_, HttpConstants::Methods::kTrace},
-        {kConStr_, HttpConstants::Methods::kConnect}};
+        {kOptStr_, constants::Methods::kOptions},
+        {kGetStr_, constants::Methods::kGet},
+        {kHeaStr_, constants::Methods::kHead},
+        {kPosStr_, constants::Methods::kPost},
+        {kPutStr_, constants::Methods::kPut},
+        {kDelStr_, constants::Methods::kDelete},
+        {kTraStr_, constants::Methods::kTrace},
+        {kConStr_, constants::Methods::kConnect}};
     st_.assign(method);
     std::transform(st_.begin(), st_.end(), st_.begin(), ::tolower);
     auto itr = known_methods.find(st_);
     cd_ = itr != known_methods.end() ? itr->second
-                                     : HttpConstants::Methods::kExtension;
+                                     : constants::Methods::kExtension;
   }
   HttpMethod(const HttpMethod&) = default;
   HttpMethod(HttpMethod&&) noexcept = default;
   ~HttpMethod() = default;
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // 
+  //
   HttpMethod& operator=(const HttpMethod&) = default;
   HttpMethod& operator=(HttpMethod&&) noexcept = default;
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Returns the method code (numeric value).
   HttpMethodValue GetCode() const { return cd_; }
   // Returns the method description (string value).
   std::string GetDescription() const { return st_; }
   // Checks if current method is 'OPTIONS'.
-  bool IsOptions() const { return cd_ == HttpConstants::Methods::kOptions; }
+  bool IsOptions() const { return cd_ == constants::Methods::kOptions; }
   // Checks if current method is 'GET'.
-  bool IsGet() const { return cd_ == HttpConstants::Methods::kGet; }
+  bool IsGet() const { return cd_ == constants::Methods::kGet; }
   // Checks if current method is 'HEAD'.
-  bool IsHead() const { return cd_ == HttpConstants::Methods::kHead; }
+  bool IsHead() const { return cd_ == constants::Methods::kHead; }
   // Checks if current method is 'POST'.
-  bool IsPost() const { return cd_ == HttpConstants::Methods::kPost; }
+  bool IsPost() const { return cd_ == constants::Methods::kPost; }
   // Checks if current method is 'PUT>'.
-  bool IsPut() const { return cd_ == HttpConstants::Methods::kPut; }
+  bool IsPut() const { return cd_ == constants::Methods::kPut; }
   // Checks if current method is 'DELETE'.
-  bool IsDelete() const { return cd_ == HttpConstants::Methods::kDelete; }
+  bool IsDelete() const { return cd_ == constants::Methods::kDelete; }
   // Checks if current method is 'TRACE'.
-  bool IsTrace() const { return cd_ == HttpConstants::Methods::kTrace; }
+  bool IsTrace() const { return cd_ == constants::Methods::kTrace; }
   // Checks if current method is 'CONNECT'.
-  bool IsConnect() const { return cd_ == HttpConstants::Methods::kConnect; }
+  bool IsConnect() const { return cd_ == constants::Methods::kConnect; }
   // Checks if current method is 'EXTENSION'.
-  bool IsExtension() const { return cd_ == HttpConstants::Methods::kExtension; }
+  bool IsExtension() const { return cd_ == constants::Methods::kExtension; }
 
  private:
   // ___________________________________________________________________________
   // CONSTANTs                                                       ( private )
-  // 
+  //
   static constexpr char kOptStr_[] = "options";
   static constexpr char kGetStr_[] = "get";
   static constexpr char kHeaStr_[] = "head";
@@ -119,8 +118,8 @@ class HttpMethod {
   static constexpr char kConStr_[] = "connect";
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
-  // 
-  HttpMethodValue cd_ = HttpConstants::Methods::kExtension;
+  //
+  HttpMethodValue cd_ = constants::Methods::kExtension;
   std::string st_;
 };
 }  // namespace koobika::hook::network::protocol::http
