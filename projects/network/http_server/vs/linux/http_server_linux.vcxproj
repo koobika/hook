@@ -185,6 +185,7 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\headers.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\limits.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\methods.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\mime.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\status_codes.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\strings.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\controllers\static_files_server.h" />
@@ -194,7 +195,6 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_headers.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_method.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_method_value.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_mime_types.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_request.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_response.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_response_writer.h" />

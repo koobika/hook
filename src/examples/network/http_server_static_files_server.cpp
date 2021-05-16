@@ -41,7 +41,7 @@ using namespace koobika::hook::network::protocol::http;
 int main() {
   try {
     auto server = HttpServerBuilder().Build();
-    server->Handle<controllers::StaticFilesServer<>>("/", "../../resources/");
+    server->Handle<controllers::StaticFilesServer<>>("/", "./static/");
     server->Start("8542");
     return getchar();
   } catch (const std::exception& exception) {
