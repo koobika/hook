@@ -37,6 +37,7 @@
 #define koobika_hook_network_protocol_http_controllers_staticfilesserver_h
 
 #include <unordered_map>
+#include <filesystem>
 
 #include "network/protocol/http/http_controller.h"
 #include "network/protocol/http/auth/modules/no_auth.h"
@@ -55,31 +56,111 @@ class StaticFilesServer : public HttpController<AUty> {
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
   StaticFilesServer(const std::string& route, const std::string& path) {
+    // Let's setup all default (built-in) supported extensions.
+    extensions_ = {
+        {".3g2", constants::Mime::k3G2},
+        {".3gp", constants::Mime::k3GP},
+        {".7z", constants::Mime::k7Z},
+        {".aac", constants::Mime::kAAC},
+        {".abw", constants::Mime::kABW},
+        {".arc", constants::Mime::kARC},
+        {".avi", constants::Mime::kAVI},
+        {".azw", constants::Mime::kAZW},
+        {".bz", constants::Mime::kBZ},
+        {".bz2", constants::Mime::kBZ2},
+        {".csh", constants::Mime::kCSH},
+        {".css", constants::Mime::kCSS},
+        {".csv", constants::Mime::kCSV},
+        {".doc", constants::Mime::kDOC},
+        {".docx", constants::Mime::kDOCX},
+        {".gz", constants::Mime::kGZ},
+        {".htm", constants::Mime::kHTM},
+        {".html", constants::Mime::kHTML},
+        {".ico", constants::Mime::kICO},
+        {".ics", constants::Mime::kICS},
+        {".jar", constants::Mime::kJAR},
+        {".jpg", constants::Mime::kJPG},
+        {".jpeg", constants::Mime::kJPEG},
+        {".js", constants::Mime::kJS},
+        {".json", constants::Mime::kJSON},
+        {".mid", constants::Mime::kMID},
+        {".midi", constants::Mime::kMIDI},
+        {".mjs", constants::Mime::kMJS},
+        {".mp3", constants::Mime::kMP3},
+        {".mpeg", constants::Mime::kMPEG},
+        {".mpkg", constants::Mime::kMPKG},
+        {".odp", constants::Mime::kODP},
+        {".ods", constants::Mime::kODS},
+        {".odt", constants::Mime::kODT},
+        {".oga", constants::Mime::kOGA},
+        {".ogv", constants::Mime::kOGV},
+        {".ogx", constants::Mime::kOGX},
+        {".opus", constants::Mime::kOPUS},
+        {".orf", constants::Mime::kOTF},
+        {".pdf", constants::Mime::kPDF},
+        {".php", constants::Mime::kPHP},
+        {".png", constants::Mime::kPNG},
+        {".ppt", constants::Mime::kPPT},
+        {".pptx", constants::Mime::kPPTX},
+        {".rar", constants::Mime::kRAR},
+        {".rtf", constants::Mime::kRTF},
+        {".sh", constants::Mime::kSH},
+        {".svg", constants::Mime::kSVG},
+        {".swf", constants::Mime::kSWF},
+        {".tar", constants::Mime::kTAR},
+        {".tif", constants::Mime::kTIF},
+        {".tiff", constants::Mime::kTIFF},
+        {".ts", constants::Mime::kTS},
+        {".ttf", constants::Mime::kTTF},
+        {".txt", constants::Mime::kTXT},
+        {".vsd", constants::Mime::kVSD},
+        {".wav", constants::Mime::kWAV},
+        {".weba", constants::Mime::kWEBA},
+        {".webm", constants::Mime::kWEBM},
+        {".webp", constants::Mime::kWEBP},
+        {".woff", constants::Mime::kWOFF},
+        {".xhtml", constants::Mime::kXHTML},
+        {".xls", constants::Mime::kXLS},
+        {".xlsx", constants::Mime::kXLSX},
+        {".xmid", constants::Mime::kXMID},
+        {".xmidi", constants::Mime::kXMIDI},
+        {".xml", constants::Mime::kXMLNONREADABLE},
+        {".xul", constants::Mime::kXUL},
+        {".zip", constants::Mime::kZIP},
+    };
+    // Let's setup the <get> end-point.
     this->Get(route, this->Authorize([this, route, path](const HttpRequest& req,
                                                          HttpResponse& res) {
-      // Let's remove the prefix route from the original uri..
-      auto final_route = req.Uri.GetPath();
-      final_route.erase(0, route.length());
-      // Let's remove extra '/' '\' characters..
-      auto position = final_route.find_first_not_of("\"/");
-      if (position != std::string::npos) {
-        final_route.erase(0, position);
-      }
-      auto fixed_path = path;
-      position = fixed_path.find_last_not_of("\"/");
-      if (position == fixed_path.length() - 1) {
-        fixed_path.append("/");
-      }
-      // Let's retrieve the resource..
-      auto content = get(fixed_path + final_route);
-      if (content.first.has_value()) {
-        res.Headers.Set(constants::Headers::kContentType, content.second);
-        res.Body.Write(content.first.value());
-        res.Ok_200();
+      // Let's check if given uri path is starting from the base one..
+      auto base_path = std::filesystem::path(path);
+      auto base_path_absolute = std::filesystem::absolute(base_path);
+      auto uri_path_absolute = std::filesystem::absolute(
+          base_path.concat(std::filesystem::path(req.Uri.GetPath()).string()));
+      auto uri_string = uri_path_absolute.string();
+      if (!uri_string.find(base_path_absolute.string())) {
+        // Let's try to retrieve the required content..
+        auto content = get(uri_string);
+        if (content.first.has_value()) {
+          res.Headers.Set(constants::Headers::kContentType, content.second);
+          res.Body.Write(content.first.value());
+          res.Ok_200();
+        } else {
+          // ((Error)) -> while trying to access an invalid resource!
+          res.NotFound_404();
+        }
       } else {
-        res.NotFound_404();
+        // ((Error)) -> while trying to access a forbidden path!
+        res.BadRequest_400();
       }
     }));
+  }
+  StaticFilesServer(
+      const std::string& route, const std::string& path,
+      const std::unordered_map<std::string, std::string>& additional_mime_types)
+      : StaticFilesServer(route, path) {
+    for (auto const& additional : additional_mime_types) {
+      extensions_.insert(additional);
+    }
   }
   StaticFilesServer(const StaticFilesServer&) = delete;
   StaticFilesServer(StaticFilesServer&&) noexcept = delete;
@@ -105,21 +186,21 @@ class StaticFilesServer : public HttpController<AUty> {
   }
   // Tries to extract the mime-type from the resource name.
   std::string getMimeType(const std::string& resource_name) {
-    static const std::unordered_map<std::string, std::string> extensions = {
-        {"jpg", constants::Mime::kJPG},
-        {"jpeg", constants::Mime::kJPEG},
-        {"png", constants::Mime::kPNG}};
     std::string mime_type = constants::Mime::kBIN;
-    auto position = resource_name.find_last_of(".");
-    if (position != std::string::npos) {
-      auto extension = resource_name.substr(position+1);
-      auto itr = extensions.find(extension);
-      if (itr != extensions.end()) {
-        mime_type = itr->second;
-      }
+    auto ex = std::filesystem::path(resource_name).extension().string();
+    std::transform(ex.begin(), ex.end(), ex.begin(), ::tolower);
+    auto itr = extensions_.find(ex);
+    if (itr != extensions_.end()) {
+      mime_type = itr->second;
     }
     return mime_type;
   }
+
+ protected:
+  // ___________________________________________________________________________
+  // ATTRIBUTEs                                                    ( protected )
+  //
+  std::unordered_map<std::string, std::string> extensions_;
 };
 }  // namespace koobika::hook::network::protocol::http::controllers
 
