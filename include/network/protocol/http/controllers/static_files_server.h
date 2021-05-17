@@ -39,6 +39,8 @@
 #include <unordered_map>
 #include <filesystem>
 
+#include "base/cache_null.h"
+#include "base/repository_filesystem.h"
 #include "network/protocol/http/http_controller.h"
 #include "network/protocol/http/auth/modules/no_auth.h"
 #include "network/protocol/http/constants/mime.h"
@@ -49,7 +51,9 @@ namespace koobika::hook::network::protocol::http::controllers {
 // -----------------------------------------------------------------------------
 // This specification holds for built-in <static-files-server> controller
 // =============================================================================
-template <typename AUty = auth::modules::NoAuth>
+template <typename AUty = auth::modules::NoAuth,
+          typename CAty = base::CacheNull,
+          typename REty = base::RepositoryFilesystem>
 class StaticFilesServer : public HttpController<AUty> {
  public:
   // ___________________________________________________________________________
@@ -177,12 +181,12 @@ class StaticFilesServer : public HttpController<AUty> {
   //
   // Retrieves (if possible) the required resource (using cache).
   std::pair<std::optional<base::AutoBuffer>, std::string> get(
-      const std::string& resource_name) {
-    std::ifstream file(resource_name, std::ios::binary);
-    if (file.is_open()) {
-      return std::make_pair(base::AutoBuffer(file), getMimeType(resource_name));
+      const std::string& key) {
+    auto resource = cache_.Get(key);
+    if (!resource.has_value()) {
+      resource = repository_.Get(key);
     }
-    return std::make_pair(std::optional<base::AutoBuffer>{}, "");
+    return std::make_pair(resource, getMimeType(key));
   }
   // Tries to extract the mime-type from the resource name.
   std::string getMimeType(const std::string& resource_name) {
@@ -200,6 +204,8 @@ class StaticFilesServer : public HttpController<AUty> {
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                    ( protected )
   //
+  CAty cache_;
+  REty repository_;
   std::unordered_map<std::string, std::string> extensions_;
 };
 }  // namespace koobika::hook::network::protocol::http::controllers
