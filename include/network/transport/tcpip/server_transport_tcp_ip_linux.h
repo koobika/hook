@@ -81,7 +81,7 @@ class ServerTransportTcpIp : public ServerTransport<int, DEty> {
   // METHODs                                                          ( public )
   //
   // Starts current transport activity using the provided (json) configuration.
-  void Start(const structured::json::Object& configuration,
+  void Start(const structured::json::JsonObject& configuration,
              const typename DEty::RequestHandler& request_handler) override {
     // let's retrieve all needed parameters for this transport..
     std::string port =

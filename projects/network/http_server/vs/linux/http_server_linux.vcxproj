@@ -227,7 +227,7 @@
     <ClInclude Include="..\..\..\..\..\include\network\transport\server_transport_decoder.h" />
     <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server_transport_tcp_ip.h" />
     <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server_transport_tcp_ip_linux.h" />
-    <ClInclude Include="..\..\..\..\..\include\structured\json\value.h" />
+    <ClInclude Include="..\..\..\..\..\include\structured\json\json_value.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{048404c6-8441-474e-af78-65e990eb879f}</ProjectGuid>

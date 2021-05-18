@@ -155,9 +155,6 @@
     <ClInclude Include="..\..\..\..\..\include\network\transport\server_transport_decoder.h">
       <Filter>include\network\transport</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\structured\json\value.h">
-      <Filter>include\structured\json</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\v1.1\http_request_decoder.h">
       <Filter>include\network\protocol\http\v1.1</Filter>
     </ClInclude>
@@ -280,6 +277,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\include\base\repository_filesystem.h">
       <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\structured\json\json_value.h">
+      <Filter>include\structured\json</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
