@@ -326,7 +326,7 @@ class AutoBuffer {
   // Adds the specified buffer fragment to the internal decoder data.
   AutoBuffer& write(std::istream& input_stream) {
     input_stream.seekg(0, input_stream.end);
-    auto length = input_stream.tellg();
+    std::size_t length = (std::size_t)input_stream.tellg();
     input_stream.seekg(0, input_stream.beg);
     char* buffer = new char[length];
     input_stream.read(buffer, length);

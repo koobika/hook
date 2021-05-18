@@ -19,28 +19,29 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\src\examples\base\stream_hello_world.cpp" />
+    <ClInclude Include="..\..\..\..\..\include\base\auto_buffer.h" />
+    <ClInclude Include="..\..\..\..\..\include\base\builder.h" />
+    <ClInclude Include="..\..\..\..\..\include\base\builder_property.h" />
+    <ClInclude Include="..\..\..\..\..\include\base\cache.h" />
+    <ClInclude Include="..\..\..\..\..\include\base\cache_null.h" />
+    <ClInclude Include="..\..\..\..\..\include\base\platform.h" />
+    <ClInclude Include="..\..\..\..\..\include\base\repository.h" />
+    <ClInclude Include="..\..\..\..\..\include\base\repository_filesystem.h" />
+    <ClInclude Include="..\..\..\..\..\include\base\serializable.h" />
+    <ClInclude Include="..\..\..\..\..\include\base\uri.h" />
+    <ClInclude Include="..\..\..\..\..\include\base\uri_query.h" />
+    <ClInclude Include="..\..\..\..\..\include\base\uri_reader.h" />
+    <ClInclude Include="..\..\..\..\..\include\base\variant.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\include\base\builder.h" />
-    <ClInclude Include="..\..\..\..\include\base\builder_property.h" />
-    <ClInclude Include="..\..\..\..\include\base\key_value_store.h" />
-    <ClInclude Include="..\..\..\..\include\base\platform.h" />
-    <ClInclude Include="..\..\..\..\include\base\repository.h" />
-    <ClInclude Include="..\..\..\..\include\base\repository_memory.h" />
-    <ClInclude Include="..\..\..\..\include\base\serializable.h" />
-    <ClInclude Include="..\..\..\..\include\base\stream.h" />
-    <ClInclude Include="..\..\..\..\include\base\uri.h" />
-    <ClInclude Include="..\..\..\..\include\base\uri_query.h" />
-    <ClInclude Include="..\..\..\..\include\base\uri_reader.h" />
-    <ClInclude Include="..\..\..\..\include\base\variant.h" />
+    <ClCompile Include="..\..\..\..\..\src\examples\base\auto_buffer_hello_world.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{183C1CEE-D5DF-47F4-AA08-A0FC8204CBA5}</ProjectGuid>
     <RootNamespace>visualstudio2019</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>stream</ProjectName>
+    <ProjectName>auto_buffer_windows</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -88,20 +89,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>$(ProjectDir)\bin\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
-    <OutDir>$(ProjectDir)\bin\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(ProjectDir)\bin\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(ProjectDir)\bin\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(ProjectDir)\bin\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(ProjectDir)\bin\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(ProjectDir)\bin\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(ProjectDir)\bin\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -109,7 +110,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../../../include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -122,7 +123,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../../../include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -137,7 +138,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../../../include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -155,7 +156,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../../../include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../../include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
