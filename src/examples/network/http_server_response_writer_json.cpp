@@ -45,8 +45,9 @@ int main() {
       if (req.Method.IsGet()) {
         // Let's directly write JSON content using 'HttpResponseWriter' class!
         HttpResponseWriter(
-            json::Object{{"My value", json::Array{"Some string value...", true,
-                                                  nullptr, 123.45}}})
+            json::JsonObject{
+                {"My value", json::JsonArray{"Some string value...", true,
+                                             nullptr, 123.45}}})
             .Prepare(res)
             .Ok_200();
       } else {

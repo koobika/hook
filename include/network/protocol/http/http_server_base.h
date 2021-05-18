@@ -50,7 +50,7 @@
 #include "http_response_writer.h"
 #include "http_router.h"
 #include "network/transport/server_transport_constants.h"
-#include "structured/json/value.h"
+#include "structured/json/json_value.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
@@ -74,7 +74,7 @@ class HttpServerBase : public HttpRoutesManager {
     configuration_[transport::ServerTransportConstants::kNumberOfWorkersKey] =
         workers_number;
   }
-  HttpServerBase(const structured::json::Object& configuration)
+  HttpServerBase(const structured::json::JsonObject& configuration)
       : configuration_(configuration) {}
   HttpServerBase(const HttpServerBase&) = delete;
   HttpServerBase(HttpServerBase&&) noexcept = delete;
@@ -240,7 +240,7 @@ class HttpServerBase : public HttpRoutesManager {
   ROty router_;
   std::shared_ptr<TRty> transport_;
   std::shared_ptr<std::thread> transport_thread_;
-  structured::json::Object configuration_;
+  structured::json::JsonObject configuration_;
 };
 }  // namespace koobika::hook::network::protocol::http
 

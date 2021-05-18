@@ -41,7 +41,7 @@
 #include "base/auto_buffer.h"
 #include "constants/headers.h"
 #include "constants/mime.h"
-#include "structured/json/value.h"
+#include "structured/json/json_value.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
@@ -60,7 +60,7 @@ class HttpResponseWriter {
       : content_type_{content_type} {
     buffer_.Write(serializable_object.Serialize());
   }
-  HttpResponseWriter(const structured::json::Value& json)
+  HttpResponseWriter(const structured::json::JsonValue& json)
       : HttpResponseWriter(json, constants::Mime::kJSON) {}
   HttpResponseWriter(
       const std::string& string_content,

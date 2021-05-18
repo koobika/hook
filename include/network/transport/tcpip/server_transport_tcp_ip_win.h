@@ -81,7 +81,7 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
   // METHODs                                                          ( public )
   // 
   // Starts current transport activity using the provided (json) configuration.
-  void Start(const structured::json::Object& configuration,
+  void Start(const structured::json::JsonObject& configuration,
              const typename DEty::RequestHandler& request_handler) override {
     if (io_port_ != INVALID_HANDLE_VALUE) {
       // ((Error)) -> transport already initialized!

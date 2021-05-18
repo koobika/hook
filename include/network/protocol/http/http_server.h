@@ -59,7 +59,7 @@ class HttpServer
   // 
   HttpServer(const unsigned int& workers_number)
       : HttpServerBase(workers_number) {}
-  HttpServer(const structured::json::Object& configuration)
+  HttpServer(const structured::json::JsonObject& configuration)
       : HttpServerBase(configuration) {}
   HttpServer(const HttpServer&) = delete;
   HttpServer(HttpServer&&) noexcept = delete;
