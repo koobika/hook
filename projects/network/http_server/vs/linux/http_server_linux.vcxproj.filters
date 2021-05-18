@@ -269,5 +269,17 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\mime.h">
       <Filter>include\network\protocol\http\constants</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\cache.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\cache_null.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\repository.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\repository_filesystem.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
