@@ -1,11 +1,37 @@
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// 03.objects.cpp
+﻿// /////////////////////////////////////////////////////////////////////////////
+//
+//       ╓▄▓▓▓▓▓▓▓▄╖      ╓▄▓▓▓▓▓▓▓▄╖
+//    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
+//  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
+//  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
+// ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
+// ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
+//  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
+//   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`  ╒▓▓▓▓▓▓▓▓▓▓▓▓▓'
+//      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
+//          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// Copyright (c) 2020 koobika corporation. All rights reserved.
-// Author: Marcos Rojas (marcos.rojas@koobika.io)
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-#include <iostream>
+// examples/structured/json/json_objects.cpp
+// -----------------------------------------------------------------------------
+// Copyright (c) 2021 koobika corporation. All rights reserved.
+// Author: Marcos Rojas (mrojas@koobika.org).
+// -----------------------------------------------------------------------------
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 3 of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// -----------------------------------------------------------------------------
+// /////////////////////////////////////////////////////////////////////////////
 
 #include "structured/json/json_value.h"
 
@@ -13,55 +39,55 @@ using namespace koobika::hook::structured::json;
 
 int main() {
   try {
-    // straightforward declaration..
-    JsonObject json_object = {{"field-a", "hello world!"},
-                              {"field-b", false},
-                              {"field-c", true},
-                              {"field-d", nullptr}};
-    // let's try to set the desired element with the specified value..
-    json_object["field-e"] = 1234.5670f;
-    // let's try to get the desired element specifying its key..
-    // in this case, we're not interested about the underlying type so
-    // we only want to get the json-value back..
-    // json_field is an instance of a JsonValue reference type so, 
-    // if we modify its value we're changing the original one (the one 
-    // stored within the json-object)..
-    auto& json_field = json_object["field-a"];
-    json_field = "content changed via reference!";
-    // let's try to get the desired element specifying its key..
-    // in this case, we're interested about the underlying type so
-    // we need to cast it to the expected value (please, note that if the 
-    // underlying type is not the expected one an exception will be triggered)..
-    // json_field is an instance of a JsonNumber reference type so,
-    // if we modify its value we're changing the original one (the one
-    // stored within the json-object)..
-    auto& json_field_specific = (JsonNumber&)json_object["field-e"];
-    json_field_specific = 765.4321f;
-    // let's try to get the desired element specifying its key..
-    // in this case, we're interested about the underlying type so
-    // we need to cast it to the expected value (please, note that if the
-    // underlying type is not the expected one an exception will be triggered)..
-    // json_field is an instance of a JsonNumber copied value type so,
-    // if we modify its value we're NOT changing the original one (the one
-    // stored within the json-object)..
-    auto json_field_specific_copy = (JsonNumber&)json_object["field-e"];
-    json_field_specific_copy = 2020;
-    // let's try now to change the original type of an stored json-value..
-    auto& json_field_to_change = json_object["field-d"];
-    json_field_to_change = "another string value!";
-    // let's try now to duplicate the original json-object content..
-    auto json_object_copy = json_object;
-    // let's try to add the copied json-object instance to the original one..
-    json_object["field-f"] = json_object_copy;
-    // let's try to erase some elements..
-    json_object.Erase("field-a");
-    json_object.Erase({"field-b", "field-c", "field-d", "field-e"});
-    // let's check for an object entry..
-    auto json_field_exists = json_object.Exist("field-a");
-    std::cout << "field-a does " << (json_field_exists ? "" : "NOT ")
-              << "exist!" << std::endl;
-    // let's try now to dump (export to string) the entire json-object content..
-    std::cout << json_object.ToString() << std::endl;
+    // implicit declaration..
+    JsonObject json_object = {{"a", "Hello, World!"}};
+    // add element..
+    json_object.Add({"b", true});
+    json_object.Add({"c", false});
+    json_object.Add({"d", nullptr});
+    json_object.Add({"e", std::numeric_limits<unsigned char>::max()});
+    json_object.Add({"f", std::numeric_limits<char>::max()});
+    json_object.Add({"g", std::numeric_limits<unsigned short>::max()});
+    json_object.Add({"h", std::numeric_limits<short>::max()});
+    json_object.Add({"i", std::numeric_limits<unsigned int>::max()});
+    json_object.Add({"j", std::numeric_limits<int>::max()});
+    json_object.Add({"k", std::numeric_limits<unsigned long>::max()});
+    json_object.Add({"l", std::numeric_limits<long>::max()});
+    json_object.Add({"m", std::numeric_limits<float>::max()});
+    json_object.Add({"n", std::numeric_limits<double>::max()});
+    // check for an existent key..
+    auto exists = json_object.Exist("c");
+    // get element (by value)..
+    auto by_value = json_object.At("g");
+    // get element (by reference)..
+    auto& by_reference = json_object.At("g");
+    by_reference = "changed by reference using method!";
+    // get element (by value) using operator..
+    auto by_value_op = json_object["m"];
+    // get element (by reference) using operator..
+    auto& by_reference_op = json_object["m"];
+    by_reference_op = "changed by reference using operator!";
+    // explicit declaration (with conversion)..
+    JsonValue json_object_aux = JsonObject{{"This is also me!", true}};
+    // explicit declaration (with conversion)..
+    JsonObject json_object_copy = json_object;
+    // erase element..
+    json_object_copy.Erase("i");
+    // Let's iterate through the elements (by const ref)!
+    std::cout << "> json_array elements (using iteration): " << std::endl;
+    for (auto const& element : json_object) {
+      std::cout << "    " << element.first << ": "
+                << element.second.Serialize().ToString() << std::endl;
+    }
+    // Let's iterate through the elements (by ref) to change them!
+    for (auto& element : json_object_copy) {
+      element.second = nullptr;
+    }
+    // let's try now to dump (export to string) the json-array's content..
+    std::cout << "> json_object_aux: " << json_object_aux.Serialize().ToString()
+              << std::endl;
+    std::cout << "> json_object_copy: "
+              << json_object_copy.Serialize().ToString() << std::endl;
   } catch (const std::exception& exception) {
     // [error] -> while performing required operations!
     std::cout << exception.what() << std::endl;

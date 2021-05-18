@@ -1,11 +1,37 @@
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// 04.arrays.cpp
+﻿// /////////////////////////////////////////////////////////////////////////////
+//
+//       ╓▄▓▓▓▓▓▓▓▄╖      ╓▄▓▓▓▓▓▓▓▄╖
+//    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
+//  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
+//  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
+// ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
+// ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
+//  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
+//   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`  ╒▓▓▓▓▓▓▓▓▓▓▓▓▓'
+//      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
+//          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// Copyright (c) 2020 koobika corporation. All rights reserved.
-// Author: Marcos Rojas (marcos.rojas@koobika.io)
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-#include <iostream>
+// examples/structured/json/json_arrays.cpp
+// -----------------------------------------------------------------------------
+// Copyright (c) 2021 koobika corporation. All rights reserved.
+// Author: Marcos Rojas (mrojas@koobika.org).
+// -----------------------------------------------------------------------------
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 3 of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// -----------------------------------------------------------------------------
+// /////////////////////////////////////////////////////////////////////////////
 
 #include "structured/json/json_value.h"
 
@@ -13,48 +39,55 @@ using namespace koobika::hook::structured::json;
 
 int main() {
   try {
-    // straightforward declaration..
-    JsonArray json_array = {"hello world!", false, true, nullptr};
-    // let's try to add the desired element with the specified value..
-    json_array.Add(1234.5670f);
-    // let's try to get the desired element specifying its index..
-    // in this case, we're not interested about the underlying type so
-    // we only want to get the json-value back..
-    // json_field is an instance of a JsonValue reference type so,
-    // if we modify its value we're changing the original one (the one
-    // stored within the json-array)..
-    auto& json_field = json_array[0];
-    json_field = "content changed via reference!";
-    // let's try to get the desired element specifying its index..
-    // in this case, we're interested about the underlying type so
-    // we need to cast it to the expected value (please, note that if the
-    // underlying type is not the expected one an exception will be triggered)..
-    // json_field is an instance of a JsonNumber reference type so,
-    // if we modify its value we're changing the original one (the one
-    // stored within the json-array)..
-    auto& json_field_specific = (JsonNumber&)json_array[4];
-    json_field_specific = 765.4321f;
-    // let's try to get the desired element specifying its inhdex..
-    // in this case, we're interested about the underlying type so
-    // we need to cast it to the expected value (please, note that if the
-    // underlying type is not the expected one an exception will be triggered)..
-    // json_field is an instance of a JsonNumber copied value type so,
-    // if we modify its value we're NOT changing the original one (the one
-    // stored within the json-array)..
-    auto json_field_specific_copy = (JsonNumber&)json_array[4];
-    json_field_specific_copy = 2020;
-    // let's try now to change the original type of an stored json-value..
-    auto& json_field_to_change = json_array[3];
-    json_field_to_change = "another string value!";
-    // let's try now to duplicate the original json-array content..
-    auto json_array_copy = json_array;
-    // let's try to add the copied json-array instance to the original one..
-    json_array.Add(json_array_copy);
-    // let's try to erase some elements..
-    json_array.Erase(2);
-    json_array.Erase(0,1); // from..to (both inclusive)
-    // let's try now to dump (export to string) the entire json-array content..
-    std::cout << json_array.ToString() << std::endl;
+    // implicit declaration..
+    JsonArray json_array = {"Hello, World!", false, true, nullptr};
+    // add element..
+    json_array.Add(true);
+    json_array.Add(false);
+    json_array.Add(nullptr);
+    json_array.Add(std::numeric_limits<unsigned char>::max());
+    json_array.Add(std::numeric_limits<char>::max());
+    json_array.Add(std::numeric_limits<unsigned short>::max());
+    json_array.Add(std::numeric_limits<short>::max());
+    json_array.Add(std::numeric_limits<unsigned int>::max());
+    json_array.Add(std::numeric_limits<int>::max());
+    json_array.Add(std::numeric_limits<unsigned long>::max());
+    json_array.Add(std::numeric_limits<long>::max());
+    json_array.Add(std::numeric_limits<float>::max());
+    json_array.Add(std::numeric_limits<double>::max());
+    json_array.Add("Hello, Array World!");
+    // get element (by value)..
+    auto by_value = json_array.At(0);
+    // get element (by reference)..
+    auto& by_reference = json_array.At(0);
+    by_reference = "changed by reference using method!";
+    // get element (by value) using operator..
+    auto by_value_op = json_array[1];
+    // get element (by reference) using operator..
+    auto& by_reference_op = json_array[1];
+    by_reference_op = "changed by reference using operator!";
+    // explicit declaration (with conversion)..
+    JsonValue json_array_aux = JsonArray{"This is also me!", true};
+    // explicit declaration (with conversion)..
+    JsonArray json_array_copy = json_array;
+    // erase element..
+    json_array_copy.Erase(0);
+    // erase range (initial/last)..
+    json_array_copy.Erase(0, 16);
+    // Let's iterate through the elements (by const ref)!
+    std::cout << "> json_array elements (using iteration): " << std::endl;
+    for (auto const& element : json_array) {
+      std::cout << "    " << element.Serialize().ToString() << std::endl;
+    }
+    // Let's iterate through the elements (by ref) to change them!
+    for (auto& element : json_array_copy) {
+      element = nullptr;
+    }
+    // let's try now to dump (export to string) the json-array's content..
+    std::cout << "> json_array_aux: " << json_array_aux.Serialize().ToString()
+              << std::endl;
+    std::cout << "> json_array_copy: " << json_array_copy.Serialize().ToString()
+              << std::endl;
   } catch (const std::exception& exception) {
     // [error] -> while performing required operations!
     std::cout << exception.what() << std::endl;

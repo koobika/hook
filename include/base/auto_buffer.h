@@ -189,11 +189,23 @@ class AutoBuffer {
     }
   }
   // Reads all the stored bytes (if available).
+  std::string ToString() const {
+    std::string out;
+    ReadAll(out);
+    return out;
+  }
+  // Reads all the stored bytes (if available).
   void ReadAll(std::stringstream& out) const {
     char tmp_buffer[kReadSomeBufferSize_];
     while (auto sz = ReadSome(tmp_buffer, kReadSomeBufferSize_)) {
       out << std::string_view{tmp_buffer, sz};
     }
+  }
+  // Reads all the stored bytes (if available).
+  std::stringstream ToStringStream() const {
+    std::stringstream out;
+    ReadAll(out);
+    return out;
   }
   // Flushes AutoBuffer content (if required).
   void Flush() const {

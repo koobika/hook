@@ -1,29 +1,51 @@
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// 01.hello_world.cpp
+﻿// /////////////////////////////////////////////////////////////////////////////
+//
+//       ╓▄▓▓▓▓▓▓▓▄╖      ╓▄▓▓▓▓▓▓▓▄╖
+//    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
+//  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
+//  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
+// ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
+// ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
+//  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
+//   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`  ╒▓▓▓▓▓▓▓▓▓▓▓▓▓'
+//      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
+//          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// Copyright (c) 2020 koobika corporation. All rights reserved.
-// Author: Marcos Rojas (marcos.rojas@koobika.io)
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// examples/structured/json/json_hello_world.cpp
+// -----------------------------------------------------------------------------
+// Copyright (c) 2021 koobika corporation. All rights reserved.
+// Author: Marcos Rojas (mrojas@koobika.org).
+// -----------------------------------------------------------------------------
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 3 of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// -----------------------------------------------------------------------------
+// /////////////////////////////////////////////////////////////////////////////
 
-#include <iostream>
-#include <limits>
+#include "structured/json/json_value.h"
 
-#include "structured/json/value.h"
-
-using namespace koobika::hook::structured;
+using namespace koobika::hook::structured::json;
 
 int main() {
   try {
-    // Let's create some dummy json values/arrays/objects..
-    json::Value json_string = "Hello, World!";
-    json::Value json_number = 2021;
-    json::Array json_array = {json_string, json_number};
-    json::Object json_object = {{"hook", json_array}};
-    json::Object json_tmp = {{"hooka", json_array}};
+    // Let's create some json values..
+    JsonValue json_string = "Hello, World!";
+    JsonValue json_number = 2021;
+    JsonArray json_array = {json_string, json_number};
+    JsonObject json_object = {{"hook", json_array}};
     // Let's dump the json 'object' content to string..
-    std::string content;
-    json_object.Serialize().ReadAll(content);
-    std::cout << content << std::endl;
+    std::cout << json_object.Serialize().ToString() << std::endl;
   } catch (const std::exception& exception) {
     // ((Error)) -> while performing required operations!
     std::cout << exception.what() << std::endl;
