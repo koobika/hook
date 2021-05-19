@@ -283,5 +283,8 @@
     <ClInclude Include="..\..\..\..\..\include\base\cache_null.h">
       <Filter>include\base</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\structured\json\json_importer.h">
+      <Filter>include\structured\json</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

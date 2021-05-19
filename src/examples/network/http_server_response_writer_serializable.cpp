@@ -51,7 +51,7 @@ int main() {
     server->Handle("/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
       if (req.Method.IsGet()) {
         // Let's directly write CUSTOM content using 'HttpResponseWriter' class!
-        HttpResponseWriter(SerializableClass(), HttpMimeTypes::kTXT)
+        HttpResponseWriter(SerializableClass(), constants::Mime::kTXT)
             .Prepare(res)
             .Ok_200();
       } else {
