@@ -1,14 +1,45 @@
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// 05.import.cpp
+﻿// /////////////////////////////////////////////////////////////////////////////
+//
+//       ╓▄▓▓▓▓▓▓▓▄╖      ╓▄▓▓▓▓▓▓▓▄╖
+//    ╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╖╓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓w
+//  ,▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓▓▓▓▓▓▓▀▀▀▀▓▓▓▓▓▓▓,
+//  ▓▓▓▓▓▓`       `▓▓▓▓▓▓▓▓`        ▓▓▓▓▓▓
+// ╫▓▓▓▓▓           ▓▓▓▓▓▓           ▓▓▓▓▓▓
+// ▓▓▓▓▓▓           ▓▓▓▓▓▓           ╟▓▓▓▓▓
+// ╙▓▓▓▓▓▄         ╓▓▓▓▓▓╛          ╓▓▓▓▓▓▌
+//  ▀▓▓▓▓▓▓æ,   ,g▓▓▓▓▓▓▀   ,,,  ,g▓▓▓▓▓▓▌
+//   '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`  ╒▓▓▓▓▓▓▓▓▓▓▓▓▓'
+//      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
+//          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// Copyright (c) 2020 koobika corporation. All rights reserved.
-// Author: Marcos Rojas (marcos.rojas@koobika.io)
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// examples/structured/json/json_import.cpp
+// -----------------------------------------------------------------------------
+// Copyright (c) 2021 koobika corporation. All rights reserved.
+// Author: Marcos Rojas (mrojas@koobika.org).
+// -----------------------------------------------------------------------------
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 3 of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// -----------------------------------------------------------------------------
+// /////////////////////////////////////////////////////////////////////////////
 
-#include <iostream>
+#include <fstream>
+#include <chrono>
 
-#include "structured/json/json_value.h"
+#include "base/auto_buffer.h"
+#include "structured/json/json_importer.h"
 
+using namespace koobika::hook::base;
 using namespace koobika::hook::structured::json;
 
 int main() {
@@ -30,12 +61,12 @@ int main() {
         "    }"
         "  ]"
         "}";
-    // straightforward import..
-    auto json = JsonValue::From(json_txt);
-    // let's try now to dump (export to string) the entire json content..
-    std::cout << json->ToString() << std::endl;
+    // Let's parse the above declared json data..
+    auto json = JsonImporter::From(json_txt);
+    // Let's dump some information..
+    std::cout << json.Serialize().ToString() << std::endl;
   } catch (const std::exception& exception) {
-    // [error] -> while performing required operations!
+    // ((Error)) -> while performing setup!
     std::cout << exception.what() << std::endl;
     return -1;
   }

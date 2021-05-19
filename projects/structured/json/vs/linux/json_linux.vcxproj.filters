@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{e3b5d5b7-7a44-4318-8b28-ab126bbe3d09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{95fe40a6-ce67-4ead-b529-05b1e8edc728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\base">
+      <UniqueIdentifier>{464c22ce-6cd8-4e36-b955-14236e4ac55c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\structured">
+      <UniqueIdentifier>{81e1a4a4-8e06-4c89-9b45-c67a66e0bc5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\structured\json">
+      <UniqueIdentifier>{c478e9a7-9d54-4cbe-ac9f-71a34da02bf1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\include\base\auto_buffer.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\builder.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\builder_property.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\platform.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\serializable.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\uri.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\uri_query.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\uri_reader.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\variant.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\cache.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\cache_null.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\repository.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\repository_filesystem.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\structured\json\json_importer.h">
+      <Filter>include\structured\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\structured\json\json_value.h">
+      <Filter>include\structured\json</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\src\examples\structured\json_arrays.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\src\examples\structured\json_basic_types.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\src\examples\structured\json_hello_world.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\src\examples\structured\json_import.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\src\examples\structured\json_objects.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

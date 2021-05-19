@@ -37,6 +37,7 @@
 #define koobika_hook_base_repository_h
 
 #include <optional>
+#include <string>
 
 #include "auto_buffer.h"
 

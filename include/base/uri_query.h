@@ -36,7 +36,7 @@
 #ifndef koobika_hook_base_uriquery_h
 #define koobika_hook_base_uriquery_h
 
-#include "base/platform.h"
+#include "platform.h"
 
 namespace koobika::hook::base {
 // =============================================================================

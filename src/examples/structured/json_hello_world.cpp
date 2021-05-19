@@ -47,7 +47,7 @@ int main() {
     // Let's dump the json 'object' content to string..
     std::cout << json_object.Serialize().ToString() << std::endl;
   } catch (const std::exception& exception) {
-    // ((Error)) -> while performing required operations!
+    // ((Error)) -> while performing setup!
     std::cout << exception.what() << std::endl;
     return -1;
   }

@@ -68,7 +68,7 @@ int main() {
               << json_float.Serialize().ToString() << std::endl
               << json_double.Serialize().ToString() << std::endl;
   } catch (const std::exception& exception) {
-    // [error] -> while performing required operations!
+    // ((Error)) -> while performing setup!
     std::cout << exception.what() << std::endl;
     return -1;
   }

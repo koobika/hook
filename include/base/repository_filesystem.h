@@ -37,6 +37,8 @@
 #define koobika_hook_base_repositoryfilesystem_h
 
 #include <fstream>
+#include <optional>
+#include <string>
 
 #include "repository.h"
 

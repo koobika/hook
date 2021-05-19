@@ -36,6 +36,11 @@
 #ifndef koobika_hook_base_cache_h
 #define koobika_hook_base_cache_h
 
+#include <optional>
+#include <string>
+
+#include "auto_buffer.h"
+
 namespace koobika::hook::base {
 // =============================================================================
 // Cache                                                           ( interface )

@@ -36,7 +36,7 @@
 #ifndef koobika_hook_base_autobuffer_h
 #define koobika_hook_base_autobuffer_h
 
-#include "base/platform.h"
+#include "platform.h"
 
 namespace koobika::hook::base {
 // =============================================================================
@@ -51,6 +51,7 @@ class AutoBuffer {
   //
   AutoBuffer() = default;
   AutoBuffer(const std::string& str) { Write(str); }
+  AutoBuffer(std::istream&& input_stream) { Write(input_stream); }
   AutoBuffer(std::istream& input_stream) { Write(input_stream); }
   AutoBuffer(const char& character) { Write(character); }
   AutoBuffer(const char* str) { Write(str); }
@@ -95,6 +96,8 @@ class AutoBuffer {
     }
     return *this;
   }
+  // Writes the specified std::istream to the internal buffer.
+  AutoBuffer& Write(std::istream&& input_stream) { return write(input_stream); }
   // Writes the specified std::istream to the internal buffer.
   AutoBuffer& Write(std::istream& input_stream) { return write(input_stream); }
   // Writes the specified std::string to the internal buffer.
@@ -336,7 +339,26 @@ class AutoBuffer {
     return *this;
   }
   // Adds the specified buffer fragment to the internal decoder data.
+  AutoBuffer& write(std::istream&& input_stream) {
+    if (!input_stream.good()) {
+      // ((Error)) -> trying to use an invalid stream!
+      throw std::logic_error("Invalid input stream!");
+    }
+    input_stream.seekg(0, input_stream.end);
+    std::size_t length = (std::size_t)input_stream.tellg();
+    input_stream.seekg(0, input_stream.beg);
+    char* buffer = new char[length];
+    input_stream.read(buffer, length);
+    write(buffer, length);
+    delete[] buffer;
+    return *this;
+  }
+  // Adds the specified buffer fragment to the internal decoder data.
   AutoBuffer& write(std::istream& input_stream) {
+    if (!input_stream.good()) {
+      // ((Error)) -> trying to use an invalid stream!
+      throw std::logic_error("Invalid input stream!");
+    }
     input_stream.seekg(0, input_stream.end);
     std::size_t length = (std::size_t)input_stream.tellg();
     input_stream.seekg(0, input_stream.beg);

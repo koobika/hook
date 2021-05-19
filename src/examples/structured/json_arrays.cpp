@@ -89,7 +89,7 @@ int main() {
     std::cout << "> json_array_copy: " << json_array_copy.Serialize().ToString()
               << std::endl;
   } catch (const std::exception& exception) {
-    // [error] -> while performing required operations!
+    // ((Error)) -> while performing setup!
     std::cout << exception.what() << std::endl;
     return -1;
   }
