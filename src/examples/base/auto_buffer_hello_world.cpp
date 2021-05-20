@@ -39,11 +39,8 @@ using namespace koobika::hook::base;
 
 int main() {
   try {
-    std::string buffer_content;
-    AutoBuffer buffer_1 = "Hello hook::base::Stream World!", buffer_2;
-    buffer_2.Write(buffer_1);
-    buffer_2.ReadAll(buffer_content);
-    std::cout << buffer_content << std::endl;
+    AutoBuffer auto_buffer = "Hello hook::base::Stream World!";
+    std::cout << auto_buffer.ToString() << std::endl;
   } catch (const std::exception& exception) {
     // [error] -> while performing required operations!
     std::cout << exception.what() << std::endl;
