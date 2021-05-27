@@ -12,7 +12,7 @@
 //      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
 //          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// network/protocol/http/http_request.h
+// network/protocol/http/http_routing_handler.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -33,48 +33,22 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_httprequest_h
-#define koobika_hook_network_protocol_http_httprequest_h
+#ifndef koobika_hook_network_protocol_http_httproutinghandler_h
+#define koobika_hook_network_protocol_http_httproutinghandler_h
 
-#include "base/auto_buffer.h"
-#include "base/uri.h"
-#include "http_headers.h"
-#include "http_method.h"
+#include <functional>
+
+#include "http_request.h"
+#include "http_response.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
-// HttpRequest                                                         ( class )
+// HttpRoutingHandler                                                  ( alias )
 // -----------------------------------------------------------------------------
-// This class is in charge of providing the http request class
+// This specification holds for http routing handler.
 // =============================================================================
-class HttpRequest {
- public:
-  // ___________________________________________________________________________
-  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // 
-  HttpRequest() = default;
-  HttpRequest(base::Uri&& uri, HttpMethod&& method, HttpHeaders&& headers,
-              base::AutoBuffer&& body)
-      : Uri{std::move(uri)},
-        Method{std::move(method)},
-        Headers{std::move(headers)},
-        Body{std::move(body)} {}
-  HttpRequest(const HttpRequest&) = delete;
-  HttpRequest(HttpRequest&&) noexcept = delete;
-  ~HttpRequest() = default;
-  // ___________________________________________________________________________
-  // OPERATORs                                                        ( public )
-  // 
-  HttpRequest& operator=(const HttpRequest&) = delete;
-  HttpRequest& operator=(HttpRequest&&) noexcept = delete;
-  // ___________________________________________________________________________
-  // PROPERTIEs                                                       ( public )
-  // 
-  base::Uri Uri;
-  HttpMethod Method;
-  HttpHeaders Headers;
-  base::AutoBuffer Body;
-};
+using HttpRoutingHandler =
+    std::function<void(const HttpRequest&, HttpResponse&)>;
 }  // namespace koobika::hook::network::protocol::http
 
 #endif

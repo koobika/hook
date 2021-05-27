@@ -36,9 +36,8 @@
 #ifndef koobika_hook_network_protocol_http_httproutesperformer_h
 #define koobika_hook_network_protocol_http_httproutesperformer_h
 
-#include <string>
-
-#include "http_routes_types.h"
+#include "http_request.h"
+#include "http_response.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
@@ -52,9 +51,7 @@ class HttpRoutesPerformer {
   // METHODs                                                          ( public )
   //
   // Tries to perform router enabled action.
-  virtual bool Perform(const std::string& route,
-                       typename HttpRoutesTypes::Request request,
-                       typename HttpRoutesTypes::Response response) const = 0;
+  virtual bool Perform(const HttpRequest& req, HttpResponse& res) const = 0;
 };
 }  // namespace koobika::hook::network::protocol::http
 

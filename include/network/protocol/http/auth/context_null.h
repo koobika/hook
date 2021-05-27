@@ -38,7 +38,7 @@
 
 #include "mapper.h"
 #include "context.h"
-#include "network/protocol/http/http_routes_types.h"
+#include "network/protocol/http/http_request.h"
 
 namespace koobika::hook::network::protocol::http::auth {
 // =============================================================================
@@ -52,10 +52,7 @@ class ContextNull : public Context, public Mapper {
   // METHODs                                                          ( public )
   // 
   // Tries to fill-up internal structures using the provided request.
-  bool Map(typename HttpRoutesTypes::Request req) override {
-    Request = req;
-    return true;
-  }
+  bool Map(const HttpRequest& req) override { return true; }
 };
 }  // namespace koobika::hook::network::protocol::http::auth
 

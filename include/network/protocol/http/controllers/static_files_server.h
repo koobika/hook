@@ -138,8 +138,13 @@ class StaticFilesServer : public HttpController<AUty> {
       // Let's check if given uri path is starting from the base one..
       auto base_path = std::filesystem::path(path);
       auto base_path_absolute = std::filesystem::absolute(base_path);
+      auto route_filtered = req.Uri.GetPath();
+      auto path_pos = route_filtered.find(route);
+      if (!path_pos) {
+        route_filtered.erase(path_pos, route.length());
+      }
       auto uri_path_absolute = std::filesystem::absolute(
-          base_path.concat(std::filesystem::path(req.Uri.GetPath()).string()));
+          base_path.concat(std::filesystem::path(route_filtered).string()));
       auto uri_string = uri_path_absolute.string();
       if (!uri_string.find(base_path_absolute.string())) {
         // Let's try to retrieve the required content..

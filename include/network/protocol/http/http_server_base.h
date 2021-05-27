@@ -104,7 +104,7 @@ class HttpServerBase : public HttpRoutesManager {
               configuration, [&router](auto const& req, auto const& sender) {
                 HttpResponse res;
                 try {
-                  if (!router.Perform(req.Uri.GetPath(), req, res)) {
+                  if (!router.Perform(req, res)) {
                     // ((Error)) -> route is not registered!
                     // ((To-Do)) -> inform user back?
                     res.NotFound_404();
@@ -139,98 +139,103 @@ class HttpServerBase : public HttpRoutesManager {
     static std::shared_ptr<AUty> internal = std::make_shared<AUty>(params...);
     internal->AddToRouter(router_);
   }
+  // Adds a new <controller> to the internal map using an string route.
+  template <typename AUty>
+  void Handle(AUty&& auth) {
+    auth.AddToRouter(router_);
+  }
   // Adds a new <generic> route to 'nominal' router structures.
   void Handle(
-      const std::string& route,
-      const typename HttpRoutesTypes::Handler& handler,
+      const std::string& route, const HttpRoutingHandler& handler,
       const HttpMethodValue& method = constants::Methods::kAll) override {
     router_.Handle(route, handler, method);
   }
-  // Adds a new <generic> route to 'regular-expressions' router structures.
+  // Adds a new <generic> route to 'nominal' router structures.
   void Handle(
-      const std::regex& regex, const typename HttpRoutesTypes::Handler& handler,
+      const std::string& route,
+      const HttpRoutingHandlerExtended& handler_extended,
       const HttpMethodValue& method = constants::Methods::kAll) override {
-    router_.Handle(regex, handler, method);
+    router_.Handle(route, handler_extended, method);
   }
   // Adds a new <options> route to the 'nominal' router structures
   void Options(const std::string& route,
-               const typename HttpRoutesTypes::Handler& handler) override {
+               const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kOptions);
   }
-  // Adds a new <options> route to the 'regex' router structures
-  void Options(const std::regex& regex,
-               const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, constants::Methods::kOptions);
+  // Adds a new <options> route to the 'nominal' router structures
+  void Options(const std::string& route,
+               const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kOptions);
   }
   // Adds a new <get> route to the 'nominal' router structures
   void Get(const std::string& route,
-           const typename HttpRoutesTypes::Handler& handler) override {
+           const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kGet);
   }
-  // Adds a new <get> route to the 'regex' router structures
-  void Get(const std::regex& regex,
-           const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, constants::Methods::kGet);
+  // Adds a new <get> route to the 'nominal' router structures
+  void Get(const std::string& route,
+           const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kGet);
   }
   // Adds a new <head> route to the 'nominal' router structures
   void Head(const std::string& route,
-            const typename HttpRoutesTypes::Handler& handler) override {
+            const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kHead);
   }
-  // Adds a new <head> route to the 'regex' router structures
-  void Head(const std::regex& regex,
-            const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, constants::Methods::kHead);
+  // Adds a new <head> route to the 'nominal' router structures
+  void Head(const std::string& route,
+            const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kHead);
   }
   // Adds a new <post> route to the 'nominal' router structures
   void Post(const std::string& route,
-            const typename HttpRoutesTypes::Handler& handler) override {
+            const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kPost);
   }
-  // Adds a new <post> route to the 'regex' router structures
-  void Post(const std::regex& regex,
-            const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, constants::Methods::kPost);
+  // Adds a new <post> route to the 'nominal' router structures
+  void Post(const std::string& route,
+            const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kPost);
   }
   // Adds a new <put> route to the 'nominal' router structures
   void Put(const std::string& route,
-           const typename HttpRoutesTypes::Handler& handler) override {
+           const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kPut);
   }
-  // Adds a new <put> route to the 'regex' router structures
-  void Put(const std::regex& regex,
-           const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, constants::Methods::kPut);
+  // Adds a new <put> route to the 'nominal' router structures
+  void Put(const std::string& route,
+           const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kPut);
   }
   // Adds a new <delete> route to the 'nominal' router structures
   void Delete(const std::string& route,
-              const typename HttpRoutesTypes::Handler& handler) override {
+              const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kDelete);
   }
-  // Adds a new <delete> route to the 'regex' router structures
-  void Delete(const std::regex& regex,
-              const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, constants::Methods::kDelete);
+  // Adds a new <delete> route to the 'nominal' router structures
+  void Delete(const std::string& route,
+              const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kDelete);
   }
   // Adds a new <trace> route to the 'nominal' router structures
   void Trace(const std::string& route,
-             const typename HttpRoutesTypes::Handler& handler) override {
+             const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kTrace);
   }
-  // Adds a new <trace> route to the 'regex' router structures
-  void Trace(const std::regex& regex,
-             const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, constants::Methods::kTrace);
+  // Adds a new <trace> route to the 'nominal' router structures
+  void Trace(const std::string& route,
+             const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kTrace);
   }
   // Adds a new <connect> route to the 'nominal' router structures
   void Connect(const std::string& route,
-               const typename HttpRoutesTypes::Handler& handler) override {
+               const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kConnect);
   }
-  // Adds a new <connect> route to the 'regex' router structures
-  void Connect(const std::regex& regex,
-               const typename HttpRoutesTypes::Handler& handler) {
-    Handle(regex, handler, constants::Methods::kConnect);
+  // Adds a new <connect> route to the 'nominal' router structures
+  void Connect(const std::string& route,
+               const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kConnect);
   }
 
  private:

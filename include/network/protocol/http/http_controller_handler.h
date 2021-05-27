@@ -36,7 +36,6 @@
 #ifndef koobika_hook_network_protocol_http_httpcontrollerhandler_h
 #define koobika_hook_network_protocol_http_httpcontrollerhandler_h
 
-#include <regex>
 #include <string>
 
 #include "http_router.h"
@@ -53,14 +52,9 @@ class HttpControllerHandler {
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
   HttpControllerHandler(HttpRouter* parent, const std::string& route,
-                        const typename HttpRoutesTypes::Handler& handler,
+                        const HttpRoutingHandler& handler,
                         const HttpMethodValue& method) {
     parent->Handle(route, handler, method);
-  }
-  HttpControllerHandler(HttpRouter* parent, const std::regex& regex,
-                        const typename HttpRoutesTypes::Handler& handler,
-                        const HttpMethodValue& method) {
-    parent->Handle(regex, handler, method);
   }
   HttpControllerHandler(const HttpControllerHandler&) = delete;
   HttpControllerHandler(HttpControllerHandler&&) noexcept = delete;
@@ -77,17 +71,13 @@ class HttpControllerHandler {
 // -----------------------------------------------------------------------------
 // This macro will help creating shortcuts for handlers.
 // =============================================================================
-#define HTTP_CONTROLLER_DEF(METHOD)                                          \
-  class HttpController##METHOD : public HttpControllerHandler {              \
-   public:                                                                   \
-    HttpController##METHOD(HttpRouter* parent, const std::string& route,     \
-                           const typename HttpRoutesTypes::Handler& handler) \
-        : HttpControllerHandler(parent, route, handler,                      \
-                                constants::Methods::k##METHOD) {}            \
-    HttpController##METHOD(HttpRouter* parent, const std::regex& regex,      \
-                           const typename HttpRoutesTypes::Handler& handler) \
-        : HttpControllerHandler(parent, regex, handler,                      \
-                                constants::Methods::k##METHOD) {}            \
+#define HTTP_CONTROLLER_DEF(METHOD)                                      \
+  class HttpController##METHOD : public HttpControllerHandler {          \
+   public:                                                               \
+    HttpController##METHOD(HttpRouter* parent, const std::string& route, \
+                           const HttpRoutingHandler& handler)            \
+        : HttpControllerHandler(parent, route, handler,                  \
+                                constants::Methods::k##METHOD) {}        \
   };
 // =============================================================================
 // Helpers (shortcuts)

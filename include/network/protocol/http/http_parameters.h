@@ -12,7 +12,7 @@
 //      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
 //          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// network/protocol/http/http_routes_node.h
+// network/protocol/http/http_parameters.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -33,47 +33,99 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_httproutesnode_h
-#define koobika_hook_network_protocol_http_httproutesnode_h
+#ifndef koobika_hook_network_protocol_http_httpparameters_h
+#define koobika_hook_network_protocol_http_httpparameters_h
 
-#include <functional>
 #include <string>
-
-#include "constants/methods.h"
-#include "http_routing_handler.h"
-#include "http_routing_handler_extended.h"
+#include <unordered_map>
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
-// HttpRoutesNode                                                     ( struct )
+// HttpParameters                                                      ( class )
 // -----------------------------------------------------------------------------
-// This specification holds for http routes <node> type. This class will
-// encapsulate all the information needed to perform routing.
+// This specification holds for http routing parameters.
 // =============================================================================
-struct HttpRoutesNode {
+class HttpParameters {
+ private:
+  // ___________________________________________________________________________
+  // USINGs                                                           ( public )
+  //
+  using Value = std::string;
+
+ public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
-  HttpRoutesNode() = default;
-  HttpRoutesNode(const HttpRoutingHandler& in_handler,
-                 const HttpMethodValue& in_method_value)
-      : handler{in_handler}, method{in_method_value} {}
-  HttpRoutesNode(const HttpRoutingHandlerExtended& in_handler_extended,
-                 const HttpMethodValue& in_method_value)
-      : handler_extended{in_handler_extended}, method{in_method_value} {}
-  HttpRoutesNode(const HttpRoutesNode&) = default;
-  HttpRoutesNode(HttpRoutesNode&&) noexcept = default;
+  HttpParameters() = default;
+  HttpParameters(const HttpParameters&) = default;
+  HttpParameters(HttpParameters&&) noexcept = default;
+  ~HttpParameters() = default;
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
   //
-  HttpRoutesNode& operator=(const HttpRoutesNode&) = default;
-  HttpRoutesNode& operator=(HttpRoutesNode&&) noexcept = default;
+  HttpParameters& operator=(const HttpParameters&) = default;
+  HttpParameters& operator=(HttpParameters&&) noexcept = default;
+  const Value& operator[](const char* key) const { return Get(key); }
+  Value& operator[](const char* key) { return Get(key); }
+  const Value& operator[](const Value& key) const { return Get(key); }
+  Value& operator[](const std::string& key) { return Get(key); }
   // ___________________________________________________________________________
-  // PROPERTIEs                                                       ( public )
+  // METHODs                                                          ( public )
   //
-  HttpRoutingHandler handler = nullptr;
-  HttpRoutingHandlerExtended handler_extended = nullptr;
-  HttpMethodValue method = constants::Methods::kInvalid;
+  // Adds the specified tuple to the object.
+  HttpParameters& Add(const std::pair<std::string, Value>& in) {
+    Get(in.first) = in.second;
+    return *this;
+  }
+  // Erases the specified value (located by key) from the object.
+  HttpParameters& Erase(const std::string& key) {
+    auto itr = data_.find(key);
+    if (itr == data_.end()) {
+      // ((Error)) -> while querying for a non-existent key!
+      throw std::logic_error("Out of bounds!");
+    }
+    data_.erase(key);
+    return *this;
+  }
+  // Checks for an existent key.
+  bool Exist(const std::string& key) const {
+    return data_.find(key) != data_.end();
+  }
+  // Returns the associated value for an existent key.
+  const Value& Get(const std::string& key) const {
+    auto itr = data_.find(key);
+    if (itr == data_.end()) {
+      // ((Error)) -> while querying for a non-existent key!
+      throw std::logic_error("Key not found!");
+    }
+    return itr->second;
+  }
+  // Returns the associated value for an existent key.
+  Value& Get(const std::string& key) { return data_[key]; }
+  // Returns the associated value for an existent key.
+  const Value& At(const std::string& key) const {
+    auto const itr = data_.find(key);
+    if (itr == data_.end()) {
+      // ((Error)) -> while querying for a non-existent key!
+      throw std::logic_error("Not found!");
+    }
+    return itr->second;
+  }
+  // Returns the associated value for an existent key.
+  Value& At(const std::string& key) {
+    auto itr = data_.find(key);
+    if (itr == data_.end()) {
+      // ((Error)) -> while querying for a non-existent key!
+      throw std::logic_error("Not found!");
+    }
+    return itr->second;
+  }
+
+ private:
+  // ___________________________________________________________________________
+  // ATTRIBUTEs                                                      ( private )
+  //
+  std::unordered_map<std::string, Value> data_;
 };
 }  // namespace koobika::hook::network::protocol::http
 

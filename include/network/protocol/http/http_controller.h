@@ -66,17 +66,7 @@ class HttpController : public HttpRouter, public AUty {
   // ___________________________________________________________________________
   // METHODs                                                       ( protected )
   // 
-  void AddToRouter(HttpRouter& router) const {
-    for (auto const& itr : this->routes_) {
-      if (!itr.first.index()) {
-        router.Handle(std ::get<std::string>(itr.first), itr.second.handler,
-                      itr.second.method);
-      } else {
-        router.Handle(std ::get<std::regex>(itr.first), itr.second.handler,
-                      itr.second.method);
-      }
-    }
-  }
+  void AddToRouter(HttpRouter& router) const { router.routes_ = routes_; }
   // ___________________________________________________________________________
   // FRIENDs                                                       ( protected )
   // 

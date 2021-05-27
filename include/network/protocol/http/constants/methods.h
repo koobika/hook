@@ -67,6 +67,8 @@ class Methods {
   static constexpr HttpMethodValue kConnect = 128;
   // Extension.
   static constexpr HttpMethodValue kExtension = 256;
+  // Invalid.
+  static constexpr HttpMethodValue kInvalid = 512;
   // All.
   static constexpr HttpMethodValue kAll = kOptions | kGet | kHead | kPost |
                                           kPut | kDelete | kTrace | kConnect |

@@ -44,13 +44,7 @@ namespace koobika::hook::network::protocol::http::auth {
 // -----------------------------------------------------------------------------
 // This specification holds for <authorization> context base class
 // =============================================================================
-class Context {
- public:
-  // ___________________________________________________________________________
-  // PROPERTIEs                                                       ( public )
-  // 
-  HttpRequest Request;
-};
+class Context {};
 }  // namespace koobika::hook::network::protocol::http::auth
 
 #endif

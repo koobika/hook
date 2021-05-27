@@ -319,52 +319,49 @@ class AutoBuffer {
   }
   // Adds the specified buffer fragment to the internal decoder data.
   AutoBuffer& write(void* buffer, const std::size_t& length) {
-    checkAndSwitch(length);
-    if (memory_mode_) {
-      allocate(length);
-      memcpy(&((char*)data_.buffer)[data_.write_cursor], buffer, length);
-    } else {
-      std::size_t written = 0;
-      const char* buf = (const char*)buffer;
-      if (!fseek(data_.file, (long)data_.write_cursor, SEEK_SET)) {
-        while (written < length) {
-          written += fwrite(&buf[written], 1, length - written, data_.file);
-        }
+    if (length) {
+      checkAndSwitch(length);
+      if (memory_mode_) {
+        allocate(length);
+        memcpy(&((char*)data_.buffer)[data_.write_cursor], buffer, length);
       } else {
-        // ((Error)) -> trying to perform seek operation!
-        // ((To-Do)) -> raise an exception?
+        std::size_t written = 0;
+        const char* buf = (const char*)buffer;
+        if (!fseek(data_.file, (long)data_.write_cursor, SEEK_SET)) {
+          while (written < length) {
+            written += fwrite(&buf[written], 1, length - written, data_.file);
+          }
+        } else {
+          // ((Error)) -> trying to perform seek operation!
+          // ((To-Do)) -> raise an exception?
+        }
       }
+      data_.write_cursor += length;
     }
-    data_.write_cursor += length;
     return *this;
   }
   // Adds the specified buffer fragment to the internal decoder data.
   AutoBuffer& write(std::istream&& input_stream) {
-    if (!input_stream.good()) {
-      // ((Error)) -> trying to use an invalid stream!
-      throw std::logic_error("Invalid input stream!");
-    }
-    input_stream.seekg(0, input_stream.end);
-    std::size_t length = (std::size_t)input_stream.tellg();
-    input_stream.seekg(0, input_stream.beg);
-    char* buffer = new char[length];
-    input_stream.read(buffer, length);
-    write(buffer, length);
-    delete[] buffer;
-    return *this;
+    return writeBuffered(input_stream);
   }
   // Adds the specified buffer fragment to the internal decoder data.
   AutoBuffer& write(std::istream& input_stream) {
-    if (!input_stream.good()) {
+    return writeBuffered(input_stream);
+  }
+  // Adds the specified buffer fragment to the internal decoder data.
+  template <typename STty>
+  AutoBuffer& writeBuffered(STty&& stream) {
+    if (!stream.good()) {
       // ((Error)) -> trying to use an invalid stream!
       throw std::logic_error("Invalid input stream!");
     }
-    input_stream.seekg(0, input_stream.end);
-    std::size_t length = (std::size_t)input_stream.tellg();
-    input_stream.seekg(0, input_stream.beg);
-    char* buffer = new char[length];
-    input_stream.read(buffer, length);
-    write(buffer, length);
+    stream.seekg(0, std::ios::beg);
+    char* buffer = new char[65536];
+    do {
+      stream.read(buffer, 65536);
+      auto bytes_read = stream.gcount();
+      write(buffer, bytes_read);
+    } while (stream.good());
     delete[] buffer;
     return *this;
   }
@@ -372,7 +369,6 @@ class AutoBuffer {
   // CONSTANTs                                                       ( private )
   //
   static constexpr std::size_t kDefaultBufferChunkSize_ = 4096;
-
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
   //

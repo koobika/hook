@@ -12,7 +12,7 @@
 //      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
 //          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// network/protocol/http/http_routes_types.h
+// network/protocol/http/http_routing_handler_extended.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -33,32 +33,23 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_httproutestypes_h
-#define koobika_hook_network_protocol_http_httproutestypes_h
+#ifndef koobika_hook_network_protocol_http_httproutinghandlerparameters_h
+#define koobika_hook_network_protocol_http_httproutinghandlerparameters_h
 
 #include <functional>
 
 #include "http_request.h"
 #include "http_response.h"
+#include "http_parameters.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
-// HttpRoutesTypes                                                     ( class )
+// HttpRoutingHandlerExtended                                          ( alias )
 // -----------------------------------------------------------------------------
-// This specification holds for http routes <common> types.
+// This specification holds for http routing handler (extended).
 // =============================================================================
-class HttpRoutesTypes {
- public:
-  // ___________________________________________________________________________
-  // USINGs                                                           ( public )
-  // 
-  // Request parameter (read-only) type while dispatching route handlers.
-  using Request = const HttpRequest&;
-  // Response parameter (read/write) type while dispatching route handlers.
-  using Response = HttpResponse&;
-  // Route handler signature (method being called on route hit).
-  using Handler = std::function<void(Request, Response)>;
-};
+using HttpRoutingHandlerExtended = std::function<void(
+    const HttpRequest&, HttpResponse&, const HttpParameters&)>;
 }  // namespace koobika::hook::network::protocol::http
 
 #endif

@@ -227,11 +227,10 @@ class HttpRequestDecoder
     }
     // third, prepare request..
     if (dispatch_request) {
-      request_handler(
-          HttpRequest(std::move(base::Uri(request_uri_)),
-                      std::move(HttpMethod(method_)),
-                      std::move(HttpHeaders(headers_)), std::move(body_)),
-          sender);
+      HttpRequest request(std::move(base::Uri(request_uri_)),
+                          std::move(HttpMethod(method_)),
+                          std::move(HttpHeaders(headers_)), std::move(body_));
+      request_handler(request, sender);
       reset();
     }
   }

@@ -40,7 +40,6 @@
 #include "context.h"
 #include "encoding/base64/decoder.h"
 #include "network/protocol/http/http_util.h"
-#include "network/protocol/http/http_routes_types.h"
 
 namespace koobika::hook::network::protocol::http::auth {
 // =============================================================================
@@ -54,13 +53,12 @@ class ContextApiKey : public Context, public Mapper {
   // METHODs                                                          ( public )
   // 
   // Tries to fill-up internal structures using the provided request.
-  bool Map(typename HttpRoutesTypes::Request req) override {
+  bool Map(const HttpRequest& req) override {
     auto auth_field = req.Headers.Get(kApiKeyField);
     if (!auth_field.has_value()) {
       auth_field = req.Uri.GetQuery().Get(kApiKeyField);
       if (!auth_field.has_value()) return false;
     }
-    Request = req;
     Token = auth_field.value();
     return true;
   }

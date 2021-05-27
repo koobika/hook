@@ -278,8 +278,8 @@ class HttpResponse : public base::Serializable {
   // ___________________________________________________________________________
   // PROPERTIEs                                                       ( public )
   //
-  unsigned short StatusCode = constants::StatusCodes::k200;
-  std::string ReasonPhrase = constants::StatusCodes::k200Str;
+  unsigned short StatusCode = constants::StatusCodes::k501;
+  std::string ReasonPhrase = constants::StatusCodes::k501Str;
   HttpHeaders Headers;
   base::AutoBuffer Body;
 

@@ -40,15 +40,16 @@
 #include <iostream>
 #include <mutex>
 #include <optional>
-#include <regex>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "constants/methods.h"
 #include "http_method.h"
 #include "http_routes_manager.h"
 #include "http_routes_node.h"
 #include "http_routes_performer.h"
+#include "http_parameters.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
@@ -75,147 +76,223 @@ class HttpRouter : public HttpRoutesManager, public HttpRoutesPerformer {
   //
   // Adds a new <generic> handler to the internal map using an string route.
   void Handle(
-      const std::string& route,
-      const typename HttpRoutesTypes::Handler& handler,
+      const std::string& route, const HttpRoutingHandler& handler,
       const HttpMethodValue& method = constants::Methods::kAll) override {
-    std::unique_lock sync(routes_mutex_);
-    routes_.push_back(std::make_pair(route, HttpRoutesNode(handler, method)));
+    handle(route, handler, method);
   }
-  // Adds a new <generic> handler to the internal map using an regex route.
+  // Adds a new <generic> handler to the internal map using an string route.
   void Handle(
-      const std::regex& regex, const typename HttpRoutesTypes::Handler& handler,
-      const HttpMethodValue& method = constants ::Methods::kAll) override {
-    std::unique_lock sync(routes_mutex_);
-    routes_.push_back(std::make_pair(regex, HttpRoutesNode(handler, method)));
+      const std::string& route,
+      const HttpRoutingHandlerExtended& handler_extended,
+      const HttpMethodValue& method = constants::Methods::kAll) override {
+    handle(route, handler_extended, method);
   }
   // Adds a new <options> handler to 'string-guided' router structures.
   void Options(const std::string& route,
-               const typename HttpRoutesTypes::Handler& handler) override {
+               const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kOptions);
   }
-  // Adds a new <options> handler to 'regex-guided' router structures.
-  void Options(const std::regex& regex,
-               const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, constants::Methods::kOptions);
+  // Adds a new <options> handler to 'string-guided' router structures.
+  void Options(const std::string& route,
+               const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kOptions);
   }
   // Adds a new <get> handler to 'string-guided' router structures.
   void Get(const std::string& route,
-           const typename HttpRoutesTypes::Handler& handler) override {
+           const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kGet);
   }
-  // Adds a new <get> handler to 'regex-guided' router structures.
-  void Get(const std::regex& regex,
-           const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, constants::Methods::kGet);
+  // Adds a new <get> handler to 'string-guided' router structures.
+  void Get(const std::string& route,
+           const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kGet);
   }
   // Adds a new <head> handler to 'string-guided' router structures.
   void Head(const std::string& route,
-            const typename HttpRoutesTypes::Handler& handler) override {
+            const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kHead);
   }
-  // Adds a new <head> handler to 'regex-guided' router structures.
-  void Head(const std::regex& regex,
-            const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, constants::Methods::kHead);
+  // Adds a new <head> handler to 'string-guided' router structures.
+  void Head(const std::string& route,
+            const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kHead);
   }
   // Adds a new <post> handler to 'string-guided' router structures.
   void Post(const std::string& route,
-            const typename HttpRoutesTypes::Handler& handler) override {
+            const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kPost);
   }
-  // Adds a new <post> handler to 'regex-guided' router structures.
-  void Post(const std::regex& regex,
-            const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, constants::Methods::kPost);
+  // Adds a new <post> handler to 'string-guided' router structures.
+  void Post(const std::string& route,
+            const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kPost);
   }
   // Adds a new <put> handler to 'string-guided' router structures.
   void Put(const std::string& route,
-           const typename HttpRoutesTypes::Handler& handler) override {
+           const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kPut);
   }
-  // Adds a new <put> handler to 'regex-guided' router structures.
-  void Put(const std::regex& regex,
-           const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, constants::Methods::kPut);
+  // Adds a new <put> handler to 'string-guided' router structures.
+  void Put(const std::string& route,
+           const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kPut);
   }
   // Adds a new <delete> handler to 'string-guided' router structures.
   void Delete(const std::string& route,
-              const typename HttpRoutesTypes::Handler& handler) override {
+              const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kDelete);
   }
-  // Adds a new <delete> handler to 'regex-guided' router structures.
-  void Delete(const std::regex& regex,
-              const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, constants::Methods::kDelete);
+  // Adds a new <delete> handler to 'string-guided' router structures.
+  void Delete(const std::string& route,
+              const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kDelete);
   }
   // Adds a new <trace> handler to 'string-guided' router structures.
   void Trace(const std::string& route,
-             const typename HttpRoutesTypes::Handler& handler) override {
+             const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kTrace);
   }
-  // Adds a new <trace> handler to 'regex-guided' router structures.
-  void Trace(const std::regex& route,
-             const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(route, handler, constants::Methods::kTrace);
+  // Adds a new <trace> handler to 'string-guided' router structures.
+  void Trace(const std::string& route,
+             const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kTrace);
   }
   // Adds a new <connect> handler to 'string-guided' router structures.
   void Connect(const std::string& route,
-               const typename HttpRoutesTypes::Handler& handler) override {
+               const HttpRoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kConnect);
   }
-  // Adds a new <connect> handler to 'regex-guided' router structures.
-  void Connect(const std::regex& regex,
-               const typename HttpRoutesTypes::Handler& handler) override {
-    Handle(regex, handler, constants::Methods::kConnect);
+  // Adds a new <connect> handler to 'string-guided' router structures.
+  void Connect(const std::string& route,
+               const HttpRoutingHandlerExtended& handler_extended) override {
+    Handle(route, handler_extended, constants::Methods::kConnect);
   }
   // Tries to perform router enabled action.
-  bool Perform(const std::string& route,
-               typename HttpRoutesTypes::Request request,
-               typename HttpRoutesTypes::Response response) const override {
+  bool Perform(const HttpRequest& req, HttpResponse& res) const override {
     HttpRoutesNode node;
-    std::size_t last_matched_length = 0;
-    bool string_based_already_matched = false;
-    routes_mutex_.lock();
-    for (auto const& r : routes_) {
-      if (r.first.index() == 0) {
-        auto stored_route = std::get<std::string>(r.first);
-        auto position = route.find(stored_route);
-        if (!position) {
-          auto stored_length = stored_route.length();
-          if (stored_length >= last_matched_length) {
-            string_based_already_matched = true;
-            last_matched_length = stored_length;
-            node = r.second;
+    HttpParameters parameters;
+    {
+      std::lock_guard<std::mutex> lock(routes_mutex_);
+      auto route = req.Uri.GetPath();
+      auto length = route.length();
+      char tmp_buffer[512];
+      strncpy(tmp_buffer, route.c_str(), length);
+      tmp_buffer[length] = 0;
+      auto pch = strtok(tmp_buffer, kSlash_);
+      auto current = routes_;
+      while (current && pch != nullptr) {
+        auto itr = current->nodes.find(pch);
+        if (itr == current->nodes.end()) {
+          // ok, we were not able to find a direct match! let's try to find a
+          // parametrized '{}' node!
+          auto itr_p = current->nodes.begin();
+          while (itr_p != current->nodes.end()) {
+            if (itr_p->second->type == ElementSrcType::kParametrized) {
+              // Let's extract the 'parametrized' segment and check for uri..
+              std::string key = itr_p->first, val = pch;
+              auto s_pos = key.find_first_of(kBraceStart_);
+              auto e_pos = key.find_first_of(kBraceEnd_, s_pos);
+              auto param = key.substr(s_pos + 1, e_pos - s_pos - 1);
+              key.erase(s_pos, e_pos - s_pos + 1);
+              auto off = val.find(key);
+              if (off != std::string::npos) {
+                val.erase(val.find(key), key.length());
+              }
+              parameters.Add(std::make_pair(param, val));
+              itr = itr_p;
+              break;
+            }
+            itr_p++;
+          }
+          if (itr == current->nodes.end()) {
+            break;
           }
         }
-      } else {
-        std::sregex_iterator next(route.begin(), route.end(),
-                                  std::get<std::regex>(r.first));
-        if (next != std::sregex_iterator() && !string_based_already_matched) {
-          node = r.second;
-        }
+        current = itr->second;
+        pch = strtok(NULL, kSlash_);
       }
+      node = current->data;
     }
-    routes_mutex_.unlock();
-    if (node.handler == nullptr || !(node.method & request.Method.GetCode())) {
+    if (node.method == constants::Methods::kInvalid ||
+        !(node.method & req.Method.GetCode())) {
       return false;
     }
-    node.handler(request, response);
+    node.handler ? node.handler(req, res)
+                 : node.handler_extended(req, res, parameters);
     return true;
   }
 
  protected:
   // ___________________________________________________________________________
-  // USINGs                                                         ( protected
-  // )
+  // METHODs                                                       ( protected )
   //
-  using First = std::variant<std::string, std::regex>;
-  using Second = HttpRoutesNode;
+  // Adds current routing data to the handler.
+  template <typename HDty>
+  void handle(const std::string& route, const HDty& handler,
+              const HttpMethodValue& method) {
+    std::unique_lock sync(routes_mutex_);
+    if (routes_ == nullptr) {
+      routes_ = std::make_shared<Element>();
+    }
+    std::shared_ptr<Element> node = routes_;
+    char tmp_buffer[512];
+    auto len = route.length();
+    strncpy(tmp_buffer, route.c_str(), len);
+    tmp_buffer[len] = 0;
+    auto pch = strtok(tmp_buffer, kSlash_);
+    while (pch) {
+      auto itr = node->nodes.find(pch);
+      if (itr == node->nodes.end()) {
+        // First, let's try to determine node type (parametrized/nominal)..
+        ElementSrcType type;
+        auto brace_s_pos = strchr(pch, kBraceStart_);
+        auto brace_e_pos = strchr(pch, kBraceEnd_);
+        if (brace_s_pos && brace_e_pos && brace_e_pos > brace_s_pos) {
+          type = ElementSrcType::kParametrized;
+        } else {
+          type = ElementSrcType::kNominal;
+        }
+        itr =
+            node->nodes.insert(std::make_pair(pch, std::make_shared<Element>()))
+                .first;
+        itr->second->type = type;
+      }
+      node = itr->second;
+      pch = strtok(NULL, kSlash_);
+    }
+    node->data = HttpRoutesNode(handler, method);
+  }
+  // ___________________________________________________________________________
+  // CONSTANTs                                                     ( protected )
+  //
+  static constexpr char kSlash_[] = "/";
+  static constexpr char kWildcardAsterisk_[] = "*";
+  static constexpr char kBraceStart_ = '{';
+  static constexpr char kBraceEnd_ = '}';
+  // ___________________________________________________________________________
+  // USINGs                                                        ( protected )
+  //
+  struct Element;
+  using ElementsMap = std::unordered_map<std::string, std::shared_ptr<Element>>;
+  // ___________________________________________________________________________
+  // TYPEs                                                         ( protected )
+  //
+  enum class ElementSrcType { kNominal, kParametrized };
+  struct Element {
+    ElementsMap nodes;
+    HttpRoutesNode data;
+    ElementSrcType type = ElementSrcType::kNominal;
+  };
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                    ( protected )
   //
-  std::vector<std::pair<First, Second>> routes_;
+  std::shared_ptr<Element> routes_;
   mutable std::mutex routes_mutex_;
+  // ___________________________________________________________________________
+  // FRIENDs                                                       ( protected )
+  //
+  template <typename AUty>
+  friend class HttpController;
 };
 }  // namespace koobika::hook::network::protocol::http
 

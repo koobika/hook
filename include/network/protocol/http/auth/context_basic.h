@@ -40,7 +40,6 @@
 #include "context.h"
 #include "encoding/base64/decoder.h"
 #include "network/protocol/http/http_util.h"
-#include "network/protocol/http/http_routes_types.h"
 #include "network/protocol/http/constants/characters.h"
 
 namespace koobika::hook::network::protocol::http::auth {
@@ -55,7 +54,7 @@ class ContextBasic : public Context, public Mapper {
   // METHODs                                                          ( public )
   // 
   // Tries to fill-up internal structures using the provided request.
-  bool Map(typename HttpRoutesTypes::Request req) override {
+  bool Map(const HttpRequest& req) override {
     auto auth_field = req.Headers.Get(kAuthorization);
     if (!auth_field.has_value()) return false;
     auto const& auth = auth_field.value();
@@ -67,7 +66,6 @@ class ContextBasic : public Context, public Mapper {
     auto decoded = encoding::base64::Decoder::Decode(vec[1]);
     auto colon_pos = decoded.find(constants::Characters::kColon);
     if (colon_pos == std::string::npos) return false;
-    Request = req;
     Username = decoded.substr(0, colon_pos);
     Password = decoded.substr(colon_pos + 1);
     return true;

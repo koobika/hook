@@ -12,7 +12,7 @@
 //      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
 //          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// network/protocol/http/http_request.h
+// examples/network/http_server_hello_world.cpp
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -33,48 +33,44 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_httprequest_h
-#define koobika_hook_network_protocol_http_httprequest_h
+#include "network/protocol/http/http_server_builder.h"
 
-#include "base/auto_buffer.h"
-#include "base/uri.h"
-#include "http_headers.h"
-#include "http_method.h"
+using namespace koobika::hook::network::protocol::http;
 
-namespace koobika::hook::network::protocol::http {
-// =============================================================================
-// HttpRequest                                                         ( class )
-// -----------------------------------------------------------------------------
-// This class is in charge of providing the http request class
-// =============================================================================
-class HttpRequest {
- public:
-  // ___________________________________________________________________________
-  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // 
-  HttpRequest() = default;
-  HttpRequest(base::Uri&& uri, HttpMethod&& method, HttpHeaders&& headers,
-              base::AutoBuffer&& body)
-      : Uri{std::move(uri)},
-        Method{std::move(method)},
-        Headers{std::move(headers)},
-        Body{std::move(body)} {}
-  HttpRequest(const HttpRequest&) = delete;
-  HttpRequest(HttpRequest&&) noexcept = delete;
-  ~HttpRequest() = default;
-  // ___________________________________________________________________________
-  // OPERATORs                                                        ( public )
-  // 
-  HttpRequest& operator=(const HttpRequest&) = delete;
-  HttpRequest& operator=(HttpRequest&&) noexcept = delete;
-  // ___________________________________________________________________________
-  // PROPERTIEs                                                       ( public )
-  // 
-  base::Uri Uri;
-  HttpMethod Method;
-  HttpHeaders Headers;
-  base::AutoBuffer Body;
-};
-}  // namespace koobika::hook::network::protocol::http
-
-#endif
+int main() {
+  try {
+    // Let's create our server using the default configuration..
+    auto server = HttpServerBuilder().Build();
+    // Let's configure our server to handle requests over '/foo/bar' uri..
+    server->Handle(
+        "/{level}/{resource}.git", [](const HttpRequest& req, HttpResponse& res,
+                                      const HttpParameters& parameters) {
+          // In this example we're only interested on <GET> requests..
+          if (req.Method.IsGet()) {
+            if (parameters.Exist("level") && parameters.Exist("resource") &&
+                parameters["resource"] == "bar") {
+              // Set some response headers..
+              res.Headers.Set("Server", "Example");
+              res.Headers.Set("Date", "Wed, 17 Apr 2013 12:00:00 GMT");
+              res.Headers.Set("Content-Type", "text/plain; charset=UTF-8");
+              // Set the response body using the provided buffer writer..
+              res.Body.Write("Resource found! -> " + req.Uri.GetPath());
+              // Set the response code and.. that's all!
+              res.Ok_200();
+            } else {
+              res.Body.Write("Resource NOT found!");
+              res.Forbidden_403();
+            }
+          } else {
+            res.Forbidden_403();
+          }
+        });
+    // Start server activity..
+    server->Start("8542");
+    return getchar();
+  } catch (const std::exception& exception) {
+    // ((Error)) -> while performing setup!
+    std::cout << exception.what() << std::endl;
+    return -1;
+  }
+}

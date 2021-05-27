@@ -96,6 +96,9 @@
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_static_files_server.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_extended_routing_parameters.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\include\auth\controller_base.h">
@@ -197,7 +200,7 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routes_performer.h">
       <Filter>include\network\protocol\http</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routes_types.h">
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routing_handler.h">
       <Filter>include\network\protocol\http</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_server.h">
@@ -283,6 +286,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\include\structured\json\json_importer.h">
       <Filter>include\structured\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routing_handler_extended.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_parameters.h">
+      <Filter>include\network\protocol\http</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

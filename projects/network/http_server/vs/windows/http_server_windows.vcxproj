@@ -61,6 +61,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_extended_routing_parameters.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_handler_shortcut.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -68,10 +74,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_hello_world.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_response_writer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -140,6 +146,7 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_headers.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_method.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_method_value.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_parameters.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_request.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_response.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_response_writer.h" />
@@ -147,7 +154,8 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routes_manager.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routes_node.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routes_performer.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routes_types.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routing_handler.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routing_handler_extended.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_server.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_server_base.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_server_builder.h" />
@@ -160,7 +168,7 @@
     <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server_transport_tcp_ip.h" />
     <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server_transport_tcp_ip_win.h" />
     <ClInclude Include="..\..\..\..\..\include\structured\json\json_importer.h" />
-    <ClInclude Include="..\..\..\..\..\include\structured\json\value.h" />
+    <ClInclude Include="..\..\..\..\..\include\structured\json\json_value.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
