@@ -43,6 +43,8 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <stack>
+#include <stdexcept>
 
 #include "constants/methods.h"
 #include "http_method.h"
@@ -224,6 +226,20 @@ class HttpRouter : public HttpRoutesManager, public HttpRoutesPerformer {
 
  protected:
   // ___________________________________________________________________________
+  // USINGs                                                        ( protected )
+  //
+  struct Element;
+  using ElementsMap = std::unordered_map<std::string, std::shared_ptr<Element>>;
+  // ___________________________________________________________________________
+  // TYPEs                                                         ( protected )
+  //
+  enum class ElementSrcType { kNominal, kParametrized };
+  struct Element {
+    ElementsMap nodes;
+    HttpRoutesNode data;
+    ElementSrcType type = ElementSrcType::kNominal;
+  };
+  // ___________________________________________________________________________
   // METHODs                                                       ( protected )
   //
   // Adds current routing data to the handler.
@@ -244,23 +260,57 @@ class HttpRouter : public HttpRoutesManager, public HttpRoutesPerformer {
       auto itr = node->nodes.find(pch);
       if (itr == node->nodes.end()) {
         // First, let's try to determine node type (parametrized/nominal)..
-        ElementSrcType type;
-        auto brace_s_pos = strchr(pch, kBraceStart_);
-        auto brace_e_pos = strchr(pch, kBraceEnd_);
-        if (brace_s_pos && brace_e_pos && brace_e_pos > brace_s_pos) {
-          type = ElementSrcType::kParametrized;
-        } else {
-          type = ElementSrcType::kNominal;
-        }
-        itr =
-            node->nodes.insert(std::make_pair(pch, std::make_shared<Element>()))
-                .first;
-        itr->second->type = type;
+        auto data = std::make_pair(pch, std::make_shared<Element>());
+        itr = node->nodes.insert(data).first;
+        itr->second->type = getType(pch);
       }
       node = itr->second;
       pch = strtok(NULL, kSlash_);
     }
     node->data = HttpRoutesNode(handler, method);
+  }
+  // Checks and return element-src-type.
+  ElementSrcType getType(const char* str) {
+    std::stack<char> braces;
+    auto braces_found = 0;
+    auto len = strlen(str);
+    auto ptr = str;
+    while (ptr < (str + len)) {
+      switch (*ptr) {
+        case kBraceStart_:
+          if (braces.size()) {
+            if (braces.top() != kBraceEnd_) {
+              // ((Error)) -> invalid braces sequence detected!
+              throw std::logic_error("Invalid braces sequence detected!");
+            }
+            braces.pop();
+          }
+          braces.push(kBraceStart_);
+          break;
+        case kBraceEnd_:
+          if (braces.size()) {
+            if (braces.top() != kBraceStart_) {
+              // ((Error)) -> invalid braces sequence detected!
+              throw std::logic_error("Invalid braces sequence detected!");
+            }
+            braces.pop();
+          } else {
+            // ((Error)) -> invalid braces sequence detected!
+            throw std::logic_error("Invalid braces sequence detected!");
+          }
+          braces_found++;
+          break;
+        default:
+          break;
+      }
+      ptr++;
+    }
+    if (braces_found > 1 || braces.size()) {
+      // ((Error)) -> invalid braces sequence detected!
+      throw std::logic_error("Invalid braces sequence detected!");
+    }
+    return braces_found ? ElementSrcType::kParametrized
+                        : ElementSrcType::kNominal;
   }
   // ___________________________________________________________________________
   // CONSTANTs                                                     ( protected )
@@ -269,20 +319,6 @@ class HttpRouter : public HttpRoutesManager, public HttpRoutesPerformer {
   static constexpr char kWildcardAsterisk_[] = "*";
   static constexpr char kBraceStart_ = '{';
   static constexpr char kBraceEnd_ = '}';
-  // ___________________________________________________________________________
-  // USINGs                                                        ( protected )
-  //
-  struct Element;
-  using ElementsMap = std::unordered_map<std::string, std::shared_ptr<Element>>;
-  // ___________________________________________________________________________
-  // TYPEs                                                         ( protected )
-  //
-  enum class ElementSrcType { kNominal, kParametrized };
-  struct Element {
-    ElementsMap nodes;
-    HttpRoutesNode data;
-    ElementSrcType type = ElementSrcType::kNominal;
-  };
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                    ( protected )
   //
