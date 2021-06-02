@@ -1,0 +1,11 @@
+[package]
+name = "rust-actix-web"
+version = "0.1.0"
+authors = ["Marcos Rojas <marcos.rojas@koobika.org>"]
+edition = "2018"
+[[bin]]
+name = "httpserver"
+path = "httpserver.rs"
+[dependencies]
+actix-rt = "1.1.1"
+actix-web = "2.0.0"

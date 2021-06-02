@@ -295,5 +295,8 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\http_routing_handler_extended.h">
       <Filter>include\network\protocol\http</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\associative_container.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

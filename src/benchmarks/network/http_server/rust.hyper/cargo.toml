@@ -1,0 +1,12 @@
+[package]
+name = "httpserver" 	# the name of the package
+version = "0.1.0"    	# the current version, obeying semver
+authors = ["Alice <a@example.com>", "Bob <b@example.com>"]
+edition = '2018'
+[[bin]]
+name = "httpserver"
+path = "httpserver.rs"
+[dependencies]
+hyper = "0.13"
+tokio = { version = "0.2", features = ["full"] }
+pretty_env_logger = "0.3.1"

@@ -37,7 +37,10 @@
 #define koobika_hook_network_protocol_http_httpparameters_h
 
 #include <string>
+#include <utility>
 #include <unordered_map>
+
+#include "base/associative_container.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
@@ -45,12 +48,12 @@ namespace koobika::hook::network::protocol::http {
 // -----------------------------------------------------------------------------
 // This specification holds for http routing parameters.
 // =============================================================================
-class HttpParameters {
- private:
+class HttpParameters
+    : public base::AssociativeContainer<std::string, std::string> {
   // ___________________________________________________________________________
-  // USINGs                                                           ( public )
+  // USINGs                                                          ( private )
   //
-  using Value = std::string;
+  using Base = base::AssociativeContainer<std::string, std::string>;
 
  public:
   // ___________________________________________________________________________
@@ -65,58 +68,59 @@ class HttpParameters {
   //
   HttpParameters& operator=(const HttpParameters&) = default;
   HttpParameters& operator=(HttpParameters&&) noexcept = default;
-  const Value& operator[](const char* key) const { return Get(key); }
-  Value& operator[](const char* key) { return Get(key); }
-  const Value& operator[](const Value& key) const { return Get(key); }
-  Value& operator[](const std::string& key) { return Get(key); }
+  virtual const Value& operator[](Key&& key) const override { return Get(key); }
+  virtual const Value& operator[](const Key& key) const override {
+    return Get(key);
+  }
+  virtual Value& operator[](Key&& key) override { return Get(key); }
+  virtual Value& operator[](const Key& key) override { return Get(key); }
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
   //
   // Adds the specified tuple to the object.
-  HttpParameters& Add(const std::pair<std::string, Value>& in) {
-    Get(in.first) = in.second;
-    return *this;
+  virtual void Add(const std::pair<Key, Value>& data) override {
+    data_.insert(data);
+  }
+  virtual void Add(std::pair<Key, Value>&& data) override {
+    data_.insert(data);
   }
   // Erases the specified value (located by key) from the object.
-  HttpParameters& Erase(const std::string& key) {
-    auto itr = data_.find(key);
-    if (itr == data_.end()) {
-      // ((Error)) -> while querying for a non-existent key!
-      throw std::logic_error("Out of bounds!");
-    }
-    data_.erase(key);
-    return *this;
-  }
+  virtual void Erase(const Key& key) override { data_.erase(key); }
+  virtual void Erase(Key&& key) override { data_.erase(key); }
   // Checks for an existent key.
-  bool Exist(const std::string& key) const {
+  virtual bool Exist(const Key& key) const override {
+    return data_.find(key) != data_.end();
+  }
+  virtual bool Exist(Key&& key) const override {
     return data_.find(key) != data_.end();
   }
   // Returns the associated value for an existent key.
-  const Value& Get(const std::string& key) const {
+  virtual const Value& Get(const Key& key) const override {
     auto itr = data_.find(key);
     if (itr == data_.end()) {
-      // ((Error)) -> while querying for a non-existent key!
-      throw std::logic_error("Key not found!");
+      // ((Error)) -> There is no entry with the specified key!
+    }
+    return itr->second;
+  }
+  virtual const Value& Get(Key&& key) const override {
+    auto itr = data_.find(key);
+    if (itr == data_.end()) {
+      // ((Error)) -> There is no entry with the specified key!
     }
     return itr->second;
   }
   // Returns the associated value for an existent key.
-  Value& Get(const std::string& key) { return data_[key]; }
-  // Returns the associated value for an existent key.
-  const Value& At(const std::string& key) const {
-    auto const itr = data_.find(key);
+  virtual Value& Get(const Key& key) override {
+    auto itr = data_.find(key);
     if (itr == data_.end()) {
-      // ((Error)) -> while querying for a non-existent key!
-      throw std::logic_error("Not found!");
+      itr = data_.insert(std::make_pair(key, Value())).first;
     }
     return itr->second;
   }
-  // Returns the associated value for an existent key.
-  Value& At(const std::string& key) {
+  virtual Value& Get(Key&& key) override {
     auto itr = data_.find(key);
     if (itr == data_.end()) {
-      // ((Error)) -> while querying for a non-existent key!
-      throw std::logic_error("Not found!");
+      itr = data_.insert(std::make_pair(key, Value())).first;
     }
     return itr->second;
   }
@@ -125,7 +129,7 @@ class HttpParameters {
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
   //
-  std::unordered_map<std::string, Value> data_;
+  std::unordered_map<Key, Value> data_;
 };
 }  // namespace koobika::hook::network::protocol::http
 
