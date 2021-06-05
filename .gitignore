@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Koo residual folders
+output/
+koo.config
