@@ -57,7 +57,7 @@ class ServerTransportDecoder {
   // USINGs                                                           ( public )
   // 
   using Sender = std::function<void(const base::AutoBuffer&)>;
-  using RequestHandler = std::function<void(RQty&, const Sender&)>;
+  using RequestHandler = std::function<void(const RQty&, const Sender&)>;
   using ErrorHandler = std::function<void()>;
   // ___________________________________________________________________________
   // METHODs                                                          ( public )

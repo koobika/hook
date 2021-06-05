@@ -47,6 +47,7 @@
 #include <stdexcept>
 
 #include "constants/methods.h"
+#include "network/transport/server_transport_constants.h"
 #include "http_method.h"
 #include "http_routes_manager.h"
 #include "http_routes_node.h"
@@ -64,10 +65,13 @@ class HttpRouter : public HttpRoutesManager, public HttpRoutesPerformer {
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
-  HttpRouter() = default;
+  HttpRouter() {
+    buffer_ = new char
+        [network::transport::ServerTransportConstants::kDefaultWriteBufferSize];
+  }
   HttpRouter(const HttpRouter&) = delete;
   HttpRouter(HttpRouter&&) noexcept = delete;
-  ~HttpRouter() = default;
+  ~HttpRouter() { delete[] buffer_; }
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
   //
@@ -177,10 +181,9 @@ class HttpRouter : public HttpRoutesManager, public HttpRoutesPerformer {
       std::lock_guard<std::mutex> lock(routes_mutex_);
       auto route = req.Uri.GetPath();
       auto length = route.length();
-      char tmp_buffer[512];
-      strncpy(tmp_buffer, route.c_str(), length);
-      tmp_buffer[length] = 0;
-      auto pch = strtok(tmp_buffer, kSlash_);
+      strncpy(buffer_, route.c_str(), length);
+      buffer_[length] = 0;
+      auto pch = strtok(buffer_, kSlash_);
       auto current = routes_;
       while (current && pch != nullptr) {
         auto itr = current->nodes.find(pch);
@@ -324,6 +327,7 @@ class HttpRouter : public HttpRoutesManager, public HttpRoutesPerformer {
   //
   std::shared_ptr<Element> routes_;
   mutable std::mutex routes_mutex_;
+  char* buffer_ = nullptr;
   // ___________________________________________________________________________
   // FRIENDs                                                       ( protected )
   //

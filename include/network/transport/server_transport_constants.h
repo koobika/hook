@@ -49,8 +49,8 @@ struct ServerTransportConstants {
   // CONSTANTs                                                        ( public )
   // 
   // Buffering capacity.
-  static constexpr std::size_t kDefaultReadBufferSize = 4096;
-  static constexpr std::size_t kDefaultWriteBufferSize = 4096;
+  static constexpr std::size_t kDefaultReadBufferSize = 256;
+  static constexpr std::size_t kDefaultWriteBufferSize = 256;
   // Port.
   static constexpr char kPortKey[] = "port";
   static constexpr char kPortValue[] = "8542";

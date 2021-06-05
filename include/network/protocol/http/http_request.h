@@ -53,12 +53,12 @@ class HttpRequest {
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   // 
   HttpRequest() = default;
-  HttpRequest(base::Uri&& uri, HttpMethod&& method, HttpHeaders&& headers,
-              base::AutoBuffer&& body)
-      : Uri{std::move(uri)},
-        Method{std::move(method)},
-        Headers{std::move(headers)},
-        Body{std::move(body)} {}
+  HttpRequest(const base::Uri& uri, const HttpMethod& method, const HttpHeaders& headers,
+              const base::AutoBuffer& body)
+      : Uri{uri},
+        Method{method},
+        Headers{headers},
+        Body{body} {}
   HttpRequest(const HttpRequest&) = delete;
   HttpRequest(HttpRequest&&) noexcept = delete;
   ~HttpRequest() = default;
@@ -70,10 +70,10 @@ class HttpRequest {
   // ___________________________________________________________________________
   // PROPERTIEs                                                       ( public )
   // 
-  base::Uri Uri;
-  HttpMethod Method;
-  HttpHeaders Headers;
-  base::AutoBuffer Body;
+  const base::Uri& Uri;
+  const HttpMethod& Method;
+  const HttpHeaders& Headers;
+  const base::AutoBuffer& Body;
 };
 }  // namespace koobika::hook::network::protocol::http
 
