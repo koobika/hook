@@ -143,46 +143,17 @@ class ServerTransportTcpIp : public ServerTransport<int, DEty> {
   // Stops current transport activity.
   void Stop(void) override { keep_running_ = false; }
   // Tries to send the specified buffer through the transport connection.
-  bool Send(const SOCKET& handler, const char* buf,
-            const std::size_t& len) override {
-    /*
-    pepe
-    */
-
+  bool Send(const SOCKET& h, const char* buf, const std::size_t& len) override {
     std::size_t off = 0;
     while (off < len) {
       std::size_t cur = std::min<std::size_t>(INT_MAX, len - off);
-      auto res = send(handler, &buf[off], (int)cur, MSG_NOSIGNAL);
+      auto res = send(h, &buf[off], (int)cur, MSG_NOSIGNAL);
       if (res == SOCKET_ERROR && errno != EAGAIN && errno != EWOULDBLOCK) {
         // ((Error)) -> while trying to send information to socket!
         return false;
-      } 
+      }
       off += res;
     }
-
-    /*
-    char tmp[ServerTransportConstants::kDefaultWriteBufferSize];
-    while (std::size_t length = buffer.ReadSome(
-               tmp, ServerTransportConstants::kDefaultWriteBufferSize)) {
-      std::size_t offset = 0;
-      while (offset < length) {
-        std::size_t len = std::min<std::size_t>(INT_MAX, length - offset);
-        auto res =
-            send(handler, &((const char*)tmp)[offset], (int)len, MSG_NOSIGNAL);
-        if (res == SOCKET_ERROR && errno != EAGAIN && errno != EWOULDBLOCK) {
-          // ((Error)) -> while trying to send information to socket!
-          return false;
-        } else {
-          offset += res;
-        }
-      }
-    }
-    */
-
-    /*
-    pepe fin
-    */
-
     return true;
   }
 
