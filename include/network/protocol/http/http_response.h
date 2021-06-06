@@ -36,12 +36,7 @@
 #ifndef koobika_hook_network_protocol_http_httpresponse_h
 #define koobika_hook_network_protocol_http_httpresponse_h
 
-#include <optional>
-#include <string>
-#include <unordered_map>
-
 #include "base/auto_buffer.h"
-#include "base/serializable.h"
 #include "constants/headers.h"
 #include "constants/status_codes.h"
 #include "constants/strings.h"
@@ -53,7 +48,7 @@ namespace koobika::hook::network::protocol::http {
 // -----------------------------------------------------------------------------
 // This class is in charge of providing the http response class.
 // =============================================================================
-class HttpResponse : public base::Serializable {
+class HttpResponse {
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
@@ -251,29 +246,6 @@ class HttpResponse : public base::Serializable {
   void HttpVersionNotSupported_505(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k505, reason_phrase);
-  }
-  // Renders current content to string.
-  base::AutoBuffer Serialize() const override {
-    base::AutoBuffer buffer;
-    HttpHeaders headers{Headers};
-    auto body_length = Body.Length();
-    // [status-line] setup
-    buffer.Write(constants::Strings::kHttpVersion)
-        .Write(constants::Strings::kSpace)
-        .Write(std::to_string(StatusCode))
-        .Write(constants::Strings::kSpace)
-        .Write(ReasonPhrase)
-        .Write(constants::Strings::kCrLf);
-    // [headers] <empty-body-considerations>
-    headers.Set(constants::Headers::kContentLength, body_length);
-    // [headers] <setup>
-    buffer.Write(headers.Serialize()).Write(constants::Strings::kCrLf);
-    // [body] setup
-    if (body_length) {
-      buffer.Write(Body);
-    }
-    // We're done! Let's return our stream!
-    return buffer;
   }
   // ___________________________________________________________________________
   // PROPERTIEs                                                       ( public )

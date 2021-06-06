@@ -55,13 +55,13 @@ class ServerTransportDecoder {
  public:
   // ___________________________________________________________________________
   // USINGs                                                           ( public )
-  // 
-  using Sender = std::function<void(const base::AutoBuffer&)>;
+  //
+  using Sender = std::function<void(const char*, const std::size_t&)>;
   using RequestHandler = std::function<void(const RQty&, const Sender&)>;
   using ErrorHandler = std::function<void()>;
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Adds (opaque) content to the decoder.
   virtual bool Add(void* buffer, const std::size_t& length) = 0;
   // Tries to decode internal content.

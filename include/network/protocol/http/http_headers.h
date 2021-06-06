@@ -36,8 +36,8 @@
 #ifndef koobika_hook_network_protocol_http_httpheaders_h
 #define koobika_hook_network_protocol_http_httpheaders_h
 
-#include <regex>
-#include <algorithm>
+#include <string>
+#include <unordered_map>
 
 #include "base/serializable.h"
 #include "base/variant.h"
@@ -50,32 +50,32 @@ namespace koobika::hook::network::protocol::http {
 // -----------------------------------------------------------------------------
 // This class is in charge of providing the http headers class.
 // =============================================================================
-class HttpHeaders : public base::Serializable {
+class HttpHeaders {
   // ___________________________________________________________________________
   // USINGs                                                          ( private )
-  // 
+  //
   using VariantList = std::initializer_list<base::Variant>;
 
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // 
+  //
   HttpHeaders() = default;
-  HttpHeaders(const std::string& raw_content) { raw_.assign(raw_content); }
-  HttpHeaders(const char* raw_content) { raw_.assign(raw_content); }
+  HttpHeaders(const std::string& raw_content) {}
+  HttpHeaders(const char* raw_content) {}
   HttpHeaders(const HttpHeaders&) = default;
   HttpHeaders(HttpHeaders&&) noexcept = default;
   ~HttpHeaders() = default;
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // 
+  //
   HttpHeaders& operator=(const HttpHeaders&) = default;
   HttpHeaders& operator=(HttpHeaders&&) noexcept = default;
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Cleans up all stored information.
-  void Clear() { raw_.clear(); }
+  void Clear() { map_.clear(); }
   // Sets a header entry (templated version).
   template <typename DAty>
   void Set(const char* name, const DAty& value) {
@@ -83,18 +83,7 @@ class HttpHeaders : public base::Serializable {
   }
   // Sets a header entry.
   void Set(const char* name, const std::string& value) {
-    if (!HttpUtil::IsToken(name)) {
-      // ((Error)) -> specified name is NOT a token!
-      // ((To-Do)) -> raise an exception?
-      return;
-    }
-    if (!HttpUtil::IsTEXT(value)) {
-      // ((Error)) -> specified value is NOT text!
-      // ((To-Do)) -> raise an exception?
-      return;
-    }
-    setFieldName(name);
-    setFieldValue(value);
+    Set(name, value.c_str());
   }
   // Sets a header entry.
   void Set(const char* name, const char* value) {
@@ -108,8 +97,7 @@ class HttpHeaders : public base::Serializable {
       // ((To-Do)) -> raise an exception?
       return;
     }
-    setFieldName(name);
-    setFieldValue(value);
+    map_[name] = value;
   }
   // Sets a header entry (variant-list version).
   void Set(const std::string& name, const VariantList& values) {
@@ -118,8 +106,7 @@ class HttpHeaders : public base::Serializable {
       // ((To-Do)) -> raise an exception?
       return;
     }
-    std::size_t length = values.size(), i = 0;
-    setFieldName(name);
+    auto& field = map_[name];
     for (auto const& value : values) {
       auto const& element_value = value.GetAsString();
       if (!element_value.has_value()) continue;
@@ -128,8 +115,7 @@ class HttpHeaders : public base::Serializable {
         // ((To-Do)) -> raise an exception?
         continue;
       }
-      setFieldValue(element_value.value().data(), i+1, i == length - 1);
-      i++;
+      field = element_value.value().c_str();
     }
   }
   // Sets a header entry (initializer-list version).
@@ -138,78 +124,29 @@ class HttpHeaders : public base::Serializable {
   }
   // Returns header entry using its name (const reference&).
   std::optional<std::string> Get(const std::string& name) const {
-    auto found = Find(name);
-    if (found.first != std::string::npos) {
-      return std::regex_replace(
-          raw_.substr(found.first, found.second - found.first),
-          std::regex("(^[ ]+)|([ ]+$)"), "");
-    }
-    return {};
+    auto itr = map_.find(name);
+    return itr != map_.end() ? itr->second : std::optional<std::string>();
   }
-  // Returns all header entries (const reference&).
-  base::AutoBuffer Serialize() const override { return raw_; }
   // Checks for the specified header entry (using its name).
   bool Exist(const std::string& name) const {
-    return Find(name).first != std::string::npos;
+    return map_.find(name) != map_.end();
+  }
+  // Gets the associated internal memory buffer (if possible).
+  void GetInternalBuffer(std::string& out) const {
+    for (auto const& field : map_) {
+      out.append(field.first);
+      out.append(constants::Strings::kColon);
+      out.append(constants::Strings::kSpace);
+      out.append(field.second);
+      out.append(constants::Strings::kCrLf);
+    }
   }
 
  private:
   // ___________________________________________________________________________
-  // METHODs                                                         ( private )
-  // 
-  // Finds for the specified header field name.
-  std::pair<std::size_t, std::size_t> Find(const std::string& name) const {
-    auto fullname = name + constants::Strings::kColon;
-    // Let's split out full raw content into lines!
-    std::size_t cur = 0, end = 0;
-    std::pair<std::size_t, std::size_t> found = {std::string::npos,
-                                                 std::string::npos};
-    while (true) {
-      end = raw_.find_first_of(constants::Strings::kCrLf, cur);
-      if (end == std::string::npos) break;
-      auto sub_start = raw_.find_first_of(constants::Strings::kColon, cur);
-      if (sub_start++ != std::string::npos) {
-        auto itr = std::search(raw_.begin() + cur, raw_.begin() + end,
-                               fullname.begin(), fullname.end(),
-                               [](char ch1, char ch2) {
-                                 return std::toupper(ch1) == std::toupper(ch2);
-                               });
-        if (itr != raw_.end() && itr != raw_.begin() + end) {
-          found.first = itr - raw_.begin() + fullname.length();
-          found.second = end;
-          break;
-        }
-      }
-      cur = end + constants::Strings::kCrLfLen;
-    }
-    return found;
-  }
-  // Sets header field name.
-  void setFieldName(const std::string& name) {
-    auto found = Find(name);
-    if (found.first != std::string::npos) {
-      raw_.erase(found.first, found.second - found.first);
-    }
-    raw_.append(name);
-    raw_.append(constants::Strings::kHeaderFieldNameSeparator);
-    raw_.append(constants::Strings::kSpace);
-  }
-  // Sets header field value.
-  void setFieldValue(const std::string& val, const bool& add_pre_comma = false,
-                     const bool& add_trailing_crlf = true) {
-    if (add_pre_comma) {
-      raw_.append(constants::Strings::kHeaderFieldValueSeparator);
-      raw_.append(constants::Strings::kSpace);
-    }
-    raw_.append(HttpUtil::RemoveCRLFs(std::move(std::string(val))).data());
-    if (add_trailing_crlf) {
-      raw_.append(constants::Strings::kCrLf);
-    }
-  }
-  // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
-  // 
-  std::string raw_;
+  //
+  std::unordered_map<std::string, std::string> map_;
 };
 }  // namespace koobika::hook::network::protocol::http
 

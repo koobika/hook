@@ -51,6 +51,7 @@ class Strings {
   //
   // Http-version.
   static constexpr char kHttpVersion[] = "HTTP/1.1";
+  static constexpr std::size_t kHttpVersionLen = 8;
   // CrLf.
   static constexpr char kCrLf[] = "\r\n";
   static constexpr std::size_t kCrLfLen = 2;

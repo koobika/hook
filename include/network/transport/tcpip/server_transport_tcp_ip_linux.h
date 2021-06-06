@@ -143,7 +143,24 @@ class ServerTransportTcpIp : public ServerTransport<int, DEty> {
   // Stops current transport activity.
   void Stop(void) override { keep_running_ = false; }
   // Tries to send the specified buffer through the transport connection.
-  bool Send(const SOCKET& handler, const base::AutoBuffer& buffer) override {
+  bool Send(const SOCKET& handler, const char* buf,
+            const std::size_t& len) override {
+    /*
+    pepe
+    */
+
+    std::size_t off = 0;
+    while (off < len) {
+      std::size_t cur = std::min<std::size_t>(INT_MAX, len - off);
+      auto res = send(handler, &buf[off], (int)cur, MSG_NOSIGNAL);
+      if (res == SOCKET_ERROR && errno != EAGAIN && errno != EWOULDBLOCK) {
+        // ((Error)) -> while trying to send information to socket!
+        return false;
+      } 
+      off += res;
+    }
+
+    /*
     char tmp[ServerTransportConstants::kDefaultWriteBufferSize];
     while (std::size_t length = buffer.ReadSome(
                tmp, ServerTransportConstants::kDefaultWriteBufferSize)) {
@@ -160,6 +177,12 @@ class ServerTransportTcpIp : public ServerTransport<int, DEty> {
         }
       }
     }
+    */
+
+    /*
+    pepe fin
+    */
+
     return true;
   }
 
@@ -249,11 +272,10 @@ class ServerTransportTcpIp : public ServerTransport<int, DEty> {
                   ctx->decoder->Add(buffer, bytes_returned);
                   ctx->decoder->Decode(
                       request_handler_,
-                      [this, ctx, efd]() {
-                        removeFromEpollAndClose(efd, ctx);
-                      },
-                      [this, ctx, efd](const base::AutoBuffer& buffer) {
-                        if (!Send(ctx->fd, buffer)) {
+                      [this, ctx, efd]() { removeFromEpollAndClose(efd, ctx); },
+                      [this, ctx, efd](const char* buffer,
+                                       const std::size_t& length) {
+                        if (!Send(ctx->fd, buffer, length)) {
                           removeFromEpollAndClose(efd, ctx);
                         }
                       });

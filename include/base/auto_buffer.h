@@ -75,7 +75,7 @@ class AutoBuffer {
     memory_mode_ = buffer.memory_mode_;
     memory_limit_ = buffer.memory_limit_;
     buffer.data_.buffer = nullptr;
-    buffer.data_.buffer_size = 0;
+    buffer.data_.buffer_length = 0;
     buffer.data_.read_cursor = 0;
     buffer.data_.write_cursor = 0;
     buffer.data_.file = nullptr;
@@ -90,8 +90,8 @@ class AutoBuffer {
   // Writes the specified AutoBuffer to the internal buffer.
   AutoBuffer& Write(const AutoBuffer& buffer) {
     buffer.Flush();
-    char tmp_buffer[kReadSomeBufferSize_];
-    while (auto sz = buffer.ReadSome(tmp_buffer, kReadSomeBufferSize_)) {
+    char tmp_buffer[kReadSomeBufferLength_];
+    while (auto sz = buffer.ReadSome(tmp_buffer, kReadSomeBufferLength_)) {
       write(tmp_buffer, sz);
     }
     return *this;
@@ -123,7 +123,7 @@ class AutoBuffer {
     if (memory_mode_) {
       free(data_.buffer);
       data_.buffer = nullptr;
-      data_.buffer_size = 0;
+      data_.buffer_length = 0;
       data_.read_cursor = 0;
       data_.write_cursor = 0;
     } else {
@@ -186,8 +186,8 @@ class AutoBuffer {
   }
   // Reads all the stored bytes (if available).
   void ReadAll(std::string& out) const {
-    char tmp_buffer[kReadSomeBufferSize_];
-    while (auto sz = ReadSome(tmp_buffer, kReadSomeBufferSize_)) {
+    char tmp_buffer[kReadSomeBufferLength_];
+    while (auto sz = ReadSome(tmp_buffer, kReadSomeBufferLength_)) {
       out.append(tmp_buffer, sz);
     }
   }
@@ -199,8 +199,8 @@ class AutoBuffer {
   }
   // Reads all the stored bytes (if available).
   void ReadAll(std::stringstream& out) const {
-    char tmp_buffer[kReadSomeBufferSize_];
-    while (auto sz = ReadSome(tmp_buffer, kReadSomeBufferSize_)) {
+    char tmp_buffer[kReadSomeBufferLength_];
+    while (auto sz = ReadSome(tmp_buffer, kReadSomeBufferLength_)) {
       out << std::string_view{tmp_buffer, sz};
     }
   }
@@ -219,13 +219,22 @@ class AutoBuffer {
       }
     }
   }
+  // Gets the associated internal memory buffer (if possible).
+  bool GetInternalBuffer(void*& out_buffer, std::size_t& out_length) const {
+    if (memory_mode_) {
+      out_buffer = data_.buffer;
+      out_length = data_.write_cursor;
+      return true;
+    }
+    return false;
+  }
 
  private:
   // ___________________________________________________________________________
   // CONSTANTs                                                       ( private )
   //
   static constexpr std::size_t kDefaultMemoryBufferLimit_ = 65536;
-  static constexpr std::size_t kReadSomeBufferSize_ = 4096;
+  static constexpr std::size_t kReadSomeBufferLength_ = 256;
   static constexpr std::size_t kMaxFilenameLength_ = 32;
   static constexpr char kFilenameBase_[] = "autobuffer_tmp_";
   static constexpr char kFilenameExt_[] = "dat";
@@ -239,8 +248,8 @@ class AutoBuffer {
   struct Data {
     // Memory buffer.
     void* buffer = nullptr;
-    // Memory buffer size.
-    std::size_t buffer_size = 0;
+    // Memory buffer length.
+    std::size_t buffer_length = 0;
     // Disk buffer.
     FILE* file = nullptr;
     // Disk buffer filename.
@@ -266,18 +275,18 @@ class AutoBuffer {
   // Allocates the needed space to allow required length.
   void allocate(const std::size_t& length) {
     std::size_t off = data_.write_cursor + length;
-    if (off > data_.buffer_size) {
-      auto amount = std::max(off - data_.buffer_size, kDefaultBufferChunkSize_);
+    if (off > data_.buffer_length) {
+      auto amount = std::max(off - data_.buffer_length, kDefaultBufferChunkLength_);
       auto new_buffer = (data_.buffer == nullptr)
                             ? malloc(amount)
-                            : realloc(data_.buffer, data_.buffer_size + amount);
+                            : realloc(data_.buffer, data_.buffer_length + amount);
       if (new_buffer == nullptr) {
         // ((Error)) -> trying to allocate memory!
         // ((To-Do)) -> raise an exception?
         return;
       }
       data_.buffer = (char*)new_buffer;
-      data_.buffer_size += amount;
+      data_.buffer_length += amount;
     }
   }
   // Checks for the current size (in memory) and switches to disk (if needed).
@@ -299,7 +308,7 @@ class AutoBuffer {
             free(old_buffer);
           }
           data_.buffer = nullptr;
-          data_.buffer_size = 0;
+          data_.buffer_length = 0;
         } else {
           // ((Error)) -> trying to open file!
           // ((To-Do)) -> raise an exception?
@@ -368,7 +377,7 @@ class AutoBuffer {
   // ___________________________________________________________________________
   // CONSTANTs                                                       ( private )
   //
-  static constexpr std::size_t kDefaultBufferChunkSize_ = 256;
+  static constexpr std::size_t kDefaultBufferChunkLength_ = 256;
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
   //

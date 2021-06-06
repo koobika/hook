@@ -286,12 +286,6 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
             delete context;
             continue;
           }
-
-          /*
-          pepe
-          */
-
-          /*
           if (bytes_returned &&
               context->decoder->Add(context->data.buf, bytes_returned)) {
             context->decoder->Decode(
@@ -307,22 +301,6 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
                   }
                 });
           }
-          */
-
-          if (bytes_returned) {
-            Send(context->socket,
-                 "HTTP/1.1 200 Ok\r\n"
-                 "Server: Example\r\n"
-                 "Date: Wed, 17 Apr 2013 12:00:00 GMT\r\n"
-                 "Content-Type: text/plain; charset=UTF-8\r\n"
-                 "Content-Length: 15\r\n\r\n"
-                 "Hello, World!\r\n");
-          }
-          
-          /*
-          pepe fin
-          */
-
           DWORD recv_flags = 0;
           DWORD bytes_transmitted = 0;
           int wsarecv_result = WSARecv(

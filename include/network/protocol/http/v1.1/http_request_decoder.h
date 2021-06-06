@@ -227,31 +227,9 @@ class HttpRequestDecoder
     }
     // third, prepare request..
     if (dispatch_request) {
-
-      /*
-      pepe
-      */
-
-      sender(
-          "HTTP/1.1 200 Ok\r\n"
-          "Server: Example\r\n"
-          "Date: Wed, 17 Apr 2013 12:00:00 GMT\r\n"
-          "Content-Type: text/plain; charset=UTF-8\r\n"
-          "Content-Length: 15\r\n\r\n"
-          "Hello, World!\r\n");
-
-
-      /*
       HttpRequest req(request_uri_, method_, headers_, body_);
       request_handler(req, sender);
-      */
-
       reset();
-
-      /*
-      pepe fin
-      */
-
     }
   }
 

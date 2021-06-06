@@ -51,6 +51,7 @@
 #include "http_router.h"
 #include "network/transport/server_transport_constants.h"
 #include "structured/json/json_value.h"
+#include "constants/limits.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
@@ -120,7 +121,38 @@ class HttpServerBase : public HttpRoutesManager {
                   res.InternalServerError_500("Unknown server exception!");
                   res.Body.Close();
                 }
-                sender(res.Serialize());
+                // Let's check if current buffer can be sent using fast memory!
+                void* body_buf = nullptr;
+                std::size_t body_len = 0;
+                if (res.Body.GetInternalBuffer(body_buf, body_len)) {
+                  // <memory-based> body buffer!
+                  std::string content;
+                  res.Headers.Set(constants::Headers::kContentLength, body_len);
+                  content.append(constants::Strings::kHttpVersion);
+                  content.append(constants::Strings::kSpace);
+                  content.append(std::to_string(res.StatusCode));
+                  content.append(constants::Strings::kSpace);
+                  content.append(res.ReasonPhrase);
+                  content.append(constants::Strings::kCrLf);
+                  res.Headers.GetInternalBuffer(content);
+                  content.append(constants::Strings::kCrLf);
+                  content.append((const char*)body_buf, body_len);
+                  sender(content.c_str(), content.length());
+                } else {
+                  // <file-based> body buffer!
+
+                  /*
+                  pepe
+                  */
+
+                  /*
+                  sender(res.Serialize());
+                  */
+
+                  /*
+                  pepe fin
+                  */
+                }
               });
         });
   }
