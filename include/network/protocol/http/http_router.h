@@ -203,7 +203,7 @@ class HttpRouter : public HttpRoutesManager, public HttpRoutesPerformer {
               if (off != std::string::npos) {
                 val.erase(val.find(key), key.length());
               }
-              parameters.Add(std::make_pair(param, val));
+              parameters.insert(std::make_pair(param, val));
               itr = itr_p;
               break;
             }

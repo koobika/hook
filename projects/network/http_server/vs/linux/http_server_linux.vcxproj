@@ -178,7 +178,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\include\auth\controller_base.h" />
-    <ClInclude Include="..\..\..\..\..\include\base\associative_container.h" />
     <ClInclude Include="..\..\..\..\..\include\base\auto_buffer.h" />
     <ClInclude Include="..\..\..\..\..\include\base\builder.h" />
     <ClInclude Include="..\..\..\..\..\include\base\builder_property.h" />

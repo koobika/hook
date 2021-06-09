@@ -142,24 +142,16 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     closesocket(accept_socket_);
   }
   // Tries to send the specified buffer through the transport connection.
-  bool Send(const SOCKET& handler, const base::AutoBuffer& buffer) override {
-    char tmp[ServerTransportConstants::kDefaultWriteBufferSize];
-    while (std::size_t length = buffer.ReadSome(
-               tmp, ServerTransportConstants::kDefaultWriteBufferSize)) {
-      std::size_t offset = 0;
-      while (offset < length) {
-        std::size_t len = std::min<std::size_t>(INT_MAX, length - offset);
-        auto res = ::send(handler, &((const char*)tmp)[offset], (int)len, 0x0);
-        if (res == SOCKET_ERROR) {
-          if (WSAGetLastError() != WSAEWOULDBLOCK) {
-            // ((Error)) -> while trying to send information to socket!
-            // ((To-Do)) -> inform user back?
-            return false;
-          }
-        } else {
-          offset += res;
-        }
+  bool Send(const SOCKET& h, const char* buf, const std::size_t& len) override {
+    std::size_t off = 0;
+    while (off < len) {
+      std::size_t cur = std::min<std::size_t>(INT_MAX, len - off);
+      auto res = send(h, &buf[off], (int)cur, 0);
+      if (res == SOCKET_ERROR && WSAGetLastError() != WSAEWOULDBLOCK) {
+        // ((Error)) -> while trying to send information to socket!
+        return false;
       }
+      off += res;
     }
     return true;
   }
@@ -294,8 +286,8 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
                   // connection closed! let's free the associated resources!
                   closesocket(context->socket);
                 },
-                [this, context](const base::AutoBuffer& buffer) {
-                  if (!Send(context->socket, buffer)) {
+                [this, context](const char* buffer, const std::size_t& len) {
+                  if (!Send(context->socket, buffer, len)) {
                     // connection closed! let's free the associated resources!
                     closesocket(context->socket);
                   }

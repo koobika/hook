@@ -166,7 +166,7 @@ class HttpRequestDecoder
       // let's decode the <request-line> section!
       GET_REQUEST_LINE_FIELD(method_, constants::Strings::kSpace,
                              constants::Strings::kSpaceLen)
-      GET_REQUEST_LINE_FIELD(request_uri_, constants::Strings::kSpace,
+      GET_REQUEST_LINE_FIELD(uri_, constants::Strings::kSpace,
                              constants::Strings::kSpaceLen)
       GET_REQUEST_LINE_FIELD(http_version_, constants::Strings::kCrLf,
                              constants::Strings::kCrLfLen)
@@ -227,8 +227,7 @@ class HttpRequestDecoder
     }
     // third, prepare request..
     if (dispatch_request) {
-      HttpRequest req(request_uri_, method_, headers_, body_);
-      request_handler(req, sender);
+      request_handler(HttpRequest(uri_, method_, headers_, body_), sender);
       reset();
     }
   }
@@ -320,7 +319,7 @@ class HttpRequestDecoder
   // http-method
   std::string method_;
   // http-request-uri
-  std::string request_uri_;
+  std::string uri_;
   // http-version
   std::string http_version_;
   // http-headers
