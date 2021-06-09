@@ -298,14 +298,14 @@ class HttpServerBase : public HttpRoutesManager {
   }
   // Returns server currently stored date.
   const char* GetCurrentDate() const {
-    std::scoped_lock<std::mutex> sync_protection(date_buffer_mutex);
+    //std::scoped_lock<std::mutex> sync_protection(date_buffer_mutex);
     return date_buffer_;
   }
 
  private:
   // Updates current stored server date.
   void updateInternalDate() {
-    std::scoped_lock<std::mutex> sync_protection(date_buffer_mutex);
+    //std::scoped_lock<std::mutex> sync_protection(date_buffer_mutex);
     time(&rawtime);
     timeinfo = localtime(&rawtime);
     strftime(date_buffer_, kMaxLength, "%a, %d %h %G %T GMT", timeinfo);
@@ -325,7 +325,7 @@ class HttpServerBase : public HttpRoutesManager {
   structured::json::JsonObject configuration_;
   // Attributes needed for server-date management!
   char date_buffer_[kMaxLength] = {0};
-  mutable std::mutex date_buffer_mutex;
+  //mutable std::mutex date_buffer_mutex;
   struct tm* timeinfo = nullptr;
   time_t rawtime;
 };
