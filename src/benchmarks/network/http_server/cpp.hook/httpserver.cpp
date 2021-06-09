@@ -42,7 +42,7 @@ int main() {
     // Let's create our server using the default configuration..
     auto server = HttpServerBuilder().Build();
     // Let's configure our server to handle requests over '/foo/bar' uri..
-    server->Handle("/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
+    server->Handle("/plaintext", [](const HttpRequest& req, HttpResponse& res) {
       // In this example we're only interested on <GET> requests..
       if (req.Method.IsGet()) {
         // Set some response headers..
@@ -58,7 +58,7 @@ int main() {
       }
     });
     // Start server activity..
-    server->Start("8542");
+    server->Start("8080");
     return getchar();
   } catch (const std::exception& exception) {
     // ((Error)) -> while performing setup!
