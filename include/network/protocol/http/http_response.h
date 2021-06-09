@@ -254,6 +254,7 @@ class HttpResponse {
   std::string ReasonPhrase = constants::StatusCodes::k501Str;
   HttpHeaders Headers;
   base::AutoBuffer Body;
+  base::AutoBuffer Raw;
 
  private:
   // ___________________________________________________________________________

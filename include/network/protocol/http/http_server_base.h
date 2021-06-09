@@ -98,63 +98,86 @@ class HttpServerBase : public HttpRoutesManager {
     // let's setup the required transport!
     transport_ = std::make_unique<TRty>();
     // let' start transport activity on a separate thread!
-    transport_thread_ = std::make_shared<std::thread>(
-        [&router = router_, &transport = transport_,
-         &configuration = configuration_]() {
-          transport->Start(
-              configuration, [&router](auto const& req, auto const& sender) {
-                HttpResponse res;
-                try {
-                  if (!router.Perform(req, res)) {
-                    // ((Error)) -> route is not registered!
-                    // ((To-Do)) -> inform user back?
-                    res.NotFound_404();
-                  }
-                } catch (std::exception& e) {
-                  // ((Error)) -> a known exception was thrown!
-                  // ((To-Do)) -> inform user back!
-                  res.InternalServerError_500(e.what());
-                  res.Body.Close();
-                } catch (...) {
-                  // ((Error)) -> a unknown exception was thrown!
-                  // ((To-Do)) -> inform user back!
-                  res.InternalServerError_500("Unknown server exception!");
-                  res.Body.Close();
-                }
-                // Let's check if current buffer can be sent using fast memory!
-                void* body_buf = nullptr;
-                std::size_t body_len = 0;
-                if (res.Body.GetInternalBuffer(body_buf, body_len)) {
-                  // <memory-based> body buffer!
-                  std::string content;
-                  res.Headers.Set(constants::Headers::kContentLength, body_len);
-                  content.append(constants::Strings::kHttpVersion);
-                  content.append(constants::Strings::kSpace);
-                  content.append(std::to_string(res.StatusCode));
-                  content.append(constants::Strings::kSpace);
-                  content.append(res.ReasonPhrase);
-                  content.append(constants::Strings::kCrLf);
-                  res.Headers.GetInternalBuffer(content);
-                  content.append(constants::Strings::kCrLf);
-                  content.append((const char*)body_buf, body_len);
-                  sender(content.c_str(), content.length());
-                } else {
-                  // <file-based> body buffer!
+    transport_thread_ = std::make_shared<std::thread>([this]() {
+      transport_->Start(
+          configuration_, [this](auto const& req, auto const& sender) {
+            HttpResponse res;
+            try {
+              if (!router_.Perform(req, res)) {
+                // ((Error)) -> route is not registered!
+                // ((To-Do)) -> inform user back?
+                res.NotFound_404();
+              }
+            } catch (std::exception& e) {
+              // ((Error)) -> a known exception was thrown!
+              // ((To-Do)) -> inform user back!
+              res.InternalServerError_500(e.what());
+              res.Body.Close();
+            } catch (...) {
+              // ((Error)) -> a unknown exception was thrown!
+              // ((To-Do)) -> inform user back!
+              res.InternalServerError_500("Unknown server exception!");
+              res.Body.Close();
+            }
+            void* body_buf = nullptr;
+            std::size_t body_len = 0;
+            // Check for a 'RAW' based stream!
+            if (res.Raw.Length()) {
+              if (res.Raw.GetInternalBuffer(body_buf, body_len)) {
+                // <memory-based> body buffer!
+                sender((const char*)body_buf, body_len);
+              } else {
+                // <file-based> body buffer!
+              }
+            } else {
+              if (res.Body.GetInternalBuffer(body_buf, body_len)) {
+                // <memory-based> body buffer!
+                std::string content;
+                res.Headers.Set(constants::Headers::kContentLength, body_len);
+                content.append(constants::Strings::kHttpVersion)
+                    .append(constants::Strings::kSpace)
+                    .append(std::to_string(res.StatusCode))
+                    .append(constants::Strings::kSpace)
+                    .append(res.ReasonPhrase)
+                    .append(constants::Strings::kCrLf)
+                    .append(res.Headers.Dump())
+                    .append(constants::Strings::kCrLf)
+                    .append((const char*)body_buf, body_len);
+                sender(content.c_str(), content.length());
+              } else {
+                // <file-based> body buffer!
 
-                  /*
-                  pepe
-                  */
+                /*
+                pepe
+                */
 
-                  /*
-                  sender(res.Serialize());
-                  */
+                /*
+                sender(res.Serialize());
+                */
 
-                  /*
-                  pepe fin
-                  */
-                }
-              });
-        });
+                /*
+                pepe fin
+                */
+              }
+            }
+          });
+    });
+
+    /*
+    pepe
+    */
+
+    support_thread_ = std::make_shared<std::thread>([this] {
+      using namespace std::chrono_literals;
+      while (transport_) {
+        updateInternalDate();
+        std::this_thread::sleep_for(1s);
+      }
+    });
+
+    /*
+    pepe fin
+    */
   }
   // Stops server activity.
   void Stop() {
@@ -163,6 +186,10 @@ class HttpServerBase : public HttpRoutesManager {
     }
     if (transport_thread_ != nullptr && transport_thread_->joinable()) {
       transport_thread_->join();
+    }
+    transport_ = nullptr;
+    if (support_thread_ != nullptr && support_thread_->joinable()) {
+      support_thread_->join();
     }
   }
   // Adds a new <controller> to the internal map using an string route.
@@ -269,15 +296,38 @@ class HttpServerBase : public HttpRoutesManager {
                const HttpRoutingHandlerExtended& handler_extended) override {
     Handle(route, handler_extended, constants::Methods::kConnect);
   }
+  // Returns server currently stored date.
+  const char* GetCurrentDate() const {
+    std::scoped_lock<std::mutex> sync_protection(date_buffer_mutex);
+    return date_buffer_;
+  }
 
  private:
+  // Updates current stored server date.
+  void updateInternalDate() {
+    std::scoped_lock<std::mutex> sync_protection(date_buffer_mutex);
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(date_buffer_, kMaxLength, "%a, %d %h %G %T GMT", timeinfo);
+  }
+
+  // ___________________________________________________________________________
+  // CONSTANTs                                                       ( private )
+  //
+  static constexpr std::size_t kMaxLength = 80;
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
   //
   ROty router_;
   std::shared_ptr<TRty> transport_;
   std::shared_ptr<std::thread> transport_thread_;
+  std::shared_ptr<std::thread> support_thread_;
   structured::json::JsonObject configuration_;
+  // Attributes needed for server-date management!
+  char date_buffer_[kMaxLength] = {0};
+  mutable std::mutex date_buffer_mutex;
+  struct tm* timeinfo = nullptr;
+  time_t rawtime;
 };
 }  // namespace koobika::hook::network::protocol::http
 

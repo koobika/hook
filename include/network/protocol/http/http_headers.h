@@ -131,15 +131,17 @@ class HttpHeaders {
   bool Exist(const std::string& name) const {
     return map_.find(name) != map_.end();
   }
-  // Gets the associated internal memory buffer (if possible).
-  void GetInternalBuffer(std::string& out) const {
+  // Dumps the associated internal content to the output string.
+  std::string Dump() const {
+    std::string out;
     for (auto const& field : map_) {
-      out.append(field.first);
-      out.append(constants::Strings::kColon);
-      out.append(constants::Strings::kSpace);
-      out.append(field.second);
-      out.append(constants::Strings::kCrLf);
+      out.append(field.first)
+          .append(constants::Strings::kColon)
+          .append(constants::Strings::kSpace)
+          .append(field.second)
+          .append(constants::Strings::kCrLf);
     }
+    return out;
   }
 
  private:
