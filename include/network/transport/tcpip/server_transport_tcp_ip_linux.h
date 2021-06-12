@@ -143,16 +143,44 @@ class ServerTransportTcpIp : public ServerTransport<int, DEty> {
   // Stops current transport activity.
   void Stop(void) override { keep_running_ = false; }
   // Tries to send the specified buffer through the transport connection.
-  bool Send(const SOCKET& h, const char* buf, const std::size_t& len) override {
-    std::size_t off = 0;
-    while (off < len) {
-      std::size_t cur = std::min<std::size_t>(INT_MAX, len - off);
-      auto res = send(h, &buf[off], (int)cur, MSG_NOSIGNAL);
-      if (res == SOCKET_ERROR && errno != EAGAIN && errno != EWOULDBLOCK) {
-        // ((Error)) -> while trying to send information to socket!
-        return false;
+  bool Send(const SOCKET& handler, const base::AutoBuffer& buffer) override {
+    const char* buf = nullptr;
+    std::size_t len = 0;
+    if (buffer.GetInternalBuffer(buf, len)) {
+      std::size_t off = 0;
+      while (off < len) {
+        std::size_t cur = std::min<std::size_t>(INT_MAX, len - off);
+        auto res = send(handler, &buf[off], (int)cur, MSG_NOSIGNAL);
+        if (res == SOCKET_ERROR) {
+          if (errno != EAGAIN && errno != EWOULDBLOCK) {
+            // ((Error)) -> while trying to send information to socket!
+            return false;
+          }
+        } else {
+          off += res;
+        }
       }
-      off += res;
+    } else {
+      static constexpr auto kBufSize =
+          ServerTransportConstants::kDefaultWriteBufferSize;
+      char* buf = new char[kBufSize];
+      while (auto len = buffer.ReadSome(buf, kBufSize)) {
+        std::size_t offset = 0;
+        while (offset < len) {
+          std::size_t amount = std::min<std::size_t>(INT_MAX, len - offset);
+          auto res = send(handler, &buf[offset], (int)amount, MSG_NOSIGNAL);
+          if (res == SOCKET_ERROR) {
+            if (errno != EAGAIN && errno != EWOULDBLOCK) {
+              // ((Error)) -> while trying to send information to socket!
+              delete[] buf;
+              return false;
+            }
+          } else {
+            offset += res;
+          }
+        }
+        delete[] buf;
+      }
     }
     return true;
   }
@@ -244,9 +272,8 @@ class ServerTransportTcpIp : public ServerTransport<int, DEty> {
                   ctx->decoder->Decode(
                       request_handler_,
                       [this, ctx, efd]() { removeFromEpollAndClose(efd, ctx); },
-                      [this, ctx, efd](const char* buffer,
-                                       const std::size_t& length) {
-                        if (!Send(ctx->fd, buffer, length)) {
+                      [this, ctx, efd](const base::AutoBuffer& buffer) {
+                        if (!Send(ctx->fd, buffer)) {
                           removeFromEpollAndClose(efd, ctx);
                         }
                       });

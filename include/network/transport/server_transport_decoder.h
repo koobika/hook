@@ -48,16 +48,17 @@ namespace koobika::hook::network::transport {
 // This specification holds for server transport decoder interface.
 // -----------------------------------------------------------------------------
 // Template parameters:
-//    RQty - server transport request type being generated
+//    RQty - server transport request type being used
+//    RSty - server transport response type being used
 // =============================================================================
-template <typename RQty>
+template <typename RQty, typename RSty>
 class ServerTransportDecoder {
  public:
   // ___________________________________________________________________________
   // USINGs                                                           ( public )
   //
-  using Sender = std::function<void(const char*, const std::size_t&)>;
-  using RequestHandler = std::function<void(const RQty&, const Sender&)>;
+  using Sender = std::function<void(const base::AutoBuffer&)>;
+  using RequestHandler = std::function<void(const RQty&, RSty&, const Sender&)>;
   using ErrorHandler = std::function<void()>;
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
@@ -66,11 +67,9 @@ class ServerTransportDecoder {
   virtual bool Add(void* buffer, const std::size_t& length) = 0;
   // Tries to decode internal content.
   virtual void Decode(
-      const transport::ServerTransportDecoder<RQty>::RequestHandler&
-          request_handler,
-      const transport::ServerTransportDecoder<RQty>::ErrorHandler&
-          error_handler,
-      const transport::ServerTransportDecoder<RQty>::Sender& sender) = 0;
+      const transport::ServerTransportDecoder<RQty, RSty>::RequestHandler&,
+      const transport::ServerTransportDecoder<RQty, RSty>::ErrorHandler&,
+      const transport::ServerTransportDecoder<RQty, RSty>::Sender&) = 0;
 };
 }  // namespace koobika::hook::network::transport
 

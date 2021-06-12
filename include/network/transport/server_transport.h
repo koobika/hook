@@ -56,14 +56,14 @@ class ServerTransport {
  public:
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Starts current transport activity using the provided (json) configuration.
   virtual void Start(const structured::json::JsonObject&,
                      const typename DEty::RequestHandler&) = 0;
   // Stops transport activity.
   virtual void Stop() = 0;
-  // Tries to sends the specified buffer through the transport connection.
-  virtual bool Send(const HDty&, const char*, const std::size_t&) = 0;
+  // Tries to sends the specified auto-buffer through the transport connection.
+  virtual bool Send(const HDty&, const base::AutoBuffer&) = 0;
 };
 }  // namespace koobika::hook::network::transport
 

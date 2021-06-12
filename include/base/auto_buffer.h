@@ -142,6 +142,20 @@ class AutoBuffer {
       }
     }
   }
+  // Clears current AutoBuffer.
+  void Clear() {
+    if (memory_mode_) {
+      data_.read_cursor = 0;
+      data_.write_cursor = 0;
+    } else {
+      if (data_.file != nullptr) {
+        if (!fseek(data_.file, 0, SEEK_SET)) {
+          // ((Error)) -> trying to perform seek operation!
+          // ((To-Do)) -> raise an exception?
+        }
+      }
+    }
+  }
   // Returns the effective length of this AutoBuffer.
   std::size_t Length() const {
     std::size_t length = 0;
@@ -204,12 +218,6 @@ class AutoBuffer {
       out << std::string_view{tmp_buffer, sz};
     }
   }
-  // Reads all the stored bytes (if available).
-  std::stringstream ToStringStream() const {
-    std::stringstream out;
-    ReadAll(out);
-    return out;
-  }
   // Flushes AutoBuffer content (if required).
   void Flush() const {
     if (!memory_mode_ && data_.file != nullptr) {
@@ -220,10 +228,10 @@ class AutoBuffer {
     }
   }
   // Gets the associated internal memory buffer (if possible).
-  bool GetInternalBuffer(void*& out_buffer, std::size_t& out_length) const {
+  bool GetInternalBuffer(const char*& out, std::size_t& length) const {
     if (memory_mode_) {
-      out_buffer = data_.buffer;
-      out_length = data_.write_cursor;
+      out = (const char*)data_.buffer;
+      length = data_.write_cursor;
       return true;
     }
     return false;

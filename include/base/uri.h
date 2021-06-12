@@ -107,8 +107,6 @@ class Uri : public UriReader {
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
   Uri() = default;
-  Uri(const std::string& str) { parseFull(str.data(), str.length()); }
-  Uri(const char* str) { parseFull(str, strlen(str)); }
   Uri(const Uri&) = default;
   Uri(Uri&&) noexcept = default;
   ~Uri() = default;
@@ -120,6 +118,8 @@ class Uri : public UriReader {
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
   //
+  // Sets Uri content from specified string.
+  void From(const char* str, const std::size_t& len) { parseFull(str, len); }
   // Returns the stored 'scheme' part.
   std::string GetScheme() const override { return scheme_; }
   // Returns the stored 'scheme-specific' part.

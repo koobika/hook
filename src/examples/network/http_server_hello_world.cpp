@@ -30,20 +30,15 @@ int main() {
     auto server = HttpServerBuilder().Build();
     // Let's configure our server to handle requests over '/foo/bar' uri..
     server->Handle(
-        "/foo/bar", [server](const HttpRequest& req, HttpResponse& res) {
-          // In this example we're only interested on <GET>
-          if (req.Method.IsGet()) {
-            // Set some response headers..
-            res.Headers.Set("Server", "Example");
-            res.Headers.Set("Date", server->GetCurrentDate());
-            res.Headers.Set("Content-Type", "text/plain; charset=UTF-8");
-            // Set the response body using the provided buffer
-            res.Body.Write("Hello, World!\r\n");
-            // Set the response code and.. that's all!
-            res.Ok_200();
-          } else {
-            res.Forbidden_403();
-          }
+        "/plaintext", [server](const HttpRequest& req, HttpResponse& res) {
+          // Set some response headers..
+          res.Headers.Set("Server", "Example");
+          res.Headers.Set("Date", server->GetCurrentDate());
+          res.Headers.Set("Content-Type", "text/plain; charset=UTF-8");
+          // Set the response body using the provided buffer
+          res.Body.Write("Hello, World!\r\n");
+          // Set the response code and.. that's all!
+          res.Ok_200();
         });
     // Start server activity..
     server->Start("8080");

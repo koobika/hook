@@ -142,16 +142,42 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
     closesocket(accept_socket_);
   }
   // Tries to send the specified buffer through the transport connection.
-  bool Send(const SOCKET& h, const char* buf, const std::size_t& len) override {
-    std::size_t off = 0;
-    while (off < len) {
-      std::size_t cur = std::min<std::size_t>(INT_MAX, len - off);
-      auto res = send(h, &buf[off], (int)cur, 0);
-      if (res == SOCKET_ERROR && WSAGetLastError() != WSAEWOULDBLOCK) {
-        // ((Error)) -> while trying to send information to socket!
-        return false;
+  bool Send(const SOCKET& handler, const base::AutoBuffer& buffer) override {
+    const char* buf = nullptr;
+    std::size_t len = 0;
+    if (buffer.GetInternalBuffer(buf, len)) {
+      std::size_t off = 0;
+      while (off < len) {
+        std::size_t cur = std::min<std::size_t>(INT_MAX, len - off);
+        auto res = send(handler, &buf[off], (int)cur, 0);
+        if (res == SOCKET_ERROR && WSAGetLastError() != WSAEWOULDBLOCK) {
+          // ((Error)) -> while trying to send information to socket!
+          return false;
+        }
+        off += res;
       }
-      off += res;
+    } else {
+      static constexpr auto kBufSize =
+          ServerTransportConstants::kDefaultWriteBufferSize;
+      char* buf = new char[kBufSize];
+      while (auto len = buffer.ReadSome(buf, kBufSize)) {
+        std::size_t offset = 0;
+        while (offset < len) {
+          std::size_t amount = std::min<std::size_t>(INT_MAX, len - offset);
+          auto res = ::send(handler, &buf[offset], (int)amount, 0x0);
+          if (res == SOCKET_ERROR) {
+            if (WSAGetLastError() != WSAEWOULDBLOCK) {
+              // ((Error)) -> while trying to send information to socket!
+              // ((To-Do)) -> inform user back?
+              delete[] buf;
+              return false;
+            }
+          } else {
+            offset += res;
+          }
+        }
+        delete[] buf;
+      }
     }
     return true;
   }
@@ -286,8 +312,8 @@ class ServerTransportTcpIp : public ServerTransport<SOCKET, DEty> {
                   // connection closed! let's free the associated resources!
                   closesocket(context->socket);
                 },
-                [this, context](const char* buffer, const std::size_t& len) {
-                  if (!Send(context->socket, buffer, len)) {
+                [this, context](const base::AutoBuffer& buffer) {
+                  if (!Send(context->socket, buffer)) {
                     // connection closed! let's free the associated resources!
                     closesocket(context->socket);
                   }

@@ -30,14 +30,15 @@ int main() {
     auto server = HttpServerBuilder().Build();
     // Let's configure our server to handle requests over '/foo/bar' uri..
     server->Handle(
-        "/foo/bar", [server](const HttpRequest& req, HttpResponse& res) {
-          res.Raw
-              .Write(
-                  "HTTP/1.1 200 OK\r\nServer: "
-                  "Example\r\nContent-Type: text/plain; "
-                  "charset=UTF-8\r\nDate: ")
-              .Write(server->GetCurrentDate())
-              .Write("\r\nContent-Length: 15\r\n\r\nHello, World!\r\n");
+        "/plaintext", [server](const HttpRequest& req, HttpResponse& res) {
+      res.Raw
+          .Write(
+              "HTTP/1.1 200 OK\r\nServer: Example\r\nContent-Type: text/plain; "
+              "charset=UTF-8\r\nContent-Length: 15\r\nDate: ")
+          .Write(server->GetCurrentDate())
+          .Write(
+              "Wed, 17 Apr 2013 "
+              "12:00:00 GMT\r\n\r\nHello, World!\r\n");
         });
     // Start server activity..
     server->Start("8080");

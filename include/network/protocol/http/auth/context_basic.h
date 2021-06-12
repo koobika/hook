@@ -55,9 +55,8 @@ class ContextBasic : public Context, public Mapper {
   // 
   // Tries to fill-up internal structures using the provided request.
   bool Map(const HttpRequest& req) override {
-    auto auth_field = req.Headers.Get(kAuthorization);
-    if (!auth_field.has_value()) return false;
-    auto const& auth = auth_field.value();
+    if (!req.Headers.Exist(kAuthorization)) return false;
+    auto auth = req.Headers.Get(kAuthorization);
     std::regex reg("\\s+");
     std::sregex_token_iterator iter(auth.begin(), auth.end(), reg, -1), end;
     std::vector<std::string> vec(iter, end);

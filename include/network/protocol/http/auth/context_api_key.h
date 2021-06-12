@@ -54,12 +54,10 @@ class ContextApiKey : public Context, public Mapper {
   // 
   // Tries to fill-up internal structures using the provided request.
   bool Map(const HttpRequest& req) override {
-    auto auth_field = req.Headers.Get(kApiKeyField);
-    if (!auth_field.has_value()) {
-      auth_field = req.Uri.GetQuery().Get(kApiKeyField);
-      if (!auth_field.has_value()) return false;
+    if (!req.Headers.Exist(kApiKeyField)) {
+      return false;
     }
-    Token = auth_field.value();
+    Token = req.Headers.Get(kApiKeyField);
     return true;
   }
   // ___________________________________________________________________________
