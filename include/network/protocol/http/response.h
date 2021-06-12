@@ -40,7 +40,7 @@
 #include "constants/headers.h"
 #include "constants/status_codes.h"
 #include "constants/strings.h"
-#include "headers.h"
+#include "headers_helper.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
@@ -252,7 +252,7 @@ class Response {
   //
   unsigned short StatusCode = constants::StatusCodes::k501;
   std::string ReasonPhrase = constants::StatusCodes::k501Str;
-  Headers Headers;
+  HeadersHelper Headers;
   base::AutoBuffer Body;
   base::AutoBuffer Raw;
 

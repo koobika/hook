@@ -215,8 +215,8 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\routes_controller.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\routes_controller_handler.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\encoding_type.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\headers.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\method.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\headers_helper.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\method_helper.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\method_value.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\parameters.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\request.h" />
@@ -234,11 +234,11 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\transfer_encoding_types.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\util.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\v1.1\request_decoder.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\transport\server_transport.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\transport\server_transport_constants.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\transport\server_transport_decoder.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server_transport_tcp_ip.h" />
-    <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server_transport_tcp_ip_linux.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\transport\server_interface.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\transport\server_constants.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\transport\server_decoder.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server_linux.h" />
     <ClInclude Include="..\..\..\..\..\include\structured\json\json_importer.h" />
     <ClInclude Include="..\..\..\..\..\include\structured\json\json_value.h" />
   </ItemGroup>

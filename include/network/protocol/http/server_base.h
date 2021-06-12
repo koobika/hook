@@ -49,7 +49,7 @@
 #include "routes_controller.h"
 #include "response_writer.h"
 #include "router.h"
-#include "network/transport/server_transport_constants.h"
+#include "network/transport/server_constants.h"
 #include "structured/json/json_value.h"
 #include "constants/limits.h"
 
@@ -72,7 +72,7 @@ class ServerBase : public RoutesManager {
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
   ServerBase(const unsigned int& workers_number) {
-    configuration_[transport::ServerTransportConstants::kNumberOfWorkersKey] =
+    configuration_[transport::ServerConstants::kNumberOfWorkersKey] =
         workers_number;
   }
   ServerBase(const structured::json::JsonObject& configuration)
@@ -94,7 +94,7 @@ class ServerBase : public RoutesManager {
       // ((Error)) -> server is already running!
       throw std::logic_error("server is already running!");
     }
-    configuration_[transport::ServerTransportConstants::kPortKey] = port;
+    configuration_[transport::ServerConstants::kPortKey] = port;
     // let's setup the required transport!
     transport_ = std::make_unique<TRty>();
     // let' start transport activity on a separate thread!

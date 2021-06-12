@@ -41,7 +41,7 @@
 #include "router.h"
 #include "server_base.h"
 #include "v1.1/request_decoder.h"
-#include "network/transport/tcpip/server_transport_tcp_ip.h"
+#include "network/transport/tcpip/server.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
@@ -50,8 +50,7 @@ namespace koobika::hook::network::protocol::http {
 // This class is in charge of providing the default http server base class.
 // =============================================================================
 class Server
-    : public ServerBase<
-          transport::tcpip::ServerTransportTcpIp<v11::RequestDecoder>, Router> {
+    : public ServerBase<transport::tcpip::Server<v11::RequestDecoder>, Router> {
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )

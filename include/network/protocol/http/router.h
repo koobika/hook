@@ -47,8 +47,8 @@
 #include <stdexcept>
 
 #include "constants/methods.h"
-#include "network/transport/server_transport_constants.h"
-#include "method.h"
+#include "network/transport/server_constants.h"
+#include "method_helper.h"
 #include "routes_manager.h"
 #include "routes_node.h"
 #include "routes_performer.h"

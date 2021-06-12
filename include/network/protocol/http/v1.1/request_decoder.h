@@ -48,7 +48,7 @@
 #include "network/protocol/http/encoding_type.h"
 #include "network/protocol/http/request.h"
 #include "network/protocol/http/response.h"
-#include "network/transport/server_transport_decoder.h"
+#include "network/transport/server_decoder.h"
 
 namespace koobika::hook::network::protocol::http::v11 {
 // =============================================================================
@@ -56,8 +56,7 @@ namespace koobika::hook::network::protocol::http::v11 {
 // -----------------------------------------------------------------------------
 // This class is in charge of providing the default http request decoder class.
 // =============================================================================
-class RequestDecoder
-    : public transport::ServerTransportDecoder<Request, Response> {
+class RequestDecoder : public transport::ServerDecoder<Request, Response> {
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
@@ -95,12 +94,9 @@ class RequestDecoder
   }
   // Decodes currently stored data.
   void Decode(
-      const transport::ServerTransportDecoder<
-          Request, Response>::RequestHandler& request_handler,
-      const transport::ServerTransportDecoder<Request, Response>::ErrorHandler&
-          error_handler,
-      const transport::ServerTransportDecoder<Request, Response>::Sender&
-          sender) {
+      const transport::ServerDecoder<Request, Response>::RequestHandler& func,
+      const transport::ServerDecoder<Request, Response>::ErrorHandler& err,
+      const transport::ServerDecoder<Request, Response>::Sender& sender) {
     do {
       if (decoding_body_part_) break;
       buffer_[used_] = 0;
@@ -160,7 +156,7 @@ class RequestDecoder
     }
     // third, call the request handler..
     if (!dispatch_request) return;
-    request_handler(*request_, *response_, sender);
+    func(*request_, *response_, sender);
     // fourth, reset internal objects..
     encoding_type_ = EncodingType::kNone;
     decoding_body_part_ = false;

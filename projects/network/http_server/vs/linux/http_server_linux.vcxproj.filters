@@ -143,19 +143,19 @@
     <ClInclude Include="..\..\..\..\..\include\encoding\base64\encoder_type.h">
       <Filter>include\encoding\base64</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server_transport_tcp_ip.h">
+    <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server.h">
       <Filter>include\network\transport\tcpip</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server_transport_tcp_ip_linux.h">
+    <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server_linux.h">
       <Filter>include\network\transport\tcpip</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\transport\server_transport.h">
+    <ClInclude Include="..\..\..\..\..\include\network\transport\server_interface.h">
       <Filter>include\network\transport</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\transport\server_transport_constants.h">
+    <ClInclude Include="..\..\..\..\..\include\network\transport\server_constants.h">
       <Filter>include\network\transport</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\transport\server_transport_decoder.h">
+    <ClInclude Include="..\..\..\..\..\include\network\transport\server_decoder.h">
       <Filter>include\network\transport</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\v1.1\request_decoder.h">
@@ -170,10 +170,10 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\encoding_type.h">
       <Filter>include\network\protocol\http</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\headers.h">
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\headers_helper.h">
       <Filter>include\network\protocol\http</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\method.h">
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\method_helper.h">
       <Filter>include\network\protocol\http</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\method_value.h">
