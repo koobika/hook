@@ -39,7 +39,7 @@
 #include "mapper.h"
 #include "context.h"
 #include "encoding/base64/decoder.h"
-#include "network/protocol/http/http_util.h"
+#include "network/protocol/http/util.h"
 
 namespace koobika::hook::network::protocol::http::auth {
 // =============================================================================
@@ -51,9 +51,9 @@ class ContextApiKey : public Context, public Mapper {
  public:
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Tries to fill-up internal structures using the provided request.
-  bool Map(const HttpRequest& req) override {
+  bool Map(const Request& req) override {
     if (!req.Headers.Exist(kApiKeyField)) {
       return false;
     }
@@ -62,13 +62,13 @@ class ContextApiKey : public Context, public Mapper {
   }
   // ___________________________________________________________________________
   // PROPERTIEs                                                       ( public )
-  // 
+  //
   std::string Token;
 
  private:
   // ___________________________________________________________________________
   // CONSTANTs                                                       ( private )
-  // 
+  //
   static constexpr char kApiKeyField[] = "x-api-key";
 };
 }  // namespace koobika::hook::network::protocol::http::auth

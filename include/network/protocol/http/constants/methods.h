@@ -36,7 +36,7 @@
 #ifndef koobika_hook_network_protocol_http_constants_methods_h
 #define koobika_hook_network_protocol_http_constants_methods_h
 
-#include "network/protocol/http/http_method_value.h"
+#include "network/protocol/http/method_value.h"
 
 namespace koobika::hook::network::protocol::http::constants {
 // =============================================================================
@@ -50,29 +50,28 @@ class Methods {
   // CONSTANTs                                                        ( public )
   //
   // Options.
-  static constexpr HttpMethodValue kOptions = 1;
+  static constexpr MethodValue kOptions = 1;
   // Get.
-  static constexpr HttpMethodValue kGet = 2;
+  static constexpr MethodValue kGet = 2;
   // Head.
-  static constexpr HttpMethodValue kHead = 4;
+  static constexpr MethodValue kHead = 4;
   // Post.
-  static constexpr HttpMethodValue kPost = 8;
+  static constexpr MethodValue kPost = 8;
   // Put.
-  static constexpr HttpMethodValue kPut = 16;
+  static constexpr MethodValue kPut = 16;
   // Delete.
-  static constexpr HttpMethodValue kDelete = 32;
+  static constexpr MethodValue kDelete = 32;
   // Trace.
-  static constexpr HttpMethodValue kTrace = 64;
+  static constexpr MethodValue kTrace = 64;
   // Connect.
-  static constexpr HttpMethodValue kConnect = 128;
+  static constexpr MethodValue kConnect = 128;
   // Extension.
-  static constexpr HttpMethodValue kExtension = 256;
+  static constexpr MethodValue kExtension = 256;
   // Invalid.
-  static constexpr HttpMethodValue kInvalid = 512;
+  static constexpr MethodValue kInvalid = 512;
   // All.
-  static constexpr HttpMethodValue kAll = kOptions | kGet | kHead | kPost |
-                                          kPut | kDelete | kTrace | kConnect |
-                                          kExtension;
+  static constexpr MethodValue kAll = kOptions | kGet | kHead | kPost | kPut |
+                                      kDelete | kTrace | kConnect | kExtension;
 };
 }  // namespace koobika::hook::network::protocol::http::constants
 

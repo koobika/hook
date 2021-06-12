@@ -33,16 +33,16 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/http_server_builder.h"
+#include "network/protocol/http/server_builder.h"
 
 using namespace koobika::hook::network::protocol::http;
 
 // This is our custom controller with only one handler!
-class CustomController : public HttpController<> {
+class CustomController : public RoutesController<> {
  protected:
   // This |GET| handler will return the 'hello world' message!
-  HttpControllerGet myCurrentValueHandler{
-      this, "/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
+  RoutesControllerGet myCurrentValueHandler{
+      this, "/foo/bar", [](const Request& req, Response& res) {
         res.Body.Write("Hello, World!\r\n");
         res.Ok_200();
       }};
@@ -50,7 +50,7 @@ class CustomController : public HttpController<> {
 
 int main() {
   try {
-    auto server = HttpServerBuilder().Build();
+    auto server = ServerBuilder().Build();
     server->Handle<CustomController>();
     server->Start("8542");
     return getchar();

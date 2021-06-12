@@ -33,7 +33,7 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/http_server_builder.h"
+#include "network/protocol/http/server_builder.h"
 
 using namespace koobika::hook::network::protocol::http;
 
@@ -41,7 +41,7 @@ using namespace koobika::hook::network::protocol::http;
 // In this example we're just creating three different handlers managing
 // different funcionalities. Some of them will require authorization
 // mechanism while other ones will be accessed using no credentials.
-class BasicController : public HttpController<auth::modules::Basic> {
+class BasicController : public RoutesController<auth::modules::Basic> {
  public:
   // Let's, for example, add here our default supported user/passwords!
   BasicController() { Set("koobika", "koobika"); }
@@ -49,9 +49,9 @@ class BasicController : public HttpController<auth::modules::Basic> {
  protected:
   // This |POST| handler will increment internal counter value!
   // In order to allow operation only authorized users can access it!
-  HttpControllerPost myIncrementHandler{
+  RoutesControllerPost myIncrementHandler{
       this, "/foo/inc",
-      Authorize([this](const HttpRequest& req, HttpResponse& res) {
+      Authorize([this](const Request& req, Response& res) {
         res.Body.Write("Incrementing internal counter to -> ")
             .Write(std::to_string(++counter_))
             .Write(" !");
@@ -59,9 +59,9 @@ class BasicController : public HttpController<auth::modules::Basic> {
       })};
   // This |POST| handler will decrement internal counter value!
   // In order to allow operation only authorized users can access it!
-  HttpControllerPost myDecrementHandler{
+  RoutesControllerPost myDecrementHandler{
       this, "/foo/dec",
-      Authorize([this](const HttpRequest& req, HttpResponse& res) {
+      Authorize([this](const Request& req, Response& res) {
         res.Body.Write("Decrementing internal counter to -> ")
             .Write(std::to_string(--counter_))
             .Write(" !");
@@ -69,8 +69,8 @@ class BasicController : public HttpController<auth::modules::Basic> {
       })};
   // This |GET| handler will return current internal counter value!
   // No authorization mechanism is enabled!
-  HttpControllerGet myCurrentValueHandler{
-      this, "/foo/cur", [this](const HttpRequest& req, HttpResponse& res) {
+  RoutesControllerGet myCurrentValueHandler{
+      this, "/foo/cur", [this](const Request& req, Response& res) {
         res.Body.Write("Current internal counter value -> ")
             .Write(std::to_string(counter_))
             .Write(" !");
@@ -83,7 +83,7 @@ class BasicController : public HttpController<auth::modules::Basic> {
 
 int main() {
   try {
-    auto server = HttpServerBuilder().Build();
+    auto server = ServerBuilder().Build();
     server->Handle<BasicController>();
     server->Start("8542");
     return getchar();

@@ -39,7 +39,7 @@
 #include "base/auto_buffer.h"
 #include "base/uri.h"
 #include "headers.h"
-#include "method.h"
+#include "method_helper.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
@@ -64,7 +64,7 @@ class Request {
   // ___________________________________________________________________________
   // PROPERTIEs                                                       ( public )
   //
-  Method Method;
+  MethodHelper Method;
   base::Uri Uri;
   std::string HttpVersion;
   Headers Headers;

@@ -36,8 +36,6 @@
 #ifndef koobika_hook_network_protocol_http_auth_context_h
 #define koobika_hook_network_protocol_http_auth_context_h
 
-#include "network/protocol/http/http_request.h"
-
 namespace koobika::hook::network::protocol::http::auth {
 // =============================================================================
 // Context                                                             ( class )

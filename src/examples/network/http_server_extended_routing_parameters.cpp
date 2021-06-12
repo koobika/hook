@@ -33,18 +33,18 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/http_server_builder.h"
+#include "network/protocol/http/server_builder.h"
 
 using namespace koobika::hook::network::protocol::http;
 
 int main() {
   try {
     // Let's create our server using the default configuration..
-    auto server = HttpServerBuilder().Build();
+    auto server = ServerBuilder().Build();
     // Let's configure our server to handle requests over '/foo/bar' uri..
     server->Handle(
-        "/{level}/{resource}.git", [](const HttpRequest& req, HttpResponse& res,
-                                      const HttpParameters& parameters) {
+        "/{level}/{resource}.git",
+        [](const Request& req, Response& res, const Parameters& parameters) {
           // In this example we're only interested on <GET> requests..
           if (req.Method.IsGet()) {
             if (parameters.Exist("level") && parameters.Exist("resource") &&

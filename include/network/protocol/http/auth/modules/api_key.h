@@ -49,8 +49,8 @@
 #include "encoding/base64/encoder.h"
 #include "network/protocol/http/auth/context_api_key.h"
 #include "network/protocol/http/auth/controller.h"
-#include "network/protocol/http/http_controller.h"
-#include "network/protocol/http/http_util.h"
+#include "network/protocol/http/routes_controller.h"
+#include "network/protocol/http/util.h"
 
 namespace koobika::hook::network::protocol::http::auth::modules {
 // =============================================================================
@@ -62,7 +62,7 @@ class ApiKey : public Controller<ContextApiKey> {
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // 
+  //
   ApiKey(const Checker& user_checker = nullptr,
          const double session_timeout_in_seconds = kDefaultTimeout)
       : timeout_in_seconds_{session_timeout_in_seconds} {
@@ -87,12 +87,12 @@ class ApiKey : public Controller<ContextApiKey> {
   ~ApiKey() = default;
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // 
+  //
   ApiKey& operator=(const ApiKey&) = default;
   ApiKey& operator=(ApiKey&&) noexcept = default;
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Sets token within the database.
   void Set(const std::string& token) {
     data_[token] = std::chrono::system_clock().now();
@@ -105,11 +105,11 @@ class ApiKey : public Controller<ContextApiKey> {
  protected:
   // ___________________________________________________________________________
   // CONSTANTs                                                     ( protected )
-  // 
+  //
   static constexpr double kDefaultTimeout = -1.0;  // disabled by default
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                    ( protected )
-  // 
+  //
   std::unordered_map<std::string, std::chrono::system_clock::time_point> data_;
   double timeout_in_seconds_;
 };

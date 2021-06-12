@@ -36,7 +36,7 @@
 #ifndef koobika_hook_network_protocol_http_auth_mapper_h
 #define koobika_hook_network_protocol_http_auth_mapper_h
 
-#include "network/protocol/http/http_request.h"
+#include "network/protocol/http/request.h"
 
 namespace koobika::hook::network::protocol::http::auth {
 // =============================================================================
@@ -48,9 +48,9 @@ class Mapper {
  public:
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Tries to fill-up internal structures using the provided request.
-  virtual bool Map(const HttpRequest& request) = 0;
+  virtual bool Map(const Request&) = 0;
 };
 }  // namespace koobika::hook::network::protocol::http::auth
 

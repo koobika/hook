@@ -37,8 +37,8 @@
 #define koobika_hook_network_protocol_http_auth_controller_h
 
 #include "auth/controller_base.h"
-#include "network/protocol/http/http_routing_handler.h"
-#include "network/protocol/http/http_routing_handler_extended.h"
+#include "network/protocol/http/routing_handler.h"
+#include "network/protocol/http/routing_handler_extended.h"
 
 namespace koobika::hook::network::protocol::http::auth {
 // =============================================================================
@@ -52,8 +52,8 @@ class Controller : public hook::auth::ControllerBase<CXty> {
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
   //
-  HttpRoutingHandler Authorize(const HttpRoutingHandler& handler) const {
-    return [this, handler](const HttpRequest& req, HttpResponse& res) {
+  RoutingHandler Authorize(const RoutingHandler& handler) const {
+    return [this, handler](const Request& req, Response& res) {
       typename hook::auth::ControllerBase<CXty>::Context context;
       if (context.Map(req)) {
         if (this->Check == nullptr || this->Check(context)) {

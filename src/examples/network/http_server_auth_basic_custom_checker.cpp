@@ -33,13 +33,13 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/http_server_builder.h"
+#include "network/protocol/http/server_builder.h"
 
 using namespace koobika::hook::network::protocol::http;
 
 int main() {
   try {
-    auto server = HttpServerBuilder().Build();
+    auto server = ServerBuilder().Build();
     // Here we're just creating a basic auth module with custom checker!
     auth::modules::Basic auth(
         [](const auth::modules::Basic::Context& context) -> bool {
@@ -47,7 +47,7 @@ int main() {
         });
     // Let's configure our server to handle <GET> requests over '/foo/bar' uri..
     server->Get("/foo/bar",
-                auth.Authorize([](const HttpRequest& req, HttpResponse& res) {
+                auth.Authorize([](const Request& req, Response& res) {
                   res.Body.Write("Hello, World!\r\n");
                   res.Ok_200();
                 }));

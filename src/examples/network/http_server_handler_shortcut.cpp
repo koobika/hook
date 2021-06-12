@@ -33,15 +33,15 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/http_server_builder.h"
+#include "network/protocol/http/server_builder.h"
 
 using namespace koobika::hook::network::protocol::http;
 
 int main() {
   try {
-    auto server = HttpServerBuilder().Build();
+    auto server = ServerBuilder().Build();
     // Let's configure our server to handle <GET> requests over '/foo/bar' uri..
-    server->Get("/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
+    server->Get("/foo/bar", [](const Request& req, Response& res) {
       res.Body.Write("Hello, World!\r\n");
       res.Ok_200();
     });

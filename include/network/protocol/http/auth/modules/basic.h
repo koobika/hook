@@ -49,8 +49,8 @@
 #include "encoding/base64/encoder.h"
 #include "network/protocol/http/auth/context_basic.h"
 #include "network/protocol/http/auth/controller.h"
-#include "network/protocol/http/http_controller.h"
-#include "network/protocol/http/http_util.h"
+#include "network/protocol/http/routes_controller.h"
+#include "network/protocol/http/util.h"
 
 namespace koobika::hook::network::protocol::http::auth::modules {
 // =============================================================================
@@ -62,7 +62,7 @@ class Basic : public Controller<ContextBasic> {
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  // 
+  //
   Basic(const Checker& user_checker = nullptr,
         const double session_timeout_in_seconds = kDefaultTimeout)
       : timeout_in_seconds_{session_timeout_in_seconds} {
@@ -87,12 +87,12 @@ class Basic : public Controller<ContextBasic> {
   ~Basic() = default;
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
-  // 
+  //
   Basic& operator=(const Basic&) = default;
   Basic& operator=(Basic&&) noexcept = default;
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
-  // 
+  //
   // Sets user/password tuple within the database.
   void Set(const std::string& user, const std::string& password) {
     data_[user] = std::make_pair(password, std::chrono::system_clock().now());
@@ -105,11 +105,11 @@ class Basic : public Controller<ContextBasic> {
  protected:
   // ___________________________________________________________________________
   // CONSTANTs                                                     ( protected )
-  // 
+  //
   static constexpr double kDefaultTimeout = -1.0;  // disabled by default
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                    ( protected )
-  // 
+  //
   std::unordered_map<
       std::string,
       std::pair<std::string, std::chrono::system_clock::time_point>>

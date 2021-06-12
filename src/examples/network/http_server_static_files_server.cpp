@@ -33,14 +33,14 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/http_server_builder.h"
+#include "network/protocol/http/server_builder.h"
 #include "network/protocol/http/controllers/static_files_server.h"
 
 using namespace koobika::hook::network::protocol::http;
 
 int main() {
   try {
-    auto server = HttpServerBuilder().Build();
+    auto server = ServerBuilder().Build();
     server->Handle<controllers::StaticFilesServer<>>("/", "./static/");
     server->Start("8542");
     return getchar();

@@ -33,7 +33,7 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/http_server_builder.h"
+#include "network/protocol/http/server_builder.h"
 
 using namespace koobika::hook::network::protocol::http;
 using namespace koobika::hook::base;
@@ -47,16 +47,16 @@ class SerializableClass : public Serializable {
 
 int main() {
   try {
-    auto server = HttpServerBuilder().Build();
-    server->Handle("/foo/bar", [](const HttpRequest& req, HttpResponse& res) {
+    auto server = ServerBuilder().Build();
+    server->Handle("/foo/bar", [](const Request& req, Response& res) {
       if (req.Method.IsGet()) {
-        // Let's directly write CUSTOM content using 'HttpResponseWriter' class!
-        HttpResponseWriter(SerializableClass(), constants::Mime::kTXT)
+        // Let's directly write CUSTOM content using 'ResponseWriter' class!
+        ResponseWriter(SerializableClass(), constants::Mime::kTXT)
             .Prepare(res)
             .Ok_200();
       } else {
-        // Let's directly write TEXT content using 'HttpResponseWriter' class!
-        HttpResponseWriter("Not supported!").Prepare(res).Forbidden_403();
+        // Let's directly write TEXT content using 'ResponseWriter' class!
+        ResponseWriter("Not supported!").Prepare(res).Forbidden_403();
       }
     });
     server->Start("8542");
