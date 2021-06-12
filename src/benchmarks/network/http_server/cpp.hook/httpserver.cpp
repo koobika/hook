@@ -20,17 +20,17 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // /////////////////////////////////////////////////////////////////////////////
 
-#include "network/protocol/http/http_server_builder.h"
+#include "network/protocol/http/server_builder.h"
 
 using namespace koobika::hook::network::protocol::http;
 
 int main() {
   try {
     // Let's create our server using the default configuration..
-    auto server = HttpServerBuilder().Build();
+    auto server = ServerBuilder().Build();
     // Let's configure our server to handle requests over '/foo/bar' uri..
     server->Handle(
-        "/plaintext", [server](const HttpRequest& req, HttpResponse& res) {
+        "/plaintext", [server](const Request& req, Response& res) {
       res.Raw
           .Write(
               "HTTP/1.1 200 OK\r\nServer: Example\r\nContent-Type: text/plain; "
