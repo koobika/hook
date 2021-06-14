@@ -236,7 +236,7 @@ class AutoBuffer {
   // ___________________________________________________________________________
   // CONSTANTs                                                       ( private )
   //
-  static constexpr std::size_t kChunkSize = 2048;
+  static constexpr std::size_t kChunkSize = 1024;
 
  private:
   // ___________________________________________________________________________
