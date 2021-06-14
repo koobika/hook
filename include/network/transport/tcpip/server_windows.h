@@ -150,9 +150,8 @@ class Server : public ServerInterface<SOCKET, DEty> {
         off += res;
       }
     } else {
-      static constexpr auto kBufSize = ServerConstants::kDefaultWriteBufferSize;
-      char* buf = new char[kBufSize];
-      while (auto len = buffer.ReadSome(buf, kBufSize)) {
+      char* buf = new char[base::AutoBuffer::kChunkSize];
+      while (auto len = buffer.ReadSome(buf, base::AutoBuffer::kChunkSize)) {
         std::size_t offset = 0;
         while (offset < len) {
           std::size_t amount = std::min<std::size_t>(INT_MAX, len - offset);
@@ -186,8 +185,8 @@ class Server : public ServerInterface<SOCKET, DEty> {
     Context(const SOCKET& in = INVALID_SOCKET) {
       decoder = std::make_shared<DEty>();
       ZeroMemory(&overlapped, sizeof(WSAOVERLAPPED));
-      data.buf = new CHAR[ServerConstants::kDefaultReadBufferSize];
-      data.len = ServerConstants::kDefaultReadBufferSize;
+      data.buf = new CHAR[base::AutoBuffer::kChunkSize];
+      data.len = base::AutoBuffer::kChunkSize;
       socket = in;
     }
     ~Context() { delete[] data.buf; }

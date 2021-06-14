@@ -90,10 +90,11 @@ class AutoBuffer {
   // Writes the specified AutoBuffer to the internal buffer.
   AutoBuffer& Write(const AutoBuffer& buffer) {
     buffer.Flush();
-    char tmp_buffer[kReadSomeBufferLength_];
-    while (auto sz = buffer.ReadSome(tmp_buffer, kReadSomeBufferLength_)) {
+    char* tmp_buffer = new char[kChunkSize];
+    while (auto sz = buffer.ReadSome(tmp_buffer, kChunkSize)) {
       write(tmp_buffer, sz);
     }
+    delete[] tmp_buffer;
     return *this;
   }
   // Writes the specified std::istream to the internal buffer.
@@ -200,10 +201,11 @@ class AutoBuffer {
   }
   // Reads all the stored bytes (if available).
   void ReadAll(std::string& out) const {
-    char tmp_buffer[kReadSomeBufferLength_];
-    while (auto sz = ReadSome(tmp_buffer, kReadSomeBufferLength_)) {
+    char* tmp_buffer = new char[kChunkSize];
+    while (auto sz = ReadSome(tmp_buffer, kChunkSize)) {
       out.append(tmp_buffer, sz);
     }
+    delete[] tmp_buffer;
   }
   // Reads all the stored bytes (if available).
   std::string ToString() const {
@@ -213,10 +215,11 @@ class AutoBuffer {
   }
   // Reads all the stored bytes (if available).
   void ReadAll(std::stringstream& out) const {
-    char tmp_buffer[kReadSomeBufferLength_];
-    while (auto sz = ReadSome(tmp_buffer, kReadSomeBufferLength_)) {
+    char* tmp_buffer = new char[kChunkSize];
+    while (auto sz = ReadSome(tmp_buffer, kChunkSize)) {
       out << std::string_view{tmp_buffer, sz};
     }
+    delete[] tmp_buffer;
   }
   // Flushes AutoBuffer content (if required).
   void Flush() const {
@@ -236,13 +239,16 @@ class AutoBuffer {
     }
     return false;
   }
+  // ___________________________________________________________________________
+  // CONSTANTs                                                       ( private )
+  //
+  static constexpr std::size_t kChunkSize = 16384;
 
  private:
   // ___________________________________________________________________________
   // CONSTANTs                                                       ( private )
   //
   static constexpr std::size_t kDefaultMemoryBufferLimit_ = 65536;
-  static constexpr std::size_t kReadSomeBufferLength_ = 256;
   static constexpr std::size_t kMaxFilenameLength_ = 32;
   static constexpr char kFilenameBase_[] = "autobuffer_tmp_";
   static constexpr char kFilenameExt_[] = "dat";
@@ -284,10 +290,11 @@ class AutoBuffer {
   void allocate(const std::size_t& length) {
     std::size_t off = data_.write_cursor + length;
     if (off > data_.buffer_length) {
-      auto amount = std::max(off - data_.buffer_length, kDefaultBufferChunkLength_);
-      auto new_buffer = (data_.buffer == nullptr)
-                            ? malloc(amount)
-                            : realloc(data_.buffer, data_.buffer_length + amount);
+      auto amount = std::max(off - data_.buffer_length, kChunkSize);
+      auto new_buffer =
+          (data_.buffer == nullptr)
+              ? malloc(amount)
+              : realloc(data_.buffer, data_.buffer_length + amount);
       if (new_buffer == nullptr) {
         // ((Error)) -> trying to allocate memory!
         // ((To-Do)) -> raise an exception?
@@ -373,19 +380,15 @@ class AutoBuffer {
       throw std::logic_error("Invalid input stream!");
     }
     stream.seekg(0, std::ios::beg);
-    char* buffer = new char[65536];
+    char* buffer = new char[kChunkSize];
     do {
-      stream.read(buffer, 65536);
+      stream.read(buffer, kChunkSize);
       auto bytes_read = stream.gcount();
       write(buffer, bytes_read);
     } while (stream.good());
     delete[] buffer;
     return *this;
   }
-  // ___________________________________________________________________________
-  // CONSTANTs                                                       ( private )
-  //
-  static constexpr std::size_t kDefaultBufferChunkLength_ = 256;
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
   //

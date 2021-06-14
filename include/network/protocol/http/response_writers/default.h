@@ -12,7 +12,7 @@
 //      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
 //          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// network/protocol/http/response_writer_default.h
+// network/protocol/http/response_writers/default.h
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -33,24 +33,37 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_protocol_http_responsewriterdefault_h
-#define koobika_hook_network_protocol_http_responsewriterdefault_h
+#ifndef koobika_hook_network_protocol_http_responsewriters_default_h
+#define koobika_hook_network_protocol_http_responsewriters_default_h
 
 #include "base/auto_buffer.h"
+#include "network/protocol/http/response.h"
 
-namespace koobika::hook::network::protocol::http {
+namespace koobika::hook::network::protocol::http::response_writers {
 // =============================================================================
-// ResponseWriterDefault                                               ( class )
+// Default                                                             ( class )
 // -----------------------------------------------------------------------------
 // This specification holds for the default http response writer class
 // =============================================================================
-class ResponseWriterDefault {
+class Default {
  public:
+  // ___________________________________________________________________________
+  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
+  //
+  Default() = default;
+  Default(const Default&) = default;
+  Default(Default&&) noexcept = default;
+  ~Default() = default;
+  // ___________________________________________________________________________
+  // OPERATORs                                                        ( public )
+  //
+  Default& operator=(const Default&) = default;
+  Default& operator=(Default&&) noexcept = default;
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
   //
   // Writes content to an auto-buffer without performing formatting.
-  void Write(Response& res, const base::AutoBuffer& buffer) const {
+  void Write(http::Response& res, const base::AutoBuffer& buffer) const {
     res.Headers.Set(constants::Headers::kContentLength, buffer.Length());
     res.Body = buffer;
   }

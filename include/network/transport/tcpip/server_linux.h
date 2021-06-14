@@ -154,9 +154,8 @@ class Server : public ServerInterface<int, DEty> {
         }
       }
     } else {
-      static constexpr auto kBufSize = ServerConstants::kDefaultWriteBufferSize;
-      char* buf = new char[kBufSize];
-      while (auto len = buffer.ReadSome(buf, kBufSize)) {
+      char* buf = new char[base::AutoBuffer::kChunkSize];
+      while (auto len = buffer.ReadSome(buf, base::AutoBuffer::kChunkSize)) {
         std::size_t offset = 0;
         while (offset < len) {
           std::size_t amount = std::min<std::size_t>(INT_MAX, len - offset);
@@ -242,7 +241,7 @@ class Server : public ServerInterface<int, DEty> {
       workers_.push_back(std::make_pair(
           efd, std::make_shared<std::thread>([efd, this]() {
             epoll_event ev[kEpollMaxEvents_];
-            char buffer[ServerConstants::kDefaultReadBufferSize];
+            char* buffer = new char[base::AutoBuffer::kChunkSize];
             while (keep_running_) {
               int n_fds = epoll_wait(efd, ev, kEpollMaxEvents_, kEpollTimeout_);
               if (n_fds < 0) {
@@ -252,8 +251,8 @@ class Server : public ServerInterface<int, DEty> {
               for (auto i = 0; i < n_fds; i++) {
                 Context* ctx = (Context*)ev[i].data.ptr;
                 if (ev[i].events & EPOLLIN) {
-                  auto bytes_returned = read(
-                      ctx->fd, buffer, ServerConstants::kDefaultReadBufferSize);
+                  auto bytes_returned =
+                      read(ctx->fd, buffer, base::AutoBuffer::kChunkSize);
                   if (bytes_returned < 0 && errno != EAGAIN &&
                       errno != EWOULDBLOCK) {
                     removeFromEpollAndClose(efd, ctx);
@@ -275,6 +274,7 @@ class Server : public ServerInterface<int, DEty> {
                 }
               }
             }
+            delete[] buffer;
           })));
     }
   }

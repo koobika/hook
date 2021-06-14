@@ -120,8 +120,10 @@ class ServerBase : public RoutesManager {
         }
         // Check for a 'RAW' based stream!
         if (!res.Raw.Length()) {
-          res.Headers.Set(constants::Headers::kContentLength,
-                          res.Body.Length());
+          if (!res.Headers.Exist(constants::Headers::kTransferEncoding)) {
+            res.Headers.Set(constants::Headers::kContentLength,
+                            res.Body.Length());
+          }
           res.Raw.Write(constants::Strings::kHttpVersion)
               .Write(constants::Strings::kSpace)
               .Write(std::to_string(res.StatusCode))

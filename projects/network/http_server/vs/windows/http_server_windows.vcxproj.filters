@@ -57,6 +57,9 @@
     <Filter Include="include\network\protocol\http\controllers">
       <UniqueIdentifier>{f9c828ca-ceac-4440-b934-09ffe4c33ad9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\network\protocol\http\response_writers">
+      <UniqueIdentifier>{449a051b-441c-4176-826f-7051a541450d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_auth_api_key.cpp">
@@ -99,6 +102,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_extended_routing_parameters.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_response_writer_transfer_encoding.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -295,8 +301,17 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\routing_handler_extended.h">
       <Filter>include\network\protocol\http</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\response_writer_default.h">
-      <Filter>include\network\protocol\http</Filter>
+    <ClInclude Include="..\..\..\..\..\include\base\case_insensitive_comparator.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\base\case_insensitive_hash.h">
+      <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\response_writers\default.h">
+      <Filter>include\network\protocol\http\response_writers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\response_writers\transfer_encoding.h">
+      <Filter>include\network\protocol\http\response_writers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

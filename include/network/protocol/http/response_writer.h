@@ -43,7 +43,8 @@
 #include "constants/mime.h"
 #include "structured/json/value.h"
 #include "request.h"
-#include "response_writer_default.h"
+#include "response_writers/default.h"
+#include "response_writers/transfer_encoding.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
@@ -51,39 +52,30 @@ namespace koobika::hook::network::protocol::http {
 // -----------------------------------------------------------------------------
 // This specification holds for http response writer class
 // =============================================================================
-template <typename WRty = ResponseWriterDefault>
+template <typename WRty = response_writers::Default>
 class ResponseWriter {
  public:
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
   //
   // Tries to fill-up response object with the specified configuration.
-  static Response& Prepare(Response& res, const base::AutoBuffer& buffer,
-                           const std::optional<std::string>& content_type = {},
-                           const WRty& writer = WRty()) {
+  static Response& Prepare(
+      Response& res, const base::AutoBuffer& buffer,
+      const std::optional<std::string>& content_type = constants::Mime::kBIN,
+      const WRty& writer = WRty()) {
     writer.Write(res, buffer);
     if (content_type.has_value()) {
       res.Headers.Set(constants::Headers::kContentType, content_type.value());
     }
     return res;
   }
-  // Tries to fill-up response object with the serializable content.
-  static Response& Prepare(Response& res,
-                           const base::Serializable& serializable,
-                           const std::optional<std::string>& content_type = {},
-                           const WRty& writer = WRty()) {
+  // Tries to fill-up response object with the serializable content
+  static Response& Prepare(
+      Response& res, const base::Serializable& serializable,
+      const std::optional<std::string>& content_type = constants::Mime::kBIN,
+      const WRty& writer = WRty()) {
     return Prepare(res, serializable.Serialize(), content_type, writer);
   }
-
-  /*
-  // Tries to fill-up response object with the specified configuration.
-  template <typename WRty = ResponseWriterDefault>
-  static Response& Prepare(
-      Response& res, const char* str, const WRty& writer = WRty(),
-      const std::optional<std::string>& content_type = {}) {
-    return Prepare<WRty>(res, (void*)str, strlen(str), writer, content_type);
-  }
-  */
 };
 }  // namespace koobika::hook::network::protocol::http
 

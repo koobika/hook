@@ -150,9 +150,9 @@ class StaticFilesServer : public RoutesController<AUty> {
         // Let's try to retrieve the required content..
         auto content = get(uri_string);
         if (content.first.has_value()) {
-          res.Headers.Set(constants::Headers::kContentType, content.second);
-          res.Body.Write(content.first.value());
-          res.Ok_200();
+          ResponseWriter<response_writers::TransferEncoding>::Prepare(
+              res, content.first.value(), content.second)
+              .Ok_200();
         } else {
           // ((Error)) -> while trying to access an invalid resource!
           res.NotFound_404();
