@@ -90,11 +90,9 @@ class AutoBuffer {
   // Writes the specified AutoBuffer to the internal buffer.
   AutoBuffer& Write(const AutoBuffer& buffer) {
     buffer.Flush();
-    char* tmp_buffer = new char[kChunkSize];
-    while (auto sz = buffer.ReadSome(tmp_buffer, kChunkSize)) {
-      write(tmp_buffer, sz);
+    while (auto sz = buffer.ReadSome(tmp_buffer_, kChunkSize)) {
+      write(tmp_buffer_, sz);
     }
-    delete[] tmp_buffer;
     return *this;
   }
   // Writes the specified std::istream to the internal buffer.
@@ -201,11 +199,9 @@ class AutoBuffer {
   }
   // Reads all the stored bytes (if available).
   void ReadAll(std::string& out) const {
-    char* tmp_buffer = new char[kChunkSize];
-    while (auto sz = ReadSome(tmp_buffer, kChunkSize)) {
-      out.append(tmp_buffer, sz);
+    while (auto sz = ReadSome((char*)tmp_buffer_, kChunkSize)) {
+      out.append(tmp_buffer_, sz);
     }
-    delete[] tmp_buffer;
   }
   // Reads all the stored bytes (if available).
   std::string ToString() const {
@@ -215,11 +211,9 @@ class AutoBuffer {
   }
   // Reads all the stored bytes (if available).
   void ReadAll(std::stringstream& out) const {
-    char* tmp_buffer = new char[kChunkSize];
-    while (auto sz = ReadSome(tmp_buffer, kChunkSize)) {
-      out << std::string_view{tmp_buffer, sz};
+    while (auto sz = ReadSome((char*)tmp_buffer_, kChunkSize)) {
+      out << std::string_view{tmp_buffer_, sz};
     }
-    delete[] tmp_buffer;
   }
   // Flushes AutoBuffer content (if required).
   void Flush() const {
@@ -242,7 +236,7 @@ class AutoBuffer {
   // ___________________________________________________________________________
   // CONSTANTs                                                       ( private )
   //
-  static constexpr std::size_t kChunkSize = 16384;
+  static constexpr std::size_t kChunkSize = 2048;
 
  private:
   // ___________________________________________________________________________
@@ -380,13 +374,11 @@ class AutoBuffer {
       throw std::logic_error("Invalid input stream!");
     }
     stream.seekg(0, std::ios::beg);
-    char* buffer = new char[kChunkSize];
     do {
-      stream.read(buffer, kChunkSize);
+      stream.read(tmp_buffer_, kChunkSize);
       auto bytes_read = stream.gcount();
-      write(buffer, bytes_read);
+      write(tmp_buffer_, bytes_read);
     } while (stream.good());
-    delete[] buffer;
     return *this;
   }
   // ___________________________________________________________________________
@@ -397,6 +389,8 @@ class AutoBuffer {
   std::size_t memory_limit_ = kDefaultMemoryBufferLimit_;
   // Stores the information withing this AutoBuffer.
   mutable Data data_;
+  // Temporary storage.
+  char tmp_buffer_[kChunkSize];
 };
 }  // namespace koobika::hook::base
 
