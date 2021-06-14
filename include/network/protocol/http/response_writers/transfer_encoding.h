@@ -50,15 +50,15 @@ class TransferEncoding {
   // ___________________________________________________________________________
   // CONSTANTs                                                        ( public )
   //
-  static constexpr unsigned char kChunked = 1;
-  static constexpr unsigned char kCompress = 2;
-  static constexpr unsigned char kDeflate = 4;
-  static constexpr unsigned char kGzip = 8;
-  static constexpr unsigned char kIdentity = 16;
+  static constexpr int kChunked = 1;
+  static constexpr int kCompress = 2;
+  static constexpr int kDeflate = 4;
+  static constexpr int kGzip = 8;
+  static constexpr int kIdentity = 16;
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
-  TransferEncoding(const unsigned char& flags = kChunked) : flags_{flags} {}
+  TransferEncoding(const int& flags = kChunked) : flags_{flags} {}
   TransferEncoding(const TransferEncoding&) = default;
   TransferEncoding(TransferEncoding&&) noexcept = default;
   ~TransferEncoding() = default;
@@ -70,6 +70,16 @@ class TransferEncoding {
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
   //
+  // Enables chunked mode!
+  TransferEncoding& EnableChunked() {
+    flags_ |= kChunked;
+    return *this;
+  }
+  // Disables chunked mode!
+  TransferEncoding& DisableChunked() {
+    flags_ &= ~kChunked;
+    return *this;
+  }
   // Writes content to an auto-buffer without performing formatting.
   void Write(http::Response& res, const base::AutoBuffer& buffer) const {
     bool using_compression = false;
@@ -78,9 +88,11 @@ class TransferEncoding {
       // ((To-Do)) -> implement it!
     }
     if (!using_compression && flags_ & kDeflate) {
+      using_compression = true;
       // ((To-Do)) -> implement it!
     }
     if (!using_compression && flags_ & kGzip) {
+      using_compression = true;
       // ((To-Do)) -> implement it!
     }
     if (flags_ & kChunked) {
@@ -111,7 +123,7 @@ class TransferEncoding {
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                       ( public )
   // 
-  unsigned char flags_;
+  int flags_;
   std::size_t chunk_size_ = kDefaultChunkSize;
 };
 }  // namespace koobika::hook::network::protocol::http::response_writers
