@@ -58,37 +58,49 @@ class ResponseWriter {
   // METHODs                                                          ( public )
   //
   // Tries to fill-up response object with the specified configuration.
-  static Response& Prepare(
-      Response& res, const base::AutoBuffer& buffer, 
-      const std::string& content_type = constants::Mime::kBIN) {
+  static Response& Prepare(Response& res, const base::AutoBuffer& buffer,
+                           const std::string& content_type) {
     response_writers::Default().Write(res, buffer);
     res.Headers.Set(constants::Headers::kContentType, content_type);
     return res;
   }
   // Tries to fill-up response object with the specified configuration.
   template <typename WRty>
-  static Response& Prepare(
-      Response& res, const base::AutoBuffer& buffer,
-      const std::string& content_type = constants::Mime::kBIN) {
+  static Response& Prepare(Response& res, const base::AutoBuffer& buffer,
+                           const std::string& content_type) {
     WRty().Write(res, buffer);
     res.Headers.Set(constants::Headers::kContentType, content_type);
     return res;
   }
   // Tries to fill-up response object with the specified configuration.
   template <typename WRty>
-  static Response& Prepare(
-      Response& res, const base::AutoBuffer& buffer, const WRty& writer,
-      const std::string& content_type = constants::Mime::kBIN) {
+  static Response& Prepare(Response& res, const base::AutoBuffer& buffer,
+                           const WRty& writer,
+                           const std::string& content_type) {
     writer.Write(res, buffer);
     res.Headers.Set(constants::Headers::kContentType, content_type);
     return res;
   }
   // Tries to fill-up response object with the serializable content
+  static Response& Prepare(Response& res,
+                           const base::Serializable& serializable,
+                           const std::string& content_type) {
+    return Prepare(res, serializable.Serialize(), content_type);
+  }
+  // Tries to fill-up response object with the serializable content
   template <typename WRty>
-  static Response& Prepare(
-      Response& res, const base::Serializable& serializable, const WRty& writer,
-      const std::string& content_type = constants::Mime::kBIN) {
-    return Prepare(res, serializable.Serialize(), writer, content_type);
+  static Response& Prepare(Response& res,
+                           const base::Serializable& serializable,
+                           const WRty& writer,
+                           const std::string& content_type) {
+    return Prepare<WRty>(res, serializable.Serialize(), writer, content_type);
+  }
+  // Tries to fill-up response object with the serializable content
+  template <typename WRty>
+  static Response& Prepare(Response& res,
+                           const base::Serializable& serializable,
+                           const std::string& content_type) {
+    return Prepare<WRty>(res, serializable.Serialize(), content_type);
   }
 };
 }  // namespace koobika::hook::network::protocol::http
