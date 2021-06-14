@@ -13,6 +13,6 @@ func test(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-    http.HandleFunc("/foo/bar", test)
-    http.ListenAndServe(":8542", nil)
+    http.HandleFunc("/plaintext", test)
+    http.ListenAndServe(":8080", nil)
 }
