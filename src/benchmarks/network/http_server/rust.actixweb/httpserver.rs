@@ -12,7 +12,7 @@ async fn hello() -> HttpResponse {
 
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
-	println!("Starting server at 127.0.0.1:8542");
+	println!("Starting server at 127.0.0.1:8080");
 	HttpServer::new(|| {
 		App::new().route("/plaintext", web::get().to(hello))
 	})
