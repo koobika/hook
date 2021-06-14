@@ -4,12 +4,11 @@ import (
 	"flag"
 	"fmt"
 	"log"
-
 	"github.com/valyala/fasthttp"
 )
 
 var (
-	addr     = flag.String("foo/bar", ":8542", "TCP address to listen to")
+	addr     = flag.String("plaintext", ":8080", "TCP address to listen to")
 	compress = flag.Bool("compress", false, "Whether to enable transparent response compression")
 )
 

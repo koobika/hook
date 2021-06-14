@@ -14,9 +14,9 @@ async fn hello() -> HttpResponse {
 async fn main() -> io::Result<()> {
 	println!("Starting server at 127.0.0.1:8542");
 	HttpServer::new(|| {
-		App::new().route("/foo/bar", web::get().to(hello))
+		App::new().route("/plaintext", web::get().to(hello))
 	})
-	.bind("127.0.0.1:8542")?
+	.bind("127.0.0.1:8080")?
 	.run()
 	.await
 }
