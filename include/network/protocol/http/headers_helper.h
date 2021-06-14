@@ -38,8 +38,12 @@
 
 #include <string>
 #include <unordered_map>
+#include <algorithm>
 
 #include "base/auto_buffer.h"
+#include "base/case_insensitive_comparator.h"
+#include "base/case_insensitive_hash.h"
+#include "constants/characters.h"
 #include "constants/strings.h"
 
 namespace koobika::hook::network::protocol::http {
@@ -53,10 +57,7 @@ class HeadersHelper {
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
-  HeadersHelper() : src_buffer_{nullptr}, src_buffer_len_{0} {}
-  HeadersHelper(const char* buffer, const std::size_t& len) {
-    From(buffer, len);
-  }
+  HeadersHelper() = default;
   HeadersHelper(const HeadersHelper&) = default;
   HeadersHelper(HeadersHelper&&) noexcept = default;
   ~HeadersHelper() = default;
@@ -73,15 +74,40 @@ class HeadersHelper {
   // METHODs                                                          ( public )
   //
   // Cleans up all stored information.
-  void Clear() {
-    map_.clear();
-    src_buffer_ = nullptr;
-    src_buffer_len_ = 0;
-  }
+  void Clear() { map_.clear(); }
   // Sets headers content from specified string.
   void From(const char* str, const std::size_t& len) {
-    src_buffer_ = str;
-    src_buffer_len_ = len;
+    auto ptr = str;
+    auto end = ptr + len;
+    auto last = ptr;
+    bool field_name_ok = false;
+    const char* colon_delimiter = nullptr;
+    while (ptr != end) {
+      if (field_name_ok) {
+        if ((ptr + 1) != end && *ptr == constants::Characters::kCr &&
+            *(ptr + 1) == constants::Characters::kLf) {
+          if ((ptr + 2) == end ||
+              (*(ptr + 2) != constants::Characters::kSpace &&
+               *(ptr + 2) != constants::Characters::kHt)) {
+            while (*colon_delimiter == constants::Characters::kColon ||
+                   *colon_delimiter == constants::Characters::kSpace ||
+                   *colon_delimiter == constants::Characters::kHt)
+              colon_delimiter++;
+            Set(std::string(last, colon_delimiter - last - 2),
+                std::string(colon_delimiter, ptr - colon_delimiter));
+            ptr += 2;
+            last = ptr;
+            field_name_ok = false;
+            continue;
+          }
+        }
+      } else {
+        if ((field_name_ok = *ptr == constants::Characters::kColon)) {
+          colon_delimiter = ptr;
+        }
+      }
+      ptr++;
+    }
   }
   // Sets a header entry (templated version).
   template <typename DAty>
@@ -93,9 +119,10 @@ class HeadersHelper {
     Set(name, value.c_str());
   }
   // Sets a header entry.
-  void Set(const char* name, const char* value) {
-    setupFromSrcBuffer();
-    map_[name] = value;
+  void Set(const char* name, const char* value) { map_[name] = value; }
+  // Sets a header entry.
+  void Set(const std::string& name, const std::string& value) {
+    Set(name.c_str(), value.c_str());
   }
   // Adds a header entry (templated version).
   template <typename DAty>
@@ -108,7 +135,6 @@ class HeadersHelper {
   }
   // Adds a header entry.
   void Add(const char* name, const char* value) {
-    setupFromSrcBuffer();
     auto itr = map_.find(name);
     if (itr != map_.end()) {
       itr->second.append(value);
@@ -120,11 +146,10 @@ class HeadersHelper {
   std::string& Get(const std::string& name) { return Get(name.c_str()); }
   // Returns header entry using its name (const reference&).
   std::string& Get(const char* name) {
-    setupFromSrcBuffer();
     auto itr = map_.find(name);
     if (itr == map_.end()) {
-      // ((Error)) -> no field matching specified name!
-      throw std::logic_error("There is no field matching specified name!");
+      // ((Error)) -> no field matching the specified key!
+      throw std::logic_error("There is no field matching tñhe specified key!");
     }
     return map_.find(name)->second;
   }
@@ -134,60 +159,43 @@ class HeadersHelper {
   }
   // Returns header entry using its name (const reference&).
   const std::string& Get(const char* name) const {
-    setupFromSrcBuffer();
     auto const itr = map_.find(name);
     if (itr == map_.end()) {
-      // ((Error)) -> no field matching specified name!
-      throw std::logic_error("There is no field matching specified name!");
+      // ((Error)) -> no field matching the specified key!
+      throw std::logic_error("There is no field matching the specified key!");
     }
     return map_.find(name)->second;
   }
   // Checks for the specified header entry (using its name).
   bool Exist(const std::string& name) const {
-    setupFromSrcBuffer();
     return map_.find(name) != map_.end();
   }
   // Dumps internal content to the specified string.
   void DumpTo(base::AutoBuffer& out) const {
-    if (src_buffer_) {
-      out.Write(src_buffer_, src_buffer_len_);
-      return;
-    }
     for (auto const& field : map_) {
       out.Write(field.first)
-          .Write(constants::Strings::kColon)
-          .Write(constants::Strings::kSpace)
+          .Write(constants::Strings::kHeaderFieldSeparator)
           .Write(field.second)
           .Write(constants::Strings::kCrLf);
     }
     out.Write(constants::Strings::kCrLf);
   }
+  // Just to allow range-based iteration.
+  auto begin() { return map_.begin(); }
+  // Just to allow range-based iteration.
+  const auto begin() const { return map_.begin(); }
+  // Just to allow range-based iteration.
+  auto end() { return map_.end(); }
+  // Just to allow range-based iteration.
+  const auto end() const { return map_.end(); }
 
  private:
   // ___________________________________________________________________________
-  // METHODs                                                         ( private )
-  //
-  // Setups internal structure using the associated src-buffer.
-  inline void setupFromSrcBuffer() const {
-    if (src_buffer_) {
-      /*
-      pepe -> implementar "parseo" del string a mapa!
-      */
-
-      /*
-      pepe fin
-      */
-
-      src_buffer_ = nullptr;
-      src_buffer_len_ = 0;
-    }
-  }
-  // ___________________________________________________________________________
   // ATTRIBUTEs                                                      ( private )
   //
-  std::unordered_map<std::string, std::string> map_;
-  mutable const char* src_buffer_;
-  mutable std::size_t src_buffer_len_;
+  std::unordered_map<std::string, std::string, base::CaseInsensitiveHash,
+                     base::CaseInsensitiveComparator>
+      map_;
 };
 }  // namespace koobika::hook::network::protocol::http
 

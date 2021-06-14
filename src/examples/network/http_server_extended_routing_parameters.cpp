@@ -34,39 +34,33 @@
 // /////////////////////////////////////////////////////////////////////////////
 
 #include "network/protocol/http/server_builder.h"
+#include "network/protocol/http/response_writer.h"
+#include "structured/json/value.h"
 
 using namespace koobika::hook::network::protocol::http;
+using namespace koobika::hook::structured;
 
 int main() {
   try {
-    // Let's create our server using the default configuration..
     auto server = ServerBuilder().Build();
-    // Let's configure our server to handle requests over '/foo/bar' uri..
-    server->Handle(
-        "/{level}/{resource}.git",
-        [](const Request& req, Response& res, const Parameters& parameters) {
-          // In this example we're only interested on <GET> requests..
-          if (req.Method.IsGet()) {
-            if (parameters.Exist("level") && parameters.Exist("resource") &&
-                parameters["resource"] == "bar") {
-              // Set some response headers..
-              res.Headers.Set("Server", "Example");
-              res.Headers.Set("Date", "Wed, 17 Apr 2013 12:00:00 GMT");
-              res.Headers.Set("Content-Type", "text/plain; charset=UTF-8");
-              // Set the response body using the provided buffer writer..
-              res.Body.Write("Resource found! -> " + req.Uri.GetPath());
-              // Set the response code and.. that's all!
-              res.Ok_200();
-            } else {
-              res.Body.Write("Resource NOT found!");
-              res.Forbidden_403();
-            }
-          } else {
-            res.Forbidden_403();
-          }
-        });
-    // Start server activity..
-    server->Start("8542");
+    server->Handle("/{level}/{resource}", [](const Request& req, Response& res,
+                                             const Parameters& parameters) {
+      // Here, we use 'parameters' variable to find needed values!
+      // Since we're only interested on /foo/bar URI, let's check that
+      // the incoming URL is fulfilling the requirements..
+      auto level = parameters.find("level");
+      auto resource = parameters.find("resource");
+      if (level != parameters.end() && resource != parameters.end()) {
+        ResponseWriter<>::Prepare(
+            res, json::Object{{"{level}", level->second},
+                              {"{resource}", resource->second}})
+            .Ok_200();
+      } else {
+        res.Body.Write("Resource Uri not supported!");
+        res.Forbidden_403();
+      }
+    });
+    server->Start("8080");
     return getchar();
   } catch (const std::exception& exception) {
     // ((Error)) -> while performing setup!

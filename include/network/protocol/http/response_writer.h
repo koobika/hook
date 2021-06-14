@@ -41,7 +41,9 @@
 #include "base/auto_buffer.h"
 #include "constants/headers.h"
 #include "constants/mime.h"
-#include "structured/json/json_value.h"
+#include "structured/json/value.h"
+#include "request.h"
+#include "response_writer_default.h"
 
 namespace koobika::hook::network::protocol::http {
 // =============================================================================
@@ -49,64 +51,39 @@ namespace koobika::hook::network::protocol::http {
 // -----------------------------------------------------------------------------
 // This specification holds for http response writer class
 // =============================================================================
+template <typename WRty = ResponseWriterDefault>
 class ResponseWriter {
  public:
   // ___________________________________________________________________________
-  // CONSTRUCTORs/DESTRUCTORs                                         ( public )
-  //
-  template <typename SEty>
-  ResponseWriter(const SEty& serializable_object,
-                 const std::string& content_type)
-      : content_type_{content_type} {
-    buffer_.Write(serializable_object.Serialize());
-  }
-  ResponseWriter(const structured::json::JsonValue& json)
-      : ResponseWriter(json, constants::Mime::kJSON) {}
-  ResponseWriter(
-      const std::string& string_content,
-      const std::optional<std::string>& content_type = constants::Mime::kTXT)
-      : content_type_{content_type} {
-    buffer_.Write(string_content);
-  }
-  ResponseWriter(
-      const char* c_string_content,
-      const std::optional<std::string>& content_type = constants::Mime::kTXT)
-      : content_type_{content_type} {
-    buffer_.Write(c_string_content);
-  }
-  ResponseWriter(void* buffer, const std::size_t& length,
-                 const std::optional<std::string>& content_type)
-      : content_type_{content_type} {
-    buffer_.Write(buffer, length);
-  }
-  ResponseWriter(const ResponseWriter&) = delete;
-  ResponseWriter(ResponseWriter&&) noexcept = delete;
-  ~ResponseWriter() = default;
-  // ___________________________________________________________________________
-  // OPERATORs                                                        ( public )
-  //
-  ResponseWriter& operator=(const ResponseWriter&) = delete;
-  ResponseWriter& operator=(ResponseWriter&&) noexcept = delete;
-  // ___________________________________________________________________________
   // METHODs                                                          ( public )
   //
-  // Tries to fill-up incoming response object with current configutation.
-  template <typename RSty>
-  RSty& Prepare(RSty& res) {
-    if (content_type_.has_value()) {
-      res.Headers.Set(constants::Headers::kContentType, content_type_.value());
+  // Tries to fill-up response object with the specified configuration.
+  static Response& Prepare(Response& res, const base::AutoBuffer& buffer,
+                           const std::optional<std::string>& content_type = {},
+                           const WRty& writer = WRty()) {
+    writer.Write(res, buffer);
+    if (content_type.has_value()) {
+      res.Headers.Set(constants::Headers::kContentType, content_type.value());
     }
-    res.Headers.Set(constants::Headers::kContentLength, buffer_.Length());
-    res.Body = std::move(buffer_);
     return res;
   }
+  // Tries to fill-up response object with the serializable content.
+  static Response& Prepare(Response& res,
+                           const base::Serializable& serializable,
+                           const std::optional<std::string>& content_type = {},
+                           const WRty& writer = WRty()) {
+    return Prepare(res, serializable.Serialize(), content_type, writer);
+  }
 
- private:
-  // ___________________________________________________________________________
-  // ATTRIBUTEs                                                      ( private )
-  //
-  base::AutoBuffer buffer_;
-  std::optional<std::string> content_type_;
+  /*
+  // Tries to fill-up response object with the specified configuration.
+  template <typename WRty = ResponseWriterDefault>
+  static Response& Prepare(
+      Response& res, const char* str, const WRty& writer = WRty(),
+      const std::optional<std::string>& content_type = {}) {
+    return Prepare<WRty>(res, (void*)str, strlen(str), writer, content_type);
+  }
+  */
 };
 }  // namespace koobika::hook::network::protocol::http
 

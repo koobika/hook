@@ -50,7 +50,7 @@
 #include "response_writer.h"
 #include "router.h"
 #include "network/transport/server_constants.h"
-#include "structured/json/json_value.h"
+#include "structured/json/value.h"
 #include "constants/limits.h"
 
 namespace koobika::hook::network::protocol::http {
@@ -75,7 +75,7 @@ class ServerBase : public RoutesManager {
     configuration_[transport::ServerConstants::kNumberOfWorkersKey] =
         workers_number;
   }
-  ServerBase(const structured::json::JsonObject& configuration)
+  ServerBase(const structured::json::Object& configuration)
       : configuration_(configuration) {}
   ServerBase(const ServerBase&) = delete;
   ServerBase(ServerBase&&) noexcept = delete;
@@ -300,7 +300,7 @@ class ServerBase : public RoutesManager {
   std::shared_ptr<TRty> transport_;
   std::shared_ptr<std::thread> transport_thread_;
   std::shared_ptr<std::thread> support_thread_;
-  structured::json::JsonObject configuration_;
+  structured::json::Object configuration_;
   // Attributes needed for server-date management!
   char date_buffer_[kMaxLength] = {0};
   mutable std::mutex date_buffer_mutex;

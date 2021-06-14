@@ -119,9 +119,14 @@ class RequestDecoder : public transport::ServerDecoder<Request, Response> {
       // decoding <headers>..
       cur = strstr(section, constants::Strings::kEmptyLine);
       if (!cur) break;
+      cur += constants::Strings::kEmptyLineLen;
       request_->Headers.From(section, cur - section);
-      section = cur + constants::Strings::kEmptyLineLen;
+      section = cur;
       // ok!, we're ready with all <basic> message information!
+      if (request_->Headers.Exist(constants::Headers::kContentLength)) {
+        content_length_ = atol(
+            request_->Headers.Get(constants::Headers::kContentLength).c_str());
+      }
       decoding_body_part_ = true;
       auto end = section - buffer_;
       auto pending = used_ - end;

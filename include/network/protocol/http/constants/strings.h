@@ -65,14 +65,8 @@ class Strings {
   static constexpr char kColon[] = ":";
   static constexpr std::size_t kColonLen = 1;
   // Header (field-name) separator.
-  static constexpr char kHeaderFieldNameSeparator[] = ":";
-  static constexpr std::size_t kHeaderFieldNameSeparatorLen = 1;
-  // Header (field-value) separator.
-  static constexpr char kHeaderFieldValueSeparator[] = ",";
-  static constexpr std::size_t kHeaderFieldValueSeparatorLen = 1;
-  // Header (chunked-content) end delimiter.
-  static constexpr char kHeaderChunkedContentEnd[] = "0\r\n\r\n";
-  static constexpr std::size_t kHeaderChunkedContentEndLen = 5;
+  static constexpr char kHeaderFieldSeparator[] = ": ";
+  static constexpr std::size_t kHeaderFieldSeparatorLen = 2;
 };
 }  // namespace koobika::hook::network::protocol::http::constants
 

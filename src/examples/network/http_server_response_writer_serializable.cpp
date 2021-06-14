@@ -39,9 +39,8 @@ using namespace koobika::hook::network::protocol::http;
 using namespace koobika::hook::base;
 
 // This custom serializable class will allow us to perform specific dumps!
-class SerializableClass : public Serializable {
+class MyClass : public Serializable {
  public:
-  // We need to write this method in order to return the buffer!
   AutoBuffer Serialize() const override { return "This is my custom content!"; }
 };
 
@@ -50,16 +49,13 @@ int main() {
     auto server = ServerBuilder().Build();
     server->Handle("/foo/bar", [](const Request& req, Response& res) {
       if (req.Method.IsGet()) {
-        // Let's directly write CUSTOM content using 'ResponseWriter' class!
-        ResponseWriter(SerializableClass(), constants::Mime::kTXT)
-            .Prepare(res)
+        ResponseWriter<>::Prepare(res, MyClass(), constants::Mime::kTXT)
             .Ok_200();
       } else {
-        // Let's directly write TEXT content using 'ResponseWriter' class!
-        ResponseWriter("Not supported!").Prepare(res).Forbidden_403();
+        ResponseWriter<>::Prepare(res, "Not supported!").Forbidden_403();
       }
     });
-    server->Start("8542");
+    server->Start("8080");
     return getchar();
   } catch (const std::exception& exception) {
     // ((Error)) -> while performing setup!

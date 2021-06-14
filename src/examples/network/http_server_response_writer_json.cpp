@@ -43,19 +43,15 @@ int main() {
     auto server = ServerBuilder().Build();
     server->Handle("/foo/bar", [](const Request& req, Response& res) {
       if (req.Method.IsGet()) {
-        // Let's directly write JSON content using 'ResponseWriter' class!
-        ResponseWriter(
-            json::JsonObject{
-                {"My value", json::JsonArray{"Some string value...", true,
-                                             nullptr, 123.45}}})
-            .Prepare(res)
+        ResponseWriter<>::Prepare(
+            res,
+            json::Object{{"koobika", json::Array{"hook rules...", 123.45}}})
             .Ok_200();
       } else {
-        // Let's directly write TEXT content using 'ResponseWriter' class!
-        ResponseWriter("Not supported!").Prepare(res).Forbidden_403();
+        ResponseWriter<>::Prepare(res, "Not supported!").Forbidden_403();
       }
     });
-    server->Start("8542");
+    server->Start("8080");
     return getchar();
   } catch (const std::exception& exception) {
     // ((Error)) -> while performing setup!

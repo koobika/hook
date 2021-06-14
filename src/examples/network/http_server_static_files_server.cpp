@@ -41,8 +41,10 @@ using namespace koobika::hook::network::protocol::http;
 int main() {
   try {
     auto server = ServerBuilder().Build();
+    // Let's define our static server with no authentication, '/' as 
+    // base route and './static/' as the base folder for file retrieval.
     server->Handle<controllers::StaticFilesServer<>>("/", "./static/");
-    server->Start("8542");
+    server->Start("8080");
     return getchar();
   } catch (const std::exception& exception) {
     // ((Error)) -> while performing setup!

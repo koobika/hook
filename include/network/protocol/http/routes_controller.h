@@ -66,7 +66,7 @@ class RoutesController : public Router, public AUty {
   // ___________________________________________________________________________
   // METHODs                                                       ( protected )
   //
-  void AddToRouter(Router& router) const { router.routes_ = routes_; }
+  void AddToRouter(Router& router) const { router.Add(*this); }
   // ___________________________________________________________________________
   // FRIENDs                                                       ( protected )
   //

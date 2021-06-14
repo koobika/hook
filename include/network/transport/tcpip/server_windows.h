@@ -76,7 +76,7 @@ class Server : public ServerInterface<SOCKET, DEty> {
   // METHODs                                                          ( public )
   //
   // Starts current transport activity using the provided (json) configuration.
-  void Start(const structured::json::JsonObject& configuration,
+  void Start(const structured::json::Object& configuration,
              const typename DEty::RequestHandler& request_handler) override {
     if (io_port_ != INVALID_HANDLE_VALUE) {
       // ((Error)) -> transport already initialized!
@@ -168,8 +168,8 @@ class Server : public ServerInterface<SOCKET, DEty> {
             offset += res;
           }
         }
-        delete[] buf;
       }
+      delete[] buf;
     }
     return true;
   }

@@ -42,14 +42,12 @@ int main() {
     auto server = ServerBuilder().Build();
     server->Handle("/foo/bar", [](const Request& req, Response& res) {
       if (req.Method.IsGet()) {
-        // Let's directly write TEXT content using 'ResponseWriter' class!
-        ResponseWriter("Hello, World!\r\n").Prepare(res).Ok_200();
+        ResponseWriter<>::Prepare(res, "Hello, World!").Ok_200();
       } else {
-        // Let's directly write TEXT content using 'ResponseWriter' class!
-        ResponseWriter("Not supported!").Prepare(res).Forbidden_403();
+        ResponseWriter<>::Prepare(res, "Not supported!").Forbidden_403();
       }
     });
-    server->Start("8542");
+    server->Start("8080");
     return getchar();
   } catch (const std::exception& exception) {
     // ((Error)) -> while performing setup!

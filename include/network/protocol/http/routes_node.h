@@ -55,12 +55,12 @@ struct RoutesNode {
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
   RoutesNode() = default;
-  RoutesNode(const RoutingHandler& in_handler,
-             const MethodValue& in_method_value)
-      : handler{in_handler}, method{in_method_value} {}
-  RoutesNode(const RoutingHandlerExtended& in_handler_extended,
-             const MethodValue& in_method_value)
-      : handler_extended{in_handler_extended}, method{in_method_value} {}
+  RoutesNode(const RoutingHandler& handler, const MethodValue& method) {
+    handlers[method] = handler;
+  }
+  RoutesNode(const RoutingHandlerExtended& handler, const MethodValue& method) {
+    handlers_extended[method] = handler;
+  }
   RoutesNode(const RoutesNode&) = default;
   RoutesNode(RoutesNode&&) noexcept = default;
   // ___________________________________________________________________________
@@ -71,9 +71,8 @@ struct RoutesNode {
   // ___________________________________________________________________________
   // PROPERTIEs                                                       ( public )
   //
-  RoutingHandler handler = nullptr;
-  RoutingHandlerExtended handler_extended = nullptr;
-  MethodValue method = constants::Methods::kInvalid;
+  std::unordered_map<MethodValue, RoutingHandler> handlers;
+  std::unordered_map<MethodValue, RoutingHandlerExtended> handlers_extended;
 };
 }  // namespace koobika::hook::network::protocol::http
 

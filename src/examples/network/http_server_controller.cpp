@@ -40,19 +40,25 @@ using namespace koobika::hook::network::protocol::http;
 // This is our custom controller with only one handler!
 class CustomController : public RoutesController<> {
  protected:
-  // This |GET| handler will return the 'hello world' message!
-  RoutesControllerGet myCurrentValueHandler{
-      this, "/foo/bar", [](const Request& req, Response& res) {
-        res.Body.Write("Hello, World!\r\n");
-        res.Ok_200();
-      }};
+  // This |GET| handler will return the 'Hello, Controller World!' message!
+  RoutesControllerGet get{this, "/foo/bar",
+                          [](const Request& req, Response& res) {
+                            res.Body.Write("Hello, Controller World!");
+                            res.Ok_200();
+                          }};
+  // This |PUT| handler will return 'forbidden'!
+  RoutesControllerPut put{this, "/foo/bar",
+                          [](const Request& req, Response& res) {
+                            res.Body.Write("Mmmmm, PUT not allowed!");
+                            res.Forbidden_403();
+                          }};
 };
 
 int main() {
   try {
     auto server = ServerBuilder().Build();
     server->Handle<CustomController>();
-    server->Start("8542");
+    server->Start("8080");
     return getchar();
   } catch (const std::exception& exception) {
     // ((Error)) -> while performing setup!

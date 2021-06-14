@@ -140,6 +140,7 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\status_codes.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\strings.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\controllers\static_files_server.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\response_writer_default.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\routes_controller.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\routes_controller_handler.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\encoding_type.h" />
@@ -167,8 +168,8 @@
     <ClInclude Include="..\..\..\..\..\include\network\transport\server_decoder.h" />
     <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server.h" />
     <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server_windows.h" />
-    <ClInclude Include="..\..\..\..\..\include\structured\json\json_importer.h" />
-    <ClInclude Include="..\..\..\..\..\include\structured\json\json_value.h" />
+    <ClInclude Include="..\..\..\..\..\include\structured\json\importer.h" />
+    <ClInclude Include="..\..\..\..\..\include\structured\json\value.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

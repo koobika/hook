@@ -39,7 +39,7 @@
 #include <functional>
 
 #include "base/auto_buffer.h"
-#include "structured/json/json_value.h"
+#include "structured/json/value.h"
 
 namespace koobika::hook::network::transport {
 // =============================================================================
@@ -58,7 +58,7 @@ class ServerInterface {
   // METHODs                                                          ( public )
   //
   // Starts current transport activity using the provided (json) configuration.
-  virtual void Start(const structured::json::JsonObject&,
+  virtual void Start(const structured::json::Object&,
                      const typename DEty::RequestHandler&) = 0;
   // Stops transport activity.
   virtual void Stop() = 0;

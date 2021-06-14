@@ -53,14 +53,14 @@ class Request {
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
   Request() = default;
-  Request(const Request&) = delete;
-  Request(Request&&) noexcept = delete;
+  Request(const Request&) = default;
+  Request(Request&&) noexcept = default;
   ~Request() = default;
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
   //
-  Request& operator=(const Request&) = delete;
-  Request& operator=(Request&&) noexcept = delete;
+  Request& operator=(const Request&) = default;
+  Request& operator=(Request&&) noexcept = default;
   // ___________________________________________________________________________
   // PROPERTIEs                                                       ( public )
   //

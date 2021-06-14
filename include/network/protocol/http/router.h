@@ -43,8 +43,8 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
-#include <stack>
 #include <stdexcept>
+#include <deque>
 
 #include "constants/methods.h"
 #include "network/transport/server_constants.h"
@@ -61,14 +61,27 @@ namespace koobika::hook::network::protocol::http {
 // This class is in charge of providing the default http router class.
 // =============================================================================
 class Router : public RoutesManager, public RoutesPerformer {
+ protected:
+  // ___________________________________________________________________________
+  // TYPEs                                                         ( protected )
+  //
+  struct NodeData {
+    NodeData() = default;
+    std::pair<std::string, std::shared_ptr<NodeData>> parameter;
+    std::unordered_map<std::string, std::shared_ptr<NodeData>> child_nodes;
+    std::unordered_map<MethodValue,
+                       std::variant<RoutingHandler, RoutingHandlerExtended>>
+        handlers;
+  };
+
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
-  Router() { buffer_ = new char[kBufferSize]; }
+  Router() = default;
   Router(const Router&) = delete;
   Router(Router&&) noexcept = delete;
-  ~Router() { delete[] buffer_; }
+  ~Router() = default;
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
   //
@@ -165,157 +178,133 @@ class Router : public RoutesManager, public RoutesPerformer {
   }
   // Tries to perform router enabled action.
   bool Perform(const Request& req, Response& res) const override {
-    RoutesNode node;
+    if (!routes_.size()) return false;
     Parameters parameters;
-    {
-      auto route = req.Uri.GetPath();
-      auto length = route.length();
-      strncpy(buffer_, route.c_str(), length);
-      buffer_[length] = 0;
-      auto pch = strtok(buffer_, kSlash_);
-      auto current = routes_;
-      while (current && pch != nullptr) {
-        auto itr = current->nodes.find(pch);
-        if (itr == current->nodes.end()) {
-          // ok, we were not able to find a direct match! let's try to find a
-          // parametrized '{}' node!
-          auto itr_p = current->nodes.begin();
-          while (itr_p != current->nodes.end()) {
-            if (itr_p->second->type == ElementSrcType::kParametrized) {
-              // Let's extract the 'parametrized' segment and check for uri..
-              std::string key = itr_p->first, val = pch;
-              auto s_pos = key.find_first_of(kBraceStart_);
-              auto e_pos = key.find_first_of(kBraceEnd_, s_pos);
-              auto param = key.substr(s_pos + 1, e_pos - s_pos - 1);
-              key.erase(s_pos, e_pos - s_pos + 1);
-              auto off = val.find(key);
-              if (off != std::string::npos) {
-                val.erase(val.find(key), key.length());
-              }
-              parameters.insert(std::make_pair(param, val));
-              itr = itr_p;
-              break;
-            }
-            itr_p++;
-          }
-          if (itr == current->nodes.end()) {
-            break;
-          }
+    auto path = req.Uri.GetPath();
+    auto ptr = path.c_str();
+    auto end = ptr + req.Uri.GetPath().length();
+    const char* cur = strchr(ptr, kSlash);
+    std::shared_ptr<NodeData> node = routes_.begin()->second;
+    while (cur++) {
+      auto last = cur;
+      cur = strchr(cur, kSlash);
+      std::string value(last, !cur ? end - last : cur - last);
+      if (node->parameter.second == nullptr) {
+        if (!node->child_nodes.size()) {
+          break;
         }
-        current = itr->second;
-        pch = strtok(NULL, kSlash_);
+        auto found = node->child_nodes.find(value);
+        if (found == node->child_nodes.end()) {
+          return false;
+        }
+        node = found->second;
+      } else {
+        parameters.insert(std::make_pair(node->parameter.first, value));
+        node = node->parameter.second;
       }
-      node = current->data;
     }
-    if (node.method == constants::Methods::kInvalid ||
-        !(node.method & req.Method.GetCode())) {
-      return false;
+    auto caller = node->handlers.find(constants::Methods::kAll);
+    if (caller == node->handlers.end()) {
+      caller = node->handlers.find(req.Method.GetCode());
+      if (caller == node->handlers.end()) {
+        return false;
+      }
     }
-    node.handler ? node.handler(req, res)
-                 : node.handler_extended(req, res, parameters);
+    !caller->second.index() ? std::get<0>(caller->second)(req, res)
+                            : std::get<1>(caller->second)(req, res, parameters);
     return true;
+  }
+  // Adds the incoming router configuration to the actual one!
+  void Add(const Router& in) {
+    if (!in.routes_.size()) return;
+    std::deque<std::string> route;
+    add(kSlashStr, in.routes_.begin()->second, route, true);
   }
 
  protected:
-  // ___________________________________________________________________________
-  // USINGs                                                        ( protected )
-  //
-  struct Element;
-  using ElementsMap = std::unordered_map<std::string, std::shared_ptr<Element>>;
-  // ___________________________________________________________________________
-  // TYPEs                                                         ( protected )
-  //
-  enum class ElementSrcType { kNominal, kParametrized };
-  struct Element {
-    ElementsMap nodes;
-    RoutesNode data;
-    ElementSrcType type = ElementSrcType::kNominal;
-  };
   // ___________________________________________________________________________
   // METHODs                                                       ( protected )
   //
   // Adds current routing data to the handler.
   template <typename HDty>
-  void handle(const std::string& route, const HDty& handler,
-              const MethodValue& method) {
-    if (routes_ == nullptr) {
-      routes_ = std::make_shared<Element>();
+  void handle(const std::string& r, const HDty& h, const MethodValue& m) {
+    auto itr = routes_.begin();
+    if (itr == routes_.end()) {
+      itr = routes_
+                .insert(std::make_pair(kSlashStr, std::make_shared<NodeData>()))
+                .first;
     }
-    std::shared_ptr<Element> node = routes_;
-    char tmp_buffer[512];
-    auto len = route.length();
-    strncpy(tmp_buffer, route.c_str(), len);
-    tmp_buffer[len] = 0;
-    auto pch = strtok(tmp_buffer, kSlash_);
+    std::shared_ptr<NodeData> node = itr->second;
+    char buffer[kMaxRouteLength] = {0};
+    strncpy(buffer, r.c_str(), r.length());
+    buffer[r.length()] = 0;
+    auto pch = strtok(buffer, kSlashStr);
+    std::string parameter_name;
     while (pch) {
-      auto itr = node->nodes.find(pch);
-      if (itr == node->nodes.end()) {
-        // First, let's try to determine node type (parametrized/nominal)..
-        auto data = std::make_pair(pch, std::make_shared<Element>());
-        itr = node->nodes.insert(data).first;
-        itr->second->type = getType(pch);
+      bool is_parameter = isParameter(pch, parameter_name);
+      if (is_parameter) {
+        node->parameter.first.assign(parameter_name);
+        node->parameter.second = std::make_shared<NodeData>();
+        node = node->parameter.second;
+      } else {
+        auto found = node->child_nodes.find(pch);
+        if (found == node->child_nodes.end()) {
+          node = node->child_nodes
+                     .insert(std::make_pair(pch, std::make_shared<NodeData>()))
+                     .first->second;
+        } else {
+          node = found->second;
+        }
       }
-      node = itr->second;
-      pch = strtok(NULL, kSlash_);
+      pch = strtok(NULL, kSlashStr);
     }
-    node->data = RoutesNode(handler, method);
+    node->handlers.insert(std::make_pair(m, h));
   }
-  // Checks and return element-src-type.
-  ElementSrcType getType(const char* str) {
-    std::stack<char> braces;
-    auto braces_found = 0;
-    auto len = strlen(str);
-    auto ptr = str;
-    while (ptr < (str + len)) {
-      switch (*ptr) {
-        case kBraceStart_:
-          if (braces.size()) {
-            if (braces.top() != kBraceEnd_) {
-              // ((Error)) -> invalid braces sequence detected!
-              throw std::logic_error("Invalid braces sequence detected!");
-            }
-            braces.pop();
-          }
-          braces.push(kBraceStart_);
-          break;
-        case kBraceEnd_:
-          if (braces.size()) {
-            if (braces.top() != kBraceStart_) {
-              // ((Error)) -> invalid braces sequence detected!
-              throw std::logic_error("Invalid braces sequence detected!");
-            }
-            braces.pop();
-          } else {
-            // ((Error)) -> invalid braces sequence detected!
-            throw std::logic_error("Invalid braces sequence detected!");
-          }
-          braces_found++;
-          break;
-        default:
-          break;
+  // Adds (recursively) incoming routing structure to internals!
+  void add(const std::string& node_str,
+           const std::shared_ptr<NodeData>& node_data,
+           std::deque<std::string>& route, const bool& is_root = false) {
+    route.push_back(node_str);
+    if (!is_root) route.push_back(kSlashStr);
+    for (auto const& child : node_data->child_nodes) {
+      add(child.first, child.second, route);
+    }
+    std::string composed;
+    for (auto const& node : route) {
+      composed.append(node);
+    }
+    for (auto const& handler : node_data->handlers) {
+      if (!handler.second.index()) {
+        Handle(composed, std::get<0>(handler.second), handler.first);
+      } else {
+        Handle(composed, std::get<1>(handler.second), handler.first);
       }
-      ptr++;
     }
-    if (braces_found > 1 || braces.size()) {
-      // ((Error)) -> invalid braces sequence detected!
-      throw std::logic_error("Invalid braces sequence detected!");
+    route.pop_back();
+    if (!is_root) route.pop_back();
+  }
+  // Checks for incoming string to be a parametrized one!
+  bool isParameter(const char* str, std::string& parameter_name) const {
+    auto start = strchr(str, kCurlyBraceStart);
+    auto end = strchr(str, kCurlyBraceEnd);
+    if (start++ && end) {
+      parameter_name.assign(start, end - start);
+      return true;
     }
-    return braces_found ? ElementSrcType::kParametrized
-                        : ElementSrcType::kNominal;
+    return false;
   }
   // ___________________________________________________________________________
   // CONSTANTs                                                     ( protected )
   //
-  static constexpr char kSlash_[] = "/";
-  static constexpr char kWildcardAsterisk_[] = "*";
-  static constexpr char kBraceStart_ = '{';
-  static constexpr char kBraceEnd_ = '}';
-  static constexpr std::size_t kBufferSize = 1024;
+  static constexpr char kSlash = '/';
+  static constexpr char kCurlyBraceStart = '{';
+  static constexpr char kCurlyBraceEnd = '}';
+  static constexpr char kSlashStr[] = {kSlash, 0};
+  static constexpr std::size_t kMaxRouteLength = 1024;
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                    ( protected )
   //
-  std::shared_ptr<Element> routes_;
-  char* buffer_ = nullptr;
+  std::unordered_map<std::string, std::shared_ptr<NodeData>> routes_;
   // ___________________________________________________________________________
   // FRIENDs                                                       ( protected )
   //

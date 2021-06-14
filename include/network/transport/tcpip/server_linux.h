@@ -76,7 +76,7 @@ class Server : public ServerInterface<int, DEty> {
   // METHODs                                                          ( public )
   //
   // Starts current transport activity using the provided (json) configuration.
-  void Start(const structured::json::JsonObject& configuration,
+  void Start(const structured::json::Object& configuration,
              const typename DEty::RequestHandler& request_handler) override {
     // let's retrieve all needed parameters for this transport..
     std::string port = configuration[ServerConstants::kPortKey];
@@ -171,8 +171,8 @@ class Server : public ServerInterface<int, DEty> {
             offset += res;
           }
         }
-        delete[] buf;
       }
+      delete[] buf;
     }
     return true;
   }

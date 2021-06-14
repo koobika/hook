@@ -41,7 +41,7 @@
 
 #include "base/cache_null.h"
 #include "base/repository_filesystem.h"
-#include "network/protocol/http/http_controller.h"
+#include "network/protocol/http/routes_controller.h"
 #include "network/protocol/http/auth/modules/no_auth.h"
 #include "network/protocol/http/constants/mime.h"
 
@@ -54,7 +54,7 @@ namespace koobika::hook::network::protocol::http::controllers {
 template <typename AUty = auth::modules::NoAuth,
           typename CAty = base::CacheNull,
           typename REty = base::RepositoryFilesystem>
-class StaticFilesServer : public HttpController<AUty> {
+class StaticFilesServer : public RoutesController<AUty> {
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
@@ -133,8 +133,8 @@ class StaticFilesServer : public HttpController<AUty> {
         {".zip", constants::Mime::kZIP},
     };
     // Let's setup the <get> end-point.
-    this->Get(route, this->Authorize([this, route, path](const HttpRequest& req,
-                                                         HttpResponse& res) {
+    this->Get(route, this->Authorize([this, route, path](const Request& req,
+                                                         Response& res) {
       // Let's check if given uri path is starting from the base one..
       auto base_path = std::filesystem::path(path);
       auto base_path_absolute = std::filesystem::absolute(base_path);

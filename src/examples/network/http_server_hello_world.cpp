@@ -42,13 +42,13 @@ int main() {
     // Let's create our server using the default configuration..
     auto server = ServerBuilder().Build();
     // Let's configure our server to handle requests over '/foo/bar' uri..
-    server->Handle("/plaintext", [server](const Request& req, Response& res) {
+    server->Handle("/foo/bar", [server](const Request& req, Response& res) {
       // Set some response headers..
       res.Headers.Set("Server", "Example");
       res.Headers.Set("Date", server->GetCurrentDate());
       res.Headers.Set("Content-Type", "text/plain; charset=UTF-8");
       // Set the response body using the provided buffer
-      res.Body.Write("Hello, World!\r\n");
+      res.Body.Write("Hello, World!");
       // Set the response code and.. that's all!
       res.Ok_200();
     });

@@ -96,14 +96,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_controller.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x86'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x86'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_extended_routing_parameters.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</ExcludedFromBuild>
@@ -126,14 +126,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_hello_world.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x86'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x86'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_response_writer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</ExcludedFromBuild>
@@ -183,6 +183,8 @@
     <ClInclude Include="..\..\..\..\..\include\base\builder_property.h" />
     <ClInclude Include="..\..\..\..\..\include\base\cache.h" />
     <ClInclude Include="..\..\..\..\..\include\base\cache_null.h" />
+    <ClInclude Include="..\..\..\..\..\include\base\case_insensitive_comparator.h" />
+    <ClInclude Include="..\..\..\..\..\include\base\case_insensitive_hash.h" />
     <ClInclude Include="..\..\..\..\..\include\base\platform.h" />
     <ClInclude Include="..\..\..\..\..\include\base\repository.h" />
     <ClInclude Include="..\..\..\..\..\include\base\repository_filesystem.h" />
@@ -212,6 +214,7 @@
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\status_codes.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\constants\strings.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\controllers\static_files_server.h" />
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\response_writer_default.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\routes_controller.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\routes_controller_handler.h" />
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\encoding_type.h" />
@@ -239,8 +242,8 @@
     <ClInclude Include="..\..\..\..\..\include\network\transport\server_decoder.h" />
     <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server.h" />
     <ClInclude Include="..\..\..\..\..\include\network\transport\tcpip\server_linux.h" />
-    <ClInclude Include="..\..\..\..\..\include\structured\json\json_importer.h" />
-    <ClInclude Include="..\..\..\..\..\include\structured\json\json_value.h" />
+    <ClInclude Include="..\..\..\..\..\include\structured\json\importer.h" />
+    <ClInclude Include="..\..\..\..\..\include\structured\json\value.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{048404c6-8441-474e-af78-65e990eb879f}</ProjectGuid>

@@ -45,9 +45,8 @@ class ContextCustom : public auth::Context, public auth::Mapper {
  public:
   // Tries to fill-up internal structures using the provided request.
   bool Map(const Request& req) override {
-    auto auth_field = req.Headers.Get(kSecretWordHeaderField);
-    if (!auth_field.has_value()) return false;
-    SecretWord = auth_field.value();
+    if (!req.Headers.Exist(kSecretWordHeaderField)) return false;
+    SecretWord = req.Headers.Get(kSecretWordHeaderField);
     return true;
   }
   // This property will hold for the 'secret-word' value!
@@ -113,7 +112,7 @@ int main() {
   try {
     auto server = ServerBuilder().Build();
     server->Handle<CustomController>();
-    server->Start("8542");
+    server->Start("8080");
     return getchar();
   } catch (const std::exception& exception) {
     // ((Error)) -> while performing setup!

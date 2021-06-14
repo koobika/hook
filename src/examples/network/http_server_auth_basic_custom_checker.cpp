@@ -45,13 +45,12 @@ int main() {
         [](const auth::modules::Basic::Context& context) -> bool {
           return context.Username == "hook" && context.Password == "rules";
         });
-    // Let's configure our server to handle <GET> requests over '/foo/bar' uri..
     server->Get("/foo/bar",
                 auth.Authorize([](const Request& req, Response& res) {
-                  res.Body.Write("Hello, World!\r\n");
+                  res.Body.Write("Hello, World!");
                   res.Ok_200();
                 }));
-    server->Start("8542");
+    server->Start("8080");
     return getchar();
   } catch (const std::exception& exception) {
     // ((Error)) -> while performing setup!

@@ -56,7 +56,7 @@ class Server
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
   Server(const unsigned int& workers_number) : ServerBase(workers_number) {}
-  Server(const structured::json::JsonObject& configuration)
+  Server(const structured::json::Object& configuration)
       : ServerBase(configuration) {}
   Server(const Server&) = delete;
   Server(Server&&) noexcept = delete;

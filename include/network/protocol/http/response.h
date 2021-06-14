@@ -54,14 +54,14 @@ class Response {
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
   Response() = default;
-  Response(const Response&) = delete;
-  Response(Response&&) noexcept = delete;
+  Response(const Response&) = default;
+  Response(Response&&) noexcept = default;
   ~Response() = default;
   // ___________________________________________________________________________
   // OPERATORs                                                        ( public )
   //
-  Response& operator=(const Response&) = delete;
-  Response& operator=(Response&&) noexcept = delete;
+  Response& operator=(const Response&) = default;
+  Response& operator=(Response&&) noexcept = default;
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
   //

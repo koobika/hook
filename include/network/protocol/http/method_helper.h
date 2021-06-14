@@ -40,6 +40,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "base/case_insensitive_comparator.h"
+#include "base/case_insensitive_hash.h"
 #include "constants/methods.h"
 
 namespace koobika::hook::network::protocol::http {
@@ -67,18 +69,17 @@ class MethodHelper {
   //
   // Sets method content from the specified string.
   void From(const char* str, const std::size_t& len) {
-    static const std::unordered_map<std::string, int> known_methods = {
-        {kOptStr_, constants::Methods::kOptions},
-        {kGetStr_, constants::Methods::kGet},
-        {kHeaStr_, constants::Methods::kHead},
-        {kPosStr_, constants::Methods::kPost},
-        {kPutStr_, constants::Methods::kPut},
-        {kDelStr_, constants::Methods::kDelete},
-        {kTraStr_, constants::Methods::kTrace},
-        {kConStr_, constants::Methods::kConnect}};
-    st_.assign(str, len);
-    std::transform(st_.begin(), st_.end(), st_.begin(), ::tolower);
-    auto itr = known_methods.find(st_);
+    static const std::unordered_map<std::string, int, base::CaseInsensitiveHash,
+                                    base::CaseInsensitiveComparator>
+        known_methods = {{kOptStr_, constants::Methods::kOptions},
+                         {kGetStr_, constants::Methods::kGet},
+                         {kHeaStr_, constants::Methods::kHead},
+                         {kPosStr_, constants::Methods::kPost},
+                         {kPutStr_, constants::Methods::kPut},
+                         {kDelStr_, constants::Methods::kDelete},
+                         {kTraStr_, constants::Methods::kTrace},
+                         {kConStr_, constants::Methods::kConnect}};
+    auto itr = known_methods.find(std::string(str, len));
     cd_ = itr != known_methods.end() ? itr->second
                                      : constants::Methods::kExtension;
   }

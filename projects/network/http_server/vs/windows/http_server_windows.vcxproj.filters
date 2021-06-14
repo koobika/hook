@@ -280,10 +280,10 @@
     <ClInclude Include="..\..\..\..\..\include\base\cache_null.h">
       <Filter>include\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\structured\json\json_importer.h">
+    <ClInclude Include="..\..\..\..\..\include\structured\json\importer.h">
       <Filter>include\structured\json</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\include\structured\json\json_value.h">
+    <ClInclude Include="..\..\..\..\..\include\structured\json\value.h">
       <Filter>include\structured\json</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\parameters.h">
@@ -293,6 +293,9 @@
       <Filter>include\network\protocol\http</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\include\network\protocol\http\routing_handler_extended.h">
+      <Filter>include\network\protocol\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\network\protocol\http\response_writer_default.h">
       <Filter>include\network\protocol\http</Filter>
     </ClInclude>
   </ItemGroup>
