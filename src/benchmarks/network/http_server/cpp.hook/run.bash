@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
 
-if [[ ! -f httpserver ]]
+if [[ ! -f ./httpserver ]]
 then
-    echo "Building app"
-    docker build -t build/go-default . 2>&1
-    docker create --name go-default build/go-default
-    docker cp go-default:/src/httpserver .
-    docker rm go-default
+    echo "You need to build the project first with koo."
 fi
 
 echo "Running app in background"

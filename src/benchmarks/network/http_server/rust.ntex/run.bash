@@ -3,10 +3,10 @@
 if [[ ! -f httpserver ]]
 then
     echo "Building app"
-    docker build -t build/go-default . 2>&1
-    docker create --name go-default build/go-default
-    docker cp go-default:/src/httpserver .
-    docker rm go-default
+    docker build -t build/rust-ntext . 2>&1
+    docker create --name rust-ntext build/rust-ntext
+    docker cp rust-ntext:/src/target/release/httpserver .
+    docker rm rust-ntext
 fi
 
 echo "Running app in background"

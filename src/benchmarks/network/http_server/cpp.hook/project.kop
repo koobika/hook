@@ -4,6 +4,6 @@
   "version": "0.0.1",
   "type": "Application",
   "dependencies": [
-    "hook@0.0.1"
+    "hook@0.1.0"
   ]
 }
