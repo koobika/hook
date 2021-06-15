@@ -49,10 +49,10 @@ int main() {
     auto server = ServerBuilder().Build();
     server->Handle("/foo/bar", [](const Request& req, Response& res) {
       if (req.Method.IsGet()) {
-        ResponseWriter<>::Prepare(res, MyClass(), constants::Mime::kTXT)
-            .Ok_200();
+        ResponseWriter::Prepare(res, MyClass(), constants::Mime::kTXT).Ok_200();
       } else {
-        ResponseWriter<>::Prepare(res, "Not supported!").Forbidden_403();
+        ResponseWriter::Prepare(res, "Not supported!", constants::Mime::kTXT)
+            .Forbidden_403();
       }
     });
     server->Start("8080");

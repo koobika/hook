@@ -42,11 +42,13 @@ int main() {
     auto server = ServerBuilder().Build();
     server->Handle("/foo/bar", [](const Request& req, Response& res) {
       if (req.Method.IsGet()) {
-        ResponseWriter<response_writers::TransferEncoding>::Prepare(
-            res, "Hello, World!")
+        ResponseWriter::Prepare<response_writers::TransferEncoding>(
+            res, "Hello, World!", constants::Mime::kTXT)
             .Ok_200();
       } else {
-        ResponseWriter<>::Prepare(res, "Not supported!").Forbidden_403();
+        ResponseWriter::Prepare<response_writers::Default>(
+            res, "Requested method is not supported!", constants::Mime::kTXT)
+            .Forbidden_403();
       }
     });
     server->Start("8080");

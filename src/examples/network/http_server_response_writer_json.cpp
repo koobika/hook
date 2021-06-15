@@ -43,12 +43,13 @@ int main() {
     auto server = ServerBuilder().Build();
     server->Handle("/foo/bar", [](const Request& req, Response& res) {
       if (req.Method.IsGet()) {
-        ResponseWriter<>::Prepare(
-            res,
-            json::Object{{"koobika", json::Array{"hook rules...", 123.45}}})
+        ResponseWriter::Prepare(
+            res, json::Object{{"koobika", json::Array{"hook rules...", 123.45}}}
+                     .Serialize(), constants::Mime::kJSON)
             .Ok_200();
       } else {
-        ResponseWriter<>::Prepare(res, "Not supported!").Forbidden_403();
+        ResponseWriter::Prepare(res, "Not supported!", constants::Mime::kTXT)
+            .Forbidden_403();
       }
     });
     server->Start("8080");
