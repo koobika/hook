@@ -10,7 +10,7 @@ mkdir -p ../../../../doc/benchmark/current
 
 # Build the wrk2 tool if not present into the system
 if [[ "$(docker images -q tools/wrk2 2> /dev/null)" == "" ]];  then
-    docker build -t tools/wrk2 ../../../../../tools/wrk2
+    docker build -t tools/wrk2 ../../../../tools/wrk2
 fi
 
 for folder in */ ; do

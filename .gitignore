@@ -31,6 +31,12 @@
 *.out
 *.app
 
-# Koo residual folders
+# Koo residual folders and files
 output/
 koo.config
+*.kpg
+
+# Benchmarks
+result.txt
+httpserver
+nohup
