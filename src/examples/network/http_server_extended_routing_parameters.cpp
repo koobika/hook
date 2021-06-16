@@ -33,6 +33,7 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
+//! [Example]
 #include "network/protocol/http/server_builder.h"
 #include "network/protocol/http/response_writer.h"
 #include "structured/json/value.h"
@@ -51,9 +52,10 @@ int main() {
       auto level = parameters.find("level");
       auto resource = parameters.find("resource");
       if (level != parameters.end() && resource != parameters.end()) {
-        ResponseWriter<>::Prepare(
-            res, json::Object{{"{level}", level->second},
-                              {"{resource}", resource->second}})
+        ResponseWriter::Prepare(res,
+                                json::Object{{"{level}", level->second},
+                                             {"{resource}", resource->second}},
+                                constants::Mime::kJSON)
             .Ok_200();
       } else {
         res.Body.Write("Resource Uri not supported!");
@@ -68,3 +70,4 @@ int main() {
     return -1;
   }
 }
+//! [Example]

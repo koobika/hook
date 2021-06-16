@@ -54,27 +54,34 @@
 #include "constants/limits.h"
 
 namespace koobika::hook::network::protocol::http {
-// =============================================================================
-// ServerBase                                                          ( class )
-// -----------------------------------------------------------------------------
-// This class is in charge of providing the default http server base class
-// -----------------------------------------------------------------------------
-// Template parameters:
-//    TRty - transport type being used
-//      [requires: ServerTransport]
-//    ROty - router type being used
-//      [requires: RoutesManager, RoutesPerformer]
-// =============================================================================
+//! @brief This is the HTTPServer base templated class neededing for the
+//! following parameters:
+//! @tparam TRty Transport type being used [requires: ServerTransport
+//! interface implementation]
+//! @tparam ROty Router type being used [requires: RoutesManager,
+//! RoutesPerformer interfaces implementation]
 template <typename TRty, typename ROty>
 class ServerBase : public RoutesManager {
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
+  //! @brief Creates a ServerBase instance using explicit parameters
+  //! @param[in] workers_number The number of workers (threads) that the server
+  //! will create to handle I/O communications. It is strongly recommended to
+  //! use (as default value) std::thread::hardware_concurrency()
   ServerBase(const unsigned int& workers_number) {
     configuration_[transport::ServerConstants::kNumberOfWorkersKey] =
         workers_number;
   }
+  //! @brief Creates a Server instance using a structured::json::Object object
+  //! @param[in] configuration A structured::json::Object object containing the
+  //! needed configuration parameters. Structured as follows:
+  //! @code{.json}
+  //! {
+  //!   "number_of_workers": <number>
+  //! }
+  //! @endcode
   ServerBase(const structured::json::Object& configuration)
       : configuration_(configuration) {}
   ServerBase(const ServerBase&) = delete;
@@ -88,11 +95,13 @@ class ServerBase : public RoutesManager {
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
   //
-  // Starts server activity uwing the provided port.
+  //! @brief Starts server activity
+  //! @param[in] port The port being used by the server
+  //! @throws std::logic_error If server is already running
   void Start(const std::string& port) {
     if (transport_ != nullptr) {
       // ((Error)) -> server is already running!
-      throw std::logic_error("server is already running!");
+      throw std::logic_error("Server is already running!");
     }
     configuration_[transport::ServerConstants::kPortKey] = port;
     // let's setup the required transport!
@@ -146,7 +155,7 @@ class ServerBase : public RoutesManager {
       }
     });
   }
-  // Stops server activity.
+  //! @brief Stops server activity
   void Stop() {
     if (transport_ != nullptr) {
       transport_->Stop();
@@ -159,124 +168,288 @@ class ServerBase : public RoutesManager {
       support_thread_->join();
     }
   }
-  // Adds a new <controller> to the internal map using an string route.
-  template <typename AUty, typename... PAty>
+  //! @brief Adds the specified user __controller__ to the server
+  //! @tparam CNty The controller class to add
+  //! @tparam PAty The (variadic) list of arguments needed by the controller
+  //! class for construction
+  //! @param[in] params The list of parameters needed by the controller class
+  //! constructor/s
+  //! @throws std::logic_error If user tries to add controllers while server is up
+  //! and running
+  //! @section Example
+  //! @snippet network/http_server_controller.cpp Example
+  template <typename CNty, typename... PAty>
   void Handle(const PAty&... params) {
     if (transport_ != nullptr) {
       // ((Error)) -> can't add more handlers while server is running!
-      throw std::logic_error(
-          "can't add more handlers while server is running!");
+      throw std::logic_error("Can't add controllers while server is running!");
     }
-    static std::shared_ptr<AUty> internal = std::make_shared<AUty>(params...);
+    static std::shared_ptr<CNty> internal = std::make_shared<CNty>(params...);
     internal->AddToRouter(router_);
   }
-  // Adds a new <controller> to the internal map using an string route.
-  template <typename AUty>
-  void Handle(AUty&& auth) {
-    if (transport_ != nullptr) {
-      // ((Error)) -> can't add more handlers while server is running!
-      throw std::logic_error(
-          "can't add more handlers while server is running!");
-    }
-    auth.AddToRouter(router_);
-  }
-  // Adds a new <generic> route to 'nominal' router structures.
+  //! @brief Adds an string-based route handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The function performing the logic
+  //! @param[in] method The method type being handled
+  //! @throws std::logic_error If user tries to add handlers while server is up and running
+  //! @see constants::Methods
+  //! @remarks \a RoutingHandler is just an alias for
+  //! std::function<void(const Request&, Response&)><br>
+  //! @section Example
+  //! @snippet network/http_server_hello_world.cpp Example
   void Handle(const std::string& route, const RoutingHandler& handler,
               const MethodValue& method = constants::Methods::kAll) override {
     if (transport_ != nullptr) {
       // ((Error)) -> can't add more handlers while server is running!
-      throw std::logic_error(
-          "can't add more handlers while server is running!");
+      throw std::logic_error("Can't add handlers while server is running!");
     }
     router_.Handle(route, handler, method);
   }
-  // Adds a new <generic> route to 'nominal' router structures.
+  //! @brief Adds an string-based route extended handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The extended function performing the logic
+  //! @param[in] method The method type being handled
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @see constants::Methods
+  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! std::function<void(const Request&, Response&, const Parameters&)><br>
+  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! std::string>
+  //! @section Example
+  //! @snippet network/http_server_extended_routing_parameters.cpp Example
   void Handle(const std::string& route,
               const RoutingHandlerExtended& handler_extended,
               const MethodValue& method = constants::Methods::kAll) override {
     if (transport_ != nullptr) {
       // ((Error)) -> can't add more handlers while server is running!
-      throw std::logic_error(
-          "can't add more handlers while server is running!");
+      throw std::logic_error("Can't add handlers while server is running!");
     }
     router_.Handle(route, handler_extended, method);
   }
-  // Adds a new <options> route to the 'nominal' router structures
+  //! @brief Adds an string-based OPTIONS route handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandler is just an alias for
+  //! std::function<void(const Request&, Response&)><br>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp OPTIONS
   void Options(const std::string& route,
                const RoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kOptions);
   }
-  // Adds a new <options> route to the 'nominal' router structures
+  //! @brief Adds an string-based OPTIONS route extended handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The extended function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! std::function<void(const Request&, Response&, const Parameters&)><br>
+  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! std::string>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp OPTIONS-EXTENDED
   void Options(const std::string& route,
                const RoutingHandlerExtended& handler_extended) override {
     Handle(route, handler_extended, constants::Methods::kOptions);
   }
-  // Adds a new <get> route to the 'nominal' router structures
+  //! @brief Adds an string-based GET route handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandler is just an alias for
+  //! std::function<void(const Request&, Response&)><br>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp GET
   void Get(const std::string& route, const RoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kGet);
   }
-  // Adds a new <get> route to the 'nominal' router structures
+  //! @brief Adds an string-based GET route extended handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The extended function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! std::function<void(const Request&, Response&, const Parameters&)><br>
+  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! std::string>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp GET-EXTENDED
   void Get(const std::string& route,
            const RoutingHandlerExtended& handler_extended) override {
     Handle(route, handler_extended, constants::Methods::kGet);
   }
-  // Adds a new <head> route to the 'nominal' router structures
+  //! @brief Adds an string-based HEAD route handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandler is just an alias for
+  //! std::function<void(const Request&, Response&)><br>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp HEAD
   void Head(const std::string& route, const RoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kHead);
   }
-  // Adds a new <head> route to the 'nominal' router structures
+  //! @brief Adds an string-based HEAD route extended handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The extended function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! std::function<void(const Request&, Response&, const Parameters&)><br>
+  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! std::string>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp HEAD-EXTENDED
   void Head(const std::string& route,
             const RoutingHandlerExtended& handler_extended) override {
     Handle(route, handler_extended, constants::Methods::kHead);
   }
-  // Adds a new <post> route to the 'nominal' router structures
+  //! @brief Adds an string-based POST route handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandler is just an alias for
+  //! std::function<void(const Request&, Response&)><br>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp POST
   void Post(const std::string& route, const RoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kPost);
   }
-  // Adds a new <post> route to the 'nominal' router structures
+  //! @brief Adds an string-based POST route extended handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The extended function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! std::function<void(const Request&, Response&, const Parameters&)><br>
+  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! std::string>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp POST-EXTENDED
   void Post(const std::string& route,
             const RoutingHandlerExtended& handler_extended) override {
     Handle(route, handler_extended, constants::Methods::kPost);
   }
-  // Adds a new <put> route to the 'nominal' router structures
+  //! @brief Adds an string-based PUT route handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandler is just an alias for
+  //! std::function<void(const Request&, Response&)><br>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp PUT
   void Put(const std::string& route, const RoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kPut);
   }
-  // Adds a new <put> route to the 'nominal' router structures
+  //! @brief Adds an string-based PUT route extended handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The extended function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! std::function<void(const Request&, Response&, const Parameters&)><br>
+  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! std::string>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp PUT-EXTENDED
   void Put(const std::string& route,
            const RoutingHandlerExtended& handler_extended) override {
     Handle(route, handler_extended, constants::Methods::kPut);
   }
-  // Adds a new <delete> route to the 'nominal' router structures
+  //! @brief Adds an string-based DELETE route handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandler is just an alias for
+  //! std::function<void(const Request&, Response&)><br>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp DELETE
   void Delete(const std::string& route,
               const RoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kDelete);
   }
-  // Adds a new <delete> route to the 'nominal' router structures
+  //! @brief Adds an string-based DELETE route extended handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The extended function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! std::function<void(const Request&, Response&, const Parameters&)><br>
+  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! std::string>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp DELETE-EXTENDED
   void Delete(const std::string& route,
               const RoutingHandlerExtended& handler_extended) override {
     Handle(route, handler_extended, constants::Methods::kDelete);
   }
-  // Adds a new <trace> route to the 'nominal' router structures
+  //! @brief Adds an string-based TRACE route handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandler is just an alias for
+  //! std::function<void(const Request&, Response&)><br>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp TRACE
   void Trace(const std::string& route, const RoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kTrace);
   }
-  // Adds a new <trace> route to the 'nominal' router structures
+  //! @brief Adds an string-based TRACE route extended handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The extended function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! std::function<void(const Request&, Response&, const Parameters&)><br>
+  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! std::string>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp TRACE-EXTENDED
   void Trace(const std::string& route,
              const RoutingHandlerExtended& handler_extended) override {
     Handle(route, handler_extended, constants::Methods::kTrace);
   }
-  // Adds a new <connect> route to the 'nominal' router structures
+  //! @brief Adds an string-based CONNECT route handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandler is just an alias for
+  //! std::function<void(const Request&, Response&)><br>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp CONNECT
   void Connect(const std::string& route,
                const RoutingHandler& handler) override {
     Handle(route, handler, constants::Methods::kConnect);
   }
-  // Adds a new <connect> route to the 'nominal' router structures
+  //! @brief Adds an string-based CONNECT route extended handler to the server
+  //! @param[in] route The route path to add
+  //! @param[in] handler The extended function performing the logic
+  //! @throws std::logic_error If user tries to add handlers while server is up
+  //! and running
+  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! std::function<void(const Request&, Response&, const Parameters&)><br>
+  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! std::string>
+  //! @section Example
+  //! @snippet network/http_server_handler_shortcut.cpp CONNECT-EXTENDED
   void Connect(const std::string& route,
                const RoutingHandlerExtended& handler_extended) override {
     Handle(route, handler_extended, constants::Methods::kConnect);
   }
-  // Returns server currently stored date.
+  //! @brief Returns currently stored server local datetime
+  //! @return The currently stored local datetime 
+  //! @section Example
+  //! @snippet network/http_server_hello_world.cpp GetCurrentDate
   std::string GetCurrentDate() const {
     std::unique_lock<std::mutex> sync_protection(date_buffer_mutex);
     return std::string(date_buffer_);

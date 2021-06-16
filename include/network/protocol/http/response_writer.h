@@ -58,17 +58,20 @@ class ResponseWriter {
   // METHODs                                                          ( public )
   //
   // Tries to fill-up response object with the specified configuration.
+  template <typename... PAty>
   static Response& Prepare(Response& res, const base::AutoBuffer& buffer,
-                           const std::string& content_type) {
-    response_writers::Default().Write(res, buffer);
+                           const std::string& content_type,
+                           const PAty&... response_writer_parameters) {
+    response_writers::Default(response_writer_parameters...).Write(res, buffer);
     res.Headers.Set(constants::Headers::kContentType, content_type);
     return res;
   }
   // Tries to fill-up response object with the specified configuration.
-  template <typename WRty>
+  template <typename WRty, typename... PAty>
   static Response& Prepare(Response& res, const base::AutoBuffer& buffer,
-                           const std::string& content_type) {
-    WRty().Write(res, buffer);
+                           const std::string& content_type,
+                           const PAty&... response_writer_parameters) {
+    WRty(response_writer_parameters...).Write(res, buffer);
     res.Headers.Set(constants::Headers::kContentType, content_type);
     return res;
   }
@@ -96,11 +99,13 @@ class ResponseWriter {
     return Prepare<WRty>(res, serializable.Serialize(), writer, content_type);
   }
   // Tries to fill-up response object with the serializable content
-  template <typename WRty>
+  template <typename WRty, typename... PAty>
   static Response& Prepare(Response& res,
                            const base::Serializable& serializable,
-                           const std::string& content_type) {
-    return Prepare<WRty>(res, serializable.Serialize(), content_type);
+                           const std::string& content_type,
+                           const PAty&... response_writer_parameters) {
+    return Prepare<WRty>(res, serializable.Serialize(), content_type,
+                         response_writer_parameters...);
   }
 };
 }  // namespace koobika::hook::network::protocol::http

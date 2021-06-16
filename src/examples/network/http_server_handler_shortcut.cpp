@@ -40,11 +40,134 @@ using namespace koobika::hook::network::protocol::http;
 int main() {
   try {
     auto server = ServerBuilder().Build();
-    // Let's configure our server to handle <GET> requests over '/foo/bar' uri..
+    //! [GET]
     server->Get("/foo/bar", [](const Request& req, Response& res) {
-      res.Body.Write("Hello, World!");
+      res.Body.Write("GET based route!");
       res.Ok_200();
     });
+    //! [GET]
+    //! [GET-EXTENDED]
+    server->Get("/{a}/{b}/{c}", [](const Request& req, Response& res,
+                                   const Parameters& parameters) {
+      for (auto const& parameter : parameters) {
+        std::cout << parameter.first << ": " << parameter.second << std::endl;
+      }
+      res.Body.Write("GET based route using extended parameters!");
+      res.Ok_200();
+    });
+    //! [GET-EXTENDED]
+    //! [PUT]
+    server->Put("/foo/bar", [](const Request& req, Response& res) {
+      res.Body.Write("PUT based route!");
+      res.Ok_200();
+    });
+    //! [PUT]
+    //! [PUT-EXTENDED]
+    server->Put("/{a}/{b}/{c}", [](const Request& req, Response& res,
+                                   const Parameters& parameters) {
+      for (auto const& parameter : parameters) {
+        std::cout << parameter.first << ": " << parameter.second << std::endl;
+      }
+      res.Body.Write("PUT based route using extended parameters!");
+      res.Ok_200();
+    });
+    //! [PUT-EXTENDED]
+    //! [POST]
+    server->Post("/foo/bar", [](const Request& req, Response& res) {
+      res.Body.Write("POST based route!");
+      res.Ok_200();
+    });
+    //! [POST]
+    //! [POST-EXTENDED]
+    server->Post("/{a}/{b}/{c}", [](const Request& req, Response& res,
+                                    const Parameters& parameters) {
+      for (auto const& parameter : parameters) {
+        std::cout << parameter.first << ": " << parameter.second << std::endl;
+      }
+      res.Body.Write("POST based route using extended parameters!");
+      res.Ok_200();
+    });
+    //! [POST-EXTENDED]
+    //! [DELETE]
+    server->Delete("/foo/bar", [](const Request& req, Response& res) {
+      res.Body.Write("DELETE based route!");
+      res.Ok_200();
+    });
+    //! [DELETE]
+    //! [DELETE-EXTENDED]
+    server->Delete("/{a}/{b}/{c}", [](const Request& req, Response& res,
+                                      const Parameters& parameters) {
+      for (auto const& parameter : parameters) {
+        std::cout << parameter.first << ": " << parameter.second << std::endl;
+      }
+      res.Body.Write("DELETE based route using extended parameters!");
+      res.Ok_200();
+    });
+    //! [DELETE-EXTENDED]
+    //! [OPTIONS]
+    server->Options("/foo/bar", [](const Request& req, Response& res) {
+      res.Body.Write("OPTIONS based route!");
+      res.Ok_200();
+    });
+    //! [OPTIONS]
+    //! [OPTIONS-EXTENDED]
+    server->Options("/{a}/{b}/{c}", [](const Request& req, Response& res,
+                                       const Parameters& parameters) {
+      for (auto const& parameter : parameters) {
+        std::cout << parameter.first << ": " << parameter.second << std::endl;
+      }
+      res.Body.Write("OPTIONS based route using extended parameters!");
+      res.Ok_200();
+    });
+    //! [OPTIONS-EXTENDED]
+    //! [HEAD]
+    server->Head("/foo/bar", [](const Request& req, Response& res) {
+      res.Body.Write("HEAD based route!");
+      res.Ok_200();
+    });
+    //! [HEAD]
+    //! [HEAD-EXTENDED]
+    server->Head("/{a}/{b}/{c}", [](const Request& req, Response& res,
+                                    const Parameters& parameters) {
+      for (auto const& parameter : parameters) {
+        std::cout << parameter.first << ": " << parameter.second << std::endl;
+      }
+      res.Body.Write("HEAD based route using extended parameters!");
+      res.Ok_200();
+    });
+    //! [HEAD-EXTENDED]
+    //! [TRACE]
+    server->Trace("/foo/bar", [](const Request& req, Response& res) {
+      res.Body.Write("TRACE based route!");
+      res.Ok_200();
+    });
+    //! [TRACE]
+    //! [TRACE-EXTENDED]
+    server->Trace("/{a}/{b}/{c}", [](const Request& req, Response& res,
+                                     const Parameters& parameters) {
+      for (auto const& parameter : parameters) {
+        std::cout << parameter.first << ": " << parameter.second << std::endl;
+      }
+      res.Body.Write("TRACE based route using extended parameters!");
+      res.Ok_200();
+    });
+    //! [TRACE-EXTENDED]
+    //! [CONNECT]
+    server->Connect("/foo/bar", [](const Request& req, Response& res) {
+      res.Body.Write("CONNECT based route!");
+      res.Ok_200();
+    });
+    //! [CONNECT]
+    //! [CONNECT-EXTENDED]
+    server->Connect("/{a}/{b}/{c}", [](const Request& req, Response& res,
+                                       const Parameters& parameters) {
+      for (auto const& parameter : parameters) {
+        std::cout << parameter.first << ": " << parameter.second << std::endl;
+      }
+      res.Body.Write("CONNECT based route using extended parameters!");
+      res.Ok_200();
+    });
+    //! [CONNECT-EXTENDED]
     server->Start("8080");
     return getchar();
   } catch (const std::exception& exception) {

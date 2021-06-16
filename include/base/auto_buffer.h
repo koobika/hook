@@ -390,7 +390,7 @@ class AutoBuffer {
   // Stores the information withing this AutoBuffer.
   mutable Data data_;
   // Temporary storage.
-  char tmp_buffer_[kChunkSize];
+  char tmp_buffer_[kChunkSize] = {0};
 };
 }  // namespace koobika::hook::base
 

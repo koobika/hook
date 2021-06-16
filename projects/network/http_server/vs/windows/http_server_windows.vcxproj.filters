@@ -107,6 +107,9 @@
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_response_writer_transfer_encoding.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_builder.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\include\auth\controller_base.h">

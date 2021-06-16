@@ -33,15 +33,19 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
+#include "structured/json/value.h"
 #include "network/protocol/http/server_builder.h"
 
 using namespace koobika::hook::network::protocol::http;
+using namespace koobika::hook::structured;
 using namespace koobika::hook::base;
 
 // This custom serializable class will allow us to perform specific dumps!
 class MyClass : public Serializable {
  public:
-  AutoBuffer Serialize() const override { return "This is my custom content!"; }
+  AutoBuffer Serialize() const override {
+    return json::Object{{"Hello", "World!"}}.Serialize();
+  }
 };
 
 int main() {

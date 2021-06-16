@@ -33,8 +33,10 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
+#include "structured/json/value.h"
 #include "network/protocol/http/server_builder.h"
 
+using namespace koobika::hook::structured;
 using namespace koobika::hook::network::protocol::http;
 
 int main() {
@@ -43,7 +45,7 @@ int main() {
     server->Handle("/foo/bar", [](const Request& req, Response& res) {
       if (req.Method.IsGet()) {
         ResponseWriter::Prepare<response_writers::TransferEncoding>(
-            res, "Hello, World!", constants::Mime::kTXT)
+            res, json::Array{"Hello, ", "World!"}, constants::Mime::kTXT)
             .Ok_200();
       } else {
         ResponseWriter::Prepare<response_writers::Default>(

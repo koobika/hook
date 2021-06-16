@@ -44,8 +44,9 @@ int main() {
     server->Handle("/foo/bar", [](const Request& req, Response& res) {
       if (req.Method.IsGet()) {
         ResponseWriter::Prepare(
-            res, json::Object{{"koobika", json::Array{"hook rules...", 123.45}}}
-                     .Serialize(), constants::Mime::kJSON)
+            res,
+            json::Object{{"koobika", json::Array{"hook rules...", 123.45}}},
+            constants::Mime::kJSON)
             .Ok_200();
       } else {
         ResponseWriter::Prepare(res, "Not supported!", constants::Mime::kTXT)

@@ -33,11 +33,12 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
+//! [Example]
 #include "network/protocol/http/server_builder.h"
 
 using namespace koobika::hook::network::protocol::http;
 
-// This is our custom controller with only one handler!
+// This is our custom controller with two different (GET|PUT) handlers!
 class CustomController : public RoutesController<> {
  protected:
   // This |GET| handler will return the 'Hello, Controller World!' message!
@@ -66,3 +67,4 @@ int main() {
     return -1;
   }
 }
+//! [Example]

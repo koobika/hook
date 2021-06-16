@@ -42,24 +42,26 @@
 #include "network/transport/server_constants.h"
 
 namespace koobika::hook::network::protocol::http {
-// =============================================================================
-// ServerBuilder                                                       ( class )
-// -----------------------------------------------------------------------------
-// This class is in charge of providing the http server builder
-// =============================================================================
+//! @brief This is the HTTPServer builder helper class
 class ServerBuilder : public base::Builder<Server> {
  public:
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
   //
-  // Builds the target httpserver object.
+  //! @brief Builds the configured HTTPServer object
+  //! @return An instance of the HTTPServer
+  //! @remarks
+  //! List of available properties:
+  //! - <em>NumberOfWorkers</em> The number of threads to create while handling I/O communications
+  //! @section Example
+  //! @snippet network/http_server_builder.cpp Example
   std::shared_ptr<Server> Build() const override {
     return std::make_shared<Server>(NumberOfWorkers);
   }
   // ___________________________________________________________________________
   // PROPERTIEs                                                       ( public )
   //
-  // By default, we will choose the total number of available cores.
+  //! @private
   base::BuilderProperty<unsigned int, ServerBuilder> NumberOfWorkers{
       this, std::thread::hardware_concurrency()};
 };
