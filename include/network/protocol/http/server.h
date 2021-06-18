@@ -44,9 +44,11 @@
 #include "network/transport/tcpip/server.h"
 
 namespace koobika::hook::network::protocol::http {
-//! @brief This is the default HTTPServer implementation module using
+//! @brief Http server default provided implementation module using
 //! <b>socket-based TCP/IP</b> transport, <b>HTTP1.1</b> request decoder and the
-//! <b>default provided</b> router. Offering for the following functionalities:
+//! <b>default provided</b> router. 
+//! 
+//! Offering for the following functionalities:
 //! - Leading in performance, even in highly demanding scenarios (e.g.: thousand
 //! of simultaneous clients)
 //! - Full routing capabilities (both string and regular-expressions based

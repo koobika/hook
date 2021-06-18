@@ -76,7 +76,7 @@ class Mime {
   // Doc: Microsoft Word | application/msword.
   static constexpr char kDOC[] = "application/msword";
   // Docx: Microsoft Word (OpenXML)
-  //  application/vnd.openxmlformats-officedocument.wordprocessingml.document.
+  // application/vnd.openxmlformats-officedocument.wordprocessingml.document.
   static constexpr char kDOCX[] =
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
   // Eot: MS Embedded OpenType fonts | application/vnd.ms-fontobject.
@@ -102,9 +102,9 @@ class Mime {
   // Jpeg: JPEG images | image/jpeg.
   static constexpr char kJPEG[] = "image/jpeg";
   // Js: JavaScript | text/javascript, per the following specifications:
-  //  https://html.spec.whatwg.org/multipage/#scriptingLanguages
-  //  https://html.spec.whatwg.org/multipage/#dependencies:willful-violation
-  //  https://datatracker.ietf.org/doc/draft-ietf-dispatch-javascript-mjs/
+  // https://html.spec.whatwg.org/multipage/#scriptingLanguages
+  // https://html.spec.whatwg.org/multipage/#dependencies:willful-violation
+  // https://datatracker.ietf.org/doc/draft-ietf-dispatch-javascript-mjs/
   static constexpr char kJS[] = "text/javascript";
   // Json: JSON format | application/json.
   static constexpr char kJSON[] = "application/json";
@@ -125,15 +125,14 @@ class Mime {
   // Mpkg: Apple Installer Package | application/vnd.apple.installer+xml.
   static constexpr char kMPKG[] = "application/vnd.apple.installer+xml";
   // Odp: OpenDocument presentation document |
-  //  application/vnd.oasis.opendocument.presentation.
+  // application/vnd.oasis.opendocument.presentation.
   static constexpr char kODP[] =
       "application/vnd.oasis.opendocument.presentation";
   // Ods: OpenDocument spreadsheet document |
-  //  application/vnd.oasis.opendocument.spreadsheet.
+  // application/vnd.oasis.opendocument.spreadsheet.
   static constexpr char kODS[] =
       "application/vnd.oasis.opendocument.spreadsheet";
-  // Odt: OpenDocument text document |
-  //  application/vnd.oasis.opendocument.text.
+  // Odt: OpenDocument text document | application/vnd.oasis.opendocument.text.
   static constexpr char kODT[] = "application/vnd.oasis.opendocument.text";
   // Oga: OGG audio | audio/ogg.
   static constexpr char kOGA[] = "audio/ogg";
@@ -154,7 +153,7 @@ class Mime {
   // Ppt: Microsoft PowerPoint | application/vnd.ms-powerpoint.
   static constexpr char kPPT[] = "application/vnd.ms-powerpoint";
   // Pptx: Microsoft PowerPoint (OpenXML) |
-  //  application/vnd.openxmlformats-officedocument.presentationml.presentation.
+  // application/vnd.openxmlformats-officedocument.presentationml.presentation.
   static constexpr char kPPTX[] =
       "application/"
       "vnd.openxmlformats-officedocument.presentationml.presentation";
@@ -167,7 +166,7 @@ class Mime {
   // Svg: Scalable Vector Graphics (SVG) | image/svg+xml.
   static constexpr char kSVG[] = "image/svg+xml";
   // Swf: Small web format (SWF) or Adobe Flash document |
-  //  application/x-shockwave-flash.
+  // application/x-shockwave-flash.
   static constexpr char kSWF[] = "application/x-shockwave-flash";
   // Tar: Tape Archive (TAR) | application/x-tar.
   static constexpr char kTAR[] = "application/x-tar";
@@ -199,24 +198,23 @@ class Mime {
   // Xls: Microsoft Excel | application/vnd.ms-excel.
   static constexpr char kXLS[] = "application/vnd.ms-excel";
   // Xlsx: Microsoft Excel (OpenXML) |
-  //  application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.
+  // application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.
   static constexpr char kXLSX[] =
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-  // Xml: XML | application/xml
-  //  if not readable from casual users (RFC 3023, section 3) text/xml
-  //  if readable from casual users (RFC 3023, section 3).
+  // Xml: XML | application/xml if not readable from casual users (RFC 3023,
+  // section 3) text/xml if readable from casual users (RFC 3023, section 3).
   static constexpr char kXMLNONREADABLE[] = "application/xml";
   static constexpr char kXMLREADABLE[] = "text/xml";
   // Xul: XUL | application/vnd.mozilla.xul+xml.
   static constexpr char kXUL[] = "application/vnd.mozilla.xul+xml";
   // Zip: ZIP archive | application/zip.
   static constexpr char kZIP[] = "application/zip";
-  // 3gp: 3GPP audio/video container | video/3gpp audio/3gpp
-  //  if it doesn't contain video.
+  // 3gp: 3GPP audio/video container | video/3gpp audio/3gpp if it doesn't
+  // contain video.
   static constexpr char k3GP[] = "video/3gpp";
   static constexpr char k3GPNOVIDEO[] = "audio/3gpp";
-  // 3g2: 3GPP2 audio/video container | video/3gpp2 audio/3gpp2
-  //  if it doesn't contain video.
+  // 3g2: 3GPP2 audio/video container | video/3gpp2 audio/3gpp2 if it doesn't
+  // contain video.
   static constexpr char k3G2[] = "video/3gpp2";
   static constexpr char k3G2NOVIDEOS[] = "audio/3gpp2";
   // 7z: 7-zip archive | application/x-7z-compressed.

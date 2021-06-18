@@ -12,7 +12,7 @@
 //      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
 //          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// network/transport/server_constants.h
+// examples/network/http_server_raw_response.cpp
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -33,22 +33,26 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_transport_serverconstants_h
-#define koobika_hook_network_transport_serverconstants_h
+#include "network/protocol/http/server_builder.h"
 
-#include <cstddef>
+using namespace koobika::hook::network::protocol::http;
 
-namespace koobika::hook::network::transport {
-//! @brief Server transport constants
-struct ServerConstants {
-  // ___________________________________________________________________________
-  // CONSTANTs                                                        ( public )
-  // 
-  //! @brief Key to store port data within the server configuration
-  static constexpr char kPortKey[] = "port";
-  //! @brief Key to store number of workers within the server configuration
-  static constexpr char kNumberOfWorkersKey[] = "number_of_workers";
-};
-}  // namespace koobika::hook::network::transport
-
-#endif
+int main() {
+  try {
+    auto server = ServerBuilder().Build();
+    //! [Example]
+    server->Handle("/foo/bar", [server](const Request& req, Response& res) {
+      res.Raw.Write(
+          "HTTP/1.1 200 OK\r\nServer: Example\r\nContent-Type: "
+          "text/plain\r\nDate: Mon, 02 Jan 2006 15:04:05 "
+          "GMT\r\nContent-Length: 13\r\n\r\nHello, World!");
+    });
+    //! [Example]
+    server->Start("8080");
+    return getchar();
+  } catch (const std::exception& exception) {
+    // ((Error)) -> while performing setup!
+    std::cout << exception.what() << std::endl;
+    return -1;
+  }
+}

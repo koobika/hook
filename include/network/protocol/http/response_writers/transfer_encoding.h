@@ -40,24 +40,56 @@
 #include "network/protocol/http/response.h"
 
 namespace koobika::hook::network::protocol::http::response_writers {
-// =============================================================================
-// TransferEncoding                                                    ( class )
-// -----------------------------------------------------------------------------
-// This specification holds for the transfer-encoding http response writer class
-// =============================================================================
+//! @brief Http transfer encoding writer
 class TransferEncoding {
  public:
   // ___________________________________________________________________________
   // CONSTANTs                                                        ( public )
   //
+  //! @brief Data is sent in a series of chunks. The <em>Content-Length</em>
+  //! header is omitted in this case and at the beginning of each chunk you
+  //! need to add the length of the current chunk in hexadecimal format,
+  //! followed by
+  //! '\\r\\n' and then the chunk itself, followed by another '\\r\\n'. The
+  //! terminating chunk is a regular chunk, with the exception that its length
+  //! is zero. It is followed by the trailer, which consists of a (possibly
+  //! empty) sequence of header fields.
   static constexpr int kChunked = 1;
+  //! @brief A format using the <em>Lempel-Ziv-Welch</em>
+  //! (https://en.wikipedia.org/wiki/LZW) LZW algorithm. The value name was
+  //! taken from the UNIX compress program, which implemented this algorithm.
+  //! Like the compress program, which has disappeared from most UNIX
+  //! distributions, this content - encoding is used by almost no browsers
+  //! today, partly because of a patent issue(which expired in 2003).
   static constexpr int kCompress = 2;
+  //! @brief Using the <em>zlib</em> (https://en.wikipedia.org/wiki/Zlib)
+  //! structure (defined in RFC 1950 ->
+  //! https://datatracker.ietf.org/doc/html/rfc1950), with the deflate
+  //! (https://en.wikipedia.org/wiki/DEFLATE) compression algorithm (defined
+  //! in RFC 1951 -> https://datatracker.ietf.org/doc/html/rfc1952).
   static constexpr int kDeflate = 4;
+  //! @brief A format using the <em>Lempel-Ziv</em>
+  //! (https://en.wikipedia.org/wiki/LZ77_and_LZ78#LZ77) coding (LZ77), with a
+  //! 32-bit CRC. This is originally the format of the UNIX gzip program. The
+  //! HTTP/1.1 standard also recommends that the servers supporting this
+  //! content-encoding should recognize x-gzip as an alias, for compatibility
+  //! purposes.
   static constexpr int kGzip = 8;
+  //! @brief Indicates the identity function(i.e.no compression, nor
+  //! modification).This token, except if explicitly specified, is always
+  //! deemed acceptable.
   static constexpr int kIdentity = 16;
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )
   //
+  //! @brief Creates a transfer encoding object instance using the provided
+  //! configuration flags.
+  //! @param[in] flags configuration flags. A combination of <em>kChunked</em>,
+  //! <em>kCompress</em>, <em>kDeflate</em>, <em>kGzip</em> and
+  //! <em>kIdentity</em> values.
+  //! @see TransferEncoding::kChunked TransferEncoding::kCompress
+  //! TransferEncoding::kDeflate TransferEncoding::kGzip
+  //! TransferEncoding::kIdentity
   TransferEncoding(const int& flags = kChunked) : flags_{flags} {}
   TransferEncoding(const TransferEncoding&) = default;
   TransferEncoding(TransferEncoding&&) noexcept = default;
@@ -70,19 +102,96 @@ class TransferEncoding {
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
   //
-  // Enables chunked mode!
+  //! @brief Enables chunked mode
+  //! @returns TransferEncoding& current object reference
+  //! @see TransferEncoding::kChunked
   TransferEncoding& EnableChunked() {
     flags_ |= kChunked;
     return *this;
   }
-  // Disables chunked mode!
+  //! @brief Disables chunked mode
+  //! @returns TransferEncoding& current object reference
+  //! @see TransferEncoding::kChunked
   TransferEncoding& DisableChunked() {
     flags_ &= ~kChunked;
     return *this;
   }
-  // Writes content to an auto-buffer without performing formatting.
+  //! @brief Enables compress mode
+  //! @returns TransferEncoding& current object reference
+  //! @see TransferEncoding::kCompress
+  //! @remarks <b>Currently NOT supported</b>
+  TransferEncoding& EnableCompress() {
+    flags_ |= kCompress;
+    return *this;
+  }
+  //! @brief Disables compress mode
+  //! @returns TransferEncoding& current object reference
+  //! @see TransferEncoding::kCompress
+  //! @remarks <b>Currently NOT supported</b>
+  TransferEncoding& DisableCompress() {
+    flags_ &= ~kCompress;
+    return *this;
+  }
+  //! @brief Enables deflate mode
+  //! @returns TransferEncoding& current object reference
+  //! @see TransferEncoding::kDeflate
+  //! @remarks <b>Currently NOT supported</b>
+  TransferEncoding& EnableDeflate() {
+    flags_ |= kDeflate;
+    return *this;
+  }
+  //! @brief Disables deflate mode
+  //! @returns TransferEncoding& current object reference
+  //! @see TransferEncoding::kDeflate
+  //! @remarks <b>Currently NOT supported</b>
+  TransferEncoding& DisableDeflate() {
+    flags_ &= ~kCompress;
+    return *this;
+  }
+  //! @brief Enables gzip mode
+  //! @returns TransferEncoding& current object reference
+  //! @see TransferEncoding::kGzip
+  //! @remarks <b>Currently NOT supported</b>
+  TransferEncoding& EnableGzip() {
+    flags_ |= kGzip;
+    return *this;
+  }
+  //! @brief Disables gzip mode
+  //! @returns TransferEncoding& current object reference
+  //! @see TransferEncoding::kGzip
+  //! @remarks <b>Currently NOT supported</b>
+  TransferEncoding& DisableGzip() {
+    flags_ &= ~kGzip;
+    return *this;
+  }
+  //! @brief Enables identity mode
+  //! @returns TransferEncoding& current object reference
+  //! @see TransferEncoding::kIdentity
+  TransferEncoding& EnableIdentity() {
+    flags_ |= kIdentity;
+    return *this;
+  }
+  //! @brief Disables identity mode
+  //! @returns TransferEncoding& current object reference
+  //! @see TransferEncoding::kIdentity
+  TransferEncoding& DisableIdentity() {
+    flags_ &= ~kGzip;
+    return *this;
+  }
+  //! @brief Writes content provided by <em>buffer</em> to the <em>res</em>
+  //! object using Transfer-Encoding mode
+  //! @param[out] res Response to update
+  //! @param[in] buffer Autobuffer containing the data to write
+  //! @remarks <b>kCompress, kDeflate and kGzip modes currently NOT
+  //! supported</b>
+  //! @section Example
+  //! @snippet network/http_server_response_builder_transfer_encoding.cpp Ex
   void Write(http::Response& res, const base::AutoBuffer& buffer) const {
     bool using_compression = false;
+    if (flags_ & kIdentity) {
+      res.Body.Write(buffer);
+      return;
+    }
     if (flags_ & kCompress) {
       using_compression = true;
       // ((To-Do)) -> implement it!
@@ -122,7 +231,7 @@ class TransferEncoding {
   static constexpr char kChunkedStr[] = "chunked";
   // ___________________________________________________________________________
   // ATTRIBUTEs                                                       ( public )
-  // 
+  //
   int flags_;
   std::size_t chunk_size_ = kDefaultChunkSize;
 };

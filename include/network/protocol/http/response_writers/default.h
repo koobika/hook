@@ -40,11 +40,7 @@
 #include "network/protocol/http/response.h"
 
 namespace koobika::hook::network::protocol::http::response_writers {
-// =============================================================================
-// Default                                                             ( class )
-// -----------------------------------------------------------------------------
-// This specification holds for the default http response writer class
-// =============================================================================
+//! @brief Http default writer
 class Default {
  public:
   // ___________________________________________________________________________
@@ -62,7 +58,12 @@ class Default {
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
   //
-  // Writes content to an auto-buffer without performing formatting.
+  //! @brief Writes content provided by <em>buffer</em> to the <em>res</em>
+  //! object using no special encoding (Content-Length based)
+  //! @param[out] res Response to update
+  //! @param[in] buffer Autobuffer containing the data to write
+  //! @section Example
+  //! @snippet network/http_server_response_builder_transfer_encoding.cpp Ex
   void Write(http::Response& res, const base::AutoBuffer& buffer) const {
     res.Headers.Set(constants::Headers::kContentLength, buffer.Length());
     res.Body = buffer;

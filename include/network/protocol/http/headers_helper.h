@@ -47,11 +47,7 @@
 #include "constants/strings.h"
 
 namespace koobika::hook::network::protocol::http {
-// =============================================================================
-// HeadersHelper                                                       ( class )
-// -----------------------------------------------------------------------------
-// This class is in charge of providing the http headers class.
-// =============================================================================
+//! @brief Http headers (helper) class
 class HeadersHelper {
  public:
   // ___________________________________________________________________________
@@ -66,16 +62,24 @@ class HeadersHelper {
   //
   HeadersHelper& operator=(const HeadersHelper&) = default;
   HeadersHelper& operator=(HeadersHelper&&) noexcept = default;
-  const std::string& operator[](const std::string& key) { return Get(key); }
+  //! @brief Gets the (modifiable) associated field value identified by the
+  //! provided key. Header field keys are <em>case-insensitive</em>.
+  //! @param[in] key Header field key
+  std::string& operator[](const std::string& key) { return Get(key); }
+  //! @brief Gets the (non-modifiable) associated field value identified by the
+  //! provided key. Header field keys are <em>case-insensitive</em>.
+  //! @param[in] key Header field key
   const std::string& operator[](const std::string& key) const {
     return Get(key);
   }
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
   //
-  // Cleans up all stored information.
+  //! @brief Cleans up all currently stored information
   void Clear() { map_.clear(); }
-  // Sets headers content from specified string.
+  //! @brief Sets headers content from the specified memory buffer
+  //! @param[in] str C-string memory buffer
+  //! @param[in] len Memory buffer length
   void From(const char* str, const std::size_t& len) {
     auto ptr = str;
     auto end = ptr + len;
@@ -109,31 +113,47 @@ class HeadersHelper {
       ptr++;
     }
   }
-  // Sets a header entry (templated version).
+  //! @brief Sets a header field content
+  //! @tparam DAty Datatype to be set (it must be convertible to std::string)
+  //! @param[in] name Header field name
+  //! @param[in] value Header field value
   template <typename DAty>
   void Set(const char* name, const DAty& value) {
     Set(name, std::to_string(value).c_str());
   }
-  // Sets a header entry.
+  //! @brief Sets a header field content
+  //! @param[in] name Header field name
+  //! @param[in] value Header field value
   void Set(const char* name, const std::string& value) {
     Set(name, value.c_str());
   }
-  // Sets a header entry.
+  //! @brief Sets a header field content
+  //! @param[in] name Header field name
+  //! @param[in] value Header field value
   void Set(const char* name, const char* value) { map_[name] = value; }
-  // Sets a header entry.
+  //! @brief Sets a header field content
+  //! @param[in] name Header field name
+  //! @param[in] value Header field value
   void Set(const std::string& name, const std::string& value) {
     Set(name.c_str(), value.c_str());
   }
-  // Adds a header entry (templated version).
+  //! @brief Adds content to a header field
+  //! @tparam DAty Datatype to be added (it must be convertible to std::string)
+  //! @param[in] name Header field name
+  //! @param[in] value Header field value
   template <typename DAty>
   void Add(const char* name, const DAty& value) {
     Add(name, std::to_string(value).c_str());
   }
-  // Adds a header entry.
+  //! @brief Adds content to a header field
+  //! @param[in] name Header field name
+  //! @param[in] value Header field value
   void Add(const char* name, const std::string& value) {
     Add(name, value.c_str());
   }
-  // Adds a header entry.
+  //! @brief Adds content to a header field
+  //! @param[in] name Header field name
+  //! @param[in] value Header field value
   void Add(const char* name, const char* value) {
     auto itr = map_.find(name);
     if (itr != map_.end()) {
@@ -142,9 +162,13 @@ class HeadersHelper {
     }
     Set(name, value);
   }
-  // Returns header entry using its name (const reference&).
+  //! @brief Gets the (modifiable) associated field value identified by the
+  //! provided name. Header field keys are <em>case-insensitive</em>.
+  //! @param[in] name Header field name
   std::string& Get(const std::string& name) { return Get(name.c_str()); }
-  // Returns header entry using its name (const reference&).
+  //! @brief Gets the (modifiable) associated field value identified by the
+  //! provided name. Header field keys are <em>case-insensitive</em>.
+  //! @param[in] name Header field name
   std::string& Get(const char* name) {
     auto itr = map_.find(name);
     if (itr == map_.end()) {
@@ -153,11 +177,15 @@ class HeadersHelper {
     }
     return map_.find(name)->second;
   }
-  // Returns header entry using its name (const reference&).
+  //! @brief Gets the (non-modifiable) associated field value identified by the
+  //! provided name. Header field keys are <em>case-insensitive</em>.
+  //! @param[in] name Header field name
   const std::string& Get(const std::string& name) const {
     return Get(name.c_str());
   }
-  // Returns header entry using its name (const reference&).
+  //! @brief Gets the (non-modifiable) associated field value identified by the
+  //! provided name. Header field keys are <em>case-insensitive</em>.
+  //! @param[in] name Header field name
   const std::string& Get(const char* name) const {
     auto const itr = map_.find(name);
     if (itr == map_.end()) {
@@ -166,11 +194,14 @@ class HeadersHelper {
     }
     return map_.find(name)->second;
   }
-  // Checks for the specified header entry (using its name).
+  //! @brief Checks if the specified field name exists
+  //! @param[in] name Header field name
+  //! @returns bool <em>true</em> if exists <em>false</em> otherwise
   bool Exist(const std::string& name) const {
     return map_.find(name) != map_.end();
   }
-  // Dumps internal content to the specified string.
+  //! @brief Dumps internal content to the specified string
+  //! @param[out] out Autobuffer containing string-based serialized content.
   void DumpTo(base::AutoBuffer& out) const {
     for (auto const& field : map_) {
       out.Write(field.first)

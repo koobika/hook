@@ -45,7 +45,6 @@
 #include "network/protocol/http/constants/headers.h"
 #include "network/protocol/http/constants/limits.h"
 #include "network/protocol/http/constants/strings.h"
-#include "network/protocol/http/encoding_type.h"
 #include "network/protocol/http/request.h"
 #include "network/protocol/http/response.h"
 #include "network/transport/server_decoder.h"
@@ -57,6 +56,15 @@ namespace koobika::hook::network::protocol::http::v11 {
 // This class is in charge of providing the default http request decoder class.
 // =============================================================================
 class RequestDecoder : public transport::ServerDecoder<Request, Response> {
+  // ___________________________________________________________________________
+  // TYPEs                                                           ( private )
+  //
+  enum class EncodingType {
+    kNone,              // Data has no encoding type (not available).
+    kContentLength,     // Data is being encoded using 'Content-Length' type.
+    kTransferEncoding,  // Data is being encoded using 'Transfer-Encoding'.
+    kMultipart          // Data is being endoded as 'Multipart'.
+  };
  public:
   // ___________________________________________________________________________
   // CONSTRUCTORs/DESTRUCTORs                                         ( public )

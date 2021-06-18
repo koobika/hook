@@ -12,7 +12,7 @@
 //      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
 //          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// network/transport/server_constants.h
+// examples/network/http_server_response_builder_transfer_encoding.cpp
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -33,22 +33,33 @@
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-#ifndef koobika_hook_network_transport_serverconstants_h
-#define koobika_hook_network_transport_serverconstants_h
+#include "structured/json/value.h"
+#include "network/protocol/http/server_builder.h"
 
-#include <cstddef>
+using namespace koobika::hook::structured;
+using namespace koobika::hook::network::protocol::http;
 
-namespace koobika::hook::network::transport {
-//! @brief Server transport constants
-struct ServerConstants {
-  // ___________________________________________________________________________
-  // CONSTANTs                                                        ( public )
-  // 
-  //! @brief Key to store port data within the server configuration
-  static constexpr char kPortKey[] = "port";
-  //! @brief Key to store number of workers within the server configuration
-  static constexpr char kNumberOfWorkersKey[] = "number_of_workers";
-};
-}  // namespace koobika::hook::network::transport
-
-#endif
+//! [Ex]
+int main() {
+  try {
+    auto server = ServerBuilder().Build();
+    server->Handle("/foo/bar", [](const Request& req, Response& res) {
+      if (req.Method.IsGet()) {
+        ResponseBuilder::Build<response_writers::TransferEncoding>(
+            res, json::Array{"Hello, ", "World!"}, constants::Mime::kTXT)
+            .Ok_200();
+      } else {
+        ResponseBuilder::Build<response_writers::Default>(
+            res, "Requested method is not supported!", constants::Mime::kTXT)
+            .Forbidden_403();
+      }
+    });
+    server->Start("8080");
+    return getchar();
+  } catch (const std::exception& exception) {
+    // ((Error)) -> while performing setup!
+    std::cout << exception.what() << std::endl;
+    return -1;
+  }
+}
+//! [Ex]

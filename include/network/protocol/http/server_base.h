@@ -47,15 +47,16 @@
 #include "auth/modules/no_auth.h"
 #include "constants/methods.h"
 #include "routes_controller.h"
-#include "response_writer.h"
+#include "response_builder.h"
 #include "router.h"
 #include "network/transport/server_constants.h"
 #include "structured/json/value.h"
 #include "constants/limits.h"
 
 namespace koobika::hook::network::protocol::http {
-//! @brief This is the HTTPServer base templated class neededing for the
-//! following parameters:
+//! @brief Http server (templated) base class
+//! 
+//! Needing for the following parameters:
 //! @tparam TRty Transport type being used [requires: ServerTransport
 //! interface implementation]
 //! @tparam ROty Router type being used [requires: RoutesManager,
@@ -193,7 +194,7 @@ class ServerBase : public RoutesManager {
   //! @param[in] method The method type being handled
   //! @throws std::logic_error If user tries to add handlers while server is up and running
   //! @see constants::Methods
-  //! @remarks \a RoutingHandler is just an alias for
+  //! @remarks <em>RoutingHandler</em> is just an alias for
   //! std::function<void(const Request&, Response&)><br>
   //! @section Example
   //! @snippet network/http_server_hello_world.cpp Example
@@ -212,9 +213,9 @@ class ServerBase : public RoutesManager {
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
   //! @see constants::Methods
-  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! @remarks <em>RoutingHandlerExtended</em> is just an alias for
   //! std::function<void(const Request&, Response&, const Parameters&)><br>
-  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! <em>Parameters</em> is just an alias for std::unordered_map<std::string,
   //! std::string>
   //! @section Example
   //! @snippet network/http_server_extended_routing_parameters.cpp Example
@@ -232,7 +233,7 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandler is just an alias for
+  //! @remarks <em>RoutingHandler</em> is just an alias for
   //! std::function<void(const Request&, Response&)><br>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp OPTIONS
@@ -245,9 +246,9 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The extended function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! @remarks <em>RoutingHandlerExtended</em> is just an alias for
   //! std::function<void(const Request&, Response&, const Parameters&)><br>
-  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! <em>Parameters</em> is just an alias for std::unordered_map<std::string,
   //! std::string>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp OPTIONS-EXTENDED
@@ -260,7 +261,7 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandler is just an alias for
+  //! @remarks <em>RoutingHandler</em> is just an alias for
   //! std::function<void(const Request&, Response&)><br>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp GET
@@ -272,9 +273,9 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The extended function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! @remarks <em>RoutingHandlerExtended</em> is just an alias for
   //! std::function<void(const Request&, Response&, const Parameters&)><br>
-  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! <em>Parameters</em> is just an alias for std::unordered_map<std::string,
   //! std::string>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp GET-EXTENDED
@@ -287,7 +288,7 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandler is just an alias for
+  //! @remarks <em>RoutingHandler</em> is just an alias for
   //! std::function<void(const Request&, Response&)><br>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp HEAD
@@ -299,9 +300,9 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The extended function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! @remarks <em>RoutingHandlerExtended</em> is just an alias for
   //! std::function<void(const Request&, Response&, const Parameters&)><br>
-  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! <em>Parameters</em> is just an alias for std::unordered_map<std::string,
   //! std::string>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp HEAD-EXTENDED
@@ -314,7 +315,7 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandler is just an alias for
+  //! @remarks <em>RoutingHandler</em> is just an alias for
   //! std::function<void(const Request&, Response&)><br>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp POST
@@ -326,9 +327,9 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The extended function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! @remarks <em>RoutingHandlerExtended</em> is just an alias for
   //! std::function<void(const Request&, Response&, const Parameters&)><br>
-  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! <em>Parameters</em> is just an alias for std::unordered_map<std::string,
   //! std::string>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp POST-EXTENDED
@@ -341,7 +342,7 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandler is just an alias for
+  //! @remarks <em>RoutingHandler</em> is just an alias for
   //! std::function<void(const Request&, Response&)><br>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp PUT
@@ -353,9 +354,9 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The extended function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! @remarks <em>RoutingHandlerExtended</em> is just an alias for
   //! std::function<void(const Request&, Response&, const Parameters&)><br>
-  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! <em>Parameters</em> is just an alias for std::unordered_map<std::string,
   //! std::string>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp PUT-EXTENDED
@@ -368,7 +369,7 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandler is just an alias for
+  //! @remarks <em>RoutingHandler</em> is just an alias for
   //! std::function<void(const Request&, Response&)><br>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp DELETE
@@ -381,9 +382,9 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The extended function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! @remarks <em>RoutingHandlerExtended</em> is just an alias for
   //! std::function<void(const Request&, Response&, const Parameters&)><br>
-  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! <em>Parameters</em> is just an alias for std::unordered_map<std::string,
   //! std::string>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp DELETE-EXTENDED
@@ -396,7 +397,7 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandler is just an alias for
+  //! @remarks <em>RoutingHandler</em> is just an alias for
   //! std::function<void(const Request&, Response&)><br>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp TRACE
@@ -408,9 +409,9 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The extended function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! @remarks <em>RoutingHandlerExtended</em> is just an alias for
   //! std::function<void(const Request&, Response&, const Parameters&)><br>
-  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! <em>Parameters</em> is just an alias for std::unordered_map<std::string,
   //! std::string>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp TRACE-EXTENDED
@@ -423,7 +424,7 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandler is just an alias for
+  //! @remarks <em>RoutingHandler</em> is just an alias for
   //! std::function<void(const Request&, Response&)><br>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp CONNECT
@@ -436,9 +437,9 @@ class ServerBase : public RoutesManager {
   //! @param[in] handler The extended function performing the logic
   //! @throws std::logic_error If user tries to add handlers while server is up
   //! and running
-  //! @remarks \a RoutingHandlerExtended is just an alias for
+  //! @remarks <em>RoutingHandlerExtended</em> is just an alias for
   //! std::function<void(const Request&, Response&, const Parameters&)><br>
-  //! \a Parameters is just an alias for std::unordered_map<std::string,
+  //! <em>Parameters</em> is just an alias for std::unordered_map<std::string,
   //! std::string>
   //! @section Example
   //! @snippet network/http_server_handler_shortcut.cpp CONNECT-EXTENDED

@@ -45,11 +45,7 @@
 #include "constants/methods.h"
 
 namespace koobika::hook::network::protocol::http {
-// =============================================================================
-// MethodHelper                                                        ( class )
-// -----------------------------------------------------------------------------
-// This class is in charge of providing the http method helper class
-// =============================================================================
+//! @brief Http method (helper) class
 class MethodHelper {
  public:
   // ___________________________________________________________________________
@@ -67,7 +63,9 @@ class MethodHelper {
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
   //
-  // Sets method content from the specified string.
+  //! @brief Sets method content from the specified memory buffer
+  //! @param[in] str C-string memory buffer
+  //! @param[in] len Memory buffer length
   void From(const char* str, const std::size_t& len) {
     static const std::unordered_map<std::string, int, base::CaseInsensitiveHash,
                                     base::CaseInsensitiveComparator>
@@ -83,27 +81,39 @@ class MethodHelper {
     cd_ = itr != known_methods.end() ? itr->second
                                      : constants::Methods::kExtension;
   }
-  // Returns the method code (numeric value).
+  //! @brief Gets the method numerical code
+  //! @returns MethodValue Method numerical code
+  //! @remarks <em>MethodValue</em> is just an alias for <em>int</em>
   MethodValue GetCode() const { return cd_; }
-  // Returns the method description (string value).
+  //! @brief Gets the method string-based description
+  //! @returns std::string Method string-based description
   std::string GetDescription() const { return st_; }
-  // Checks if current method is 'OPTIONS'.
+  //! @brief Checks if current method is an OPTIONS one
+  //! @returns bool <em>true</em> if OPTIONS <em>false</em> otherwise
   bool IsOptions() const { return cd_ == constants::Methods::kOptions; }
-  // Checks if current method is 'GET'.
+  //! @brief Checks if current method is a GET one
+  //! @returns bool <em>true</em> if GET <em>false</em> otherwise
   bool IsGet() const { return cd_ == constants::Methods::kGet; }
-  // Checks if current method is 'HEAD'.
+  //! @brief Checks if current method is a HEAD one
+  //! @returns bool <em>true</em> if HEAD <em>false</em> otherwise
   bool IsHead() const { return cd_ == constants::Methods::kHead; }
-  // Checks if current method is 'POST'.
+  //! @brief Checks if current method is a POST one
+  //! @returns bool <em>true</em> if POST <em>false</em> otherwise
   bool IsPost() const { return cd_ == constants::Methods::kPost; }
-  // Checks if current method is 'PUT>'.
+  //! @brief Checks if current method is a PUT one
+  //! @returns bool <em>true</em> if PUT <em>false</em> otherwise
   bool IsPut() const { return cd_ == constants::Methods::kPut; }
-  // Checks if current method is 'DELETE'.
+  //! @brief Checks if current method is a DELETE one
+  //! @returns bool <em>true</em> if DELETE <em>false</em> otherwise
   bool IsDelete() const { return cd_ == constants::Methods::kDelete; }
-  // Checks if current method is 'TRACE'.
+  //! @brief Checks if current method is a TRACE one
+  //! @returns bool <em>true</em> if TRACE <em>false</em> otherwise
   bool IsTrace() const { return cd_ == constants::Methods::kTrace; }
-  // Checks if current method is 'CONNECT'.
+  //! @brief Checks if current method is a CONNECT one
+  //! @returns bool <em>true</em> if CONNECT <em>false</em> otherwise
   bool IsConnect() const { return cd_ == constants::Methods::kConnect; }
-  // Checks if current method is 'EXTENSION'.
+  //! @brief Checks if current method is a EXTENSION one
+  //! @returns bool <em>true</em> if EXTENSION <em>false</em> otherwise
   bool IsExtension() const { return cd_ == constants::Methods::kExtension; }
 
  private:

@@ -42,11 +42,7 @@
 #include "method_helper.h"
 
 namespace koobika::hook::network::protocol::http {
-// =============================================================================
-// Request                                                             ( class )
-// -----------------------------------------------------------------------------
-// This class is in charge of providing the http request class
-// =============================================================================
+//! @brief Http request class
 class Request {
  public:
   // ___________________________________________________________________________
@@ -64,10 +60,15 @@ class Request {
   // ___________________________________________________________________________
   // PROPERTIEs                                                       ( public )
   //
+  //! @brief HTTP method associated within the request
   MethodHelper Method;
+  //! @brief HTTP request-uri associated within the request
   base::Uri Uri;
+  //! @brief HTTP version associated within the request
   std::string HttpVersion;
+  //! @brief HTTP headers associated within the request
   HeadersHelper Headers;
+  //! @brief HTTP body associated within the request
   base::AutoBuffer Body;
 };
 }  // namespace koobika::hook::network::protocol::http

@@ -42,7 +42,7 @@
 #include "network/transport/server_constants.h"
 
 namespace koobika::hook::network::protocol::http {
-//! @brief This is the HTTPServer builder helper class
+//! @brief Http server builder (helper) class
 class ServerBuilder : public base::Builder<Server> {
  public:
   // ___________________________________________________________________________

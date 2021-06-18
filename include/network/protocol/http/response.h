@@ -43,11 +43,7 @@
 #include "headers_helper.h"
 
 namespace koobika::hook::network::protocol::http {
-// =============================================================================
-// Response                                                            ( class )
-// -----------------------------------------------------------------------------
-// This class is in charge of providing the http response class.
-// =============================================================================
+//! @brief Http response class
 class Response {
  public:
   // ___________________________________________________________________________
@@ -65,184 +61,339 @@ class Response {
   // ___________________________________________________________________________
   // METHODs                                                          ( public )
   //
-  // 100 - Continue.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>100 - Continue</em>. User can override the default provided
+  //! reason-phrase by passing an specific string (via optional parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void Continue_100(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k100, reason_phrase);
   }
-  // 101 - Switching Protocols.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>101 - Switching Protocols</em>. User can override the default provided
+  //! reason-phrase by passing an specific string (via optional parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void SwitchingProtocols_101(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k101, reason_phrase);
   }
-  // 200 - Ok.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>200 - Ok</em>. User can override the default provided
+  //! reason-phrase by passing an specific string (via optional parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void Ok_200(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k200, reason_phrase);
   }
-  // 201 - Created.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>201 - Created</em>. User can override the default provided
+  //! reason-phrase by passing an specific string (via optional parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void Created_201(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k201, reason_phrase);
   }
-  // 202 - Accepted.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>202 - Accepted</em>. User can override the default provided
+  //! reason-phrase by passing an specific string (via optional parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void Accepted_202(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k202, reason_phrase);
   }
-  // 203 - Non Authoritative Information.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>203 - Non Authoritative Information</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void NonAuthoritativeInformation_203(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k203, reason_phrase);
   }
-  // 204 - No Content.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>204 - No Content</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void NoContent_204(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k204, reason_phrase);
   }
-  // 205 - Reset Content.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>205 - Reset Content</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void ResetContent_205(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k205, reason_phrase);
   }
-  // 206 - Partial Content.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>206 - Partial Content</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void PartialContent_206(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k206, reason_phrase);
   }
-  // 300 - Multiple Choices.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>300 - Multiple Choices</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void MultipleChoices_300(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k300, reason_phrase);
   }
-  // 301 - Moved Permanently.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>301 - Moved Permanently</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void MovedPermanently_301(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k301, reason_phrase);
   }
-  // 302 - Found.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>302 - Found</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void Found_302(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k302, reason_phrase);
   }
-  // 303 - See Other.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>303 - See Other</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void SeeOther_303(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k303, reason_phrase);
   }
-  // 304 - Not Modified.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>304 - Not Modified</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void NotModified_304(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k304, reason_phrase);
   }
-  // 305 - Use Proxy.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>305 - Use Proxy</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void UseProxy_305(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k305, reason_phrase);
   }
-  // 307 - Temporary Redirect.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>307 - Temporary Redirect</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void TemporaryRedirect_307(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k307, reason_phrase);
   }
-  // 400 - Bad Request.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>400 - Bad Request</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void BadRequest_400(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k400, reason_phrase);
   }
-  // 401 - Unauthorized.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>401 - Unauthorized</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void Unauthorized_401(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k401, reason_phrase);
   }
-  // 402 - Payment Required.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>402 - Payment Required</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void PaymentRequired_402(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k402, reason_phrase);
   }
-  // 403 - Forbidden.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>403 - Forbidden</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void Forbidden_403(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k403, reason_phrase);
   }
-  // 404 - Not Found.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>404 - Not Found</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void NotFound_404(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k404, reason_phrase);
   }
-  // 405 - Method Not Allowed.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>405 - Method Not Allowed</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void MethodNotAllowed_405(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k405, reason_phrase);
   }
-  // 406 - Not Acceptable.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>406 - Not Acceptable</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void NotAcceptable_406(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k406, reason_phrase);
   }
-  // 407 - Proxy Authentication Required.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>407 - Proxy Authentication Required</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void ProxyAuthenticationRequired_407(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k407, reason_phrase);
   }
-  // 408 - Request Timeout.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>408 - Request Timeout</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void RequestTimeout_408(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k408, reason_phrase);
   }
-  // 409 - Conflict.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>409 - Conflict</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void Conflict_409(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k409, reason_phrase);
   }
-  // 410 - Gone.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>410 - Gone</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void Gone_410(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k410, reason_phrase);
   }
-  // 411 - Length Required.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>411 - Length Required</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void LengthRequired_411(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k411, reason_phrase);
   }
-  // 412 - Precondition Failed.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>412 - Precondition Failed</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void PreconditionFailed_412(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k412, reason_phrase);
   }
-  // 413 - Request Entity Too Large.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>413 - Request Entity Too Large</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void RequestEntityTooLarge_413(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k413, reason_phrase);
   }
-  // 414 - Request Uri Too Large.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>414 - Request Uri Too Large</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void RequestUriTooLarge_414(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k414, reason_phrase);
   }
-  // 415 - Unsupported Media Type.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>415 - Unsupported Media Type</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void UnsupportedMediaType_415(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k415, reason_phrase);
   }
-  // 416 - Requested Range Not Satisfiable.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>416 - Requested Range Not Satisfiable</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void RequestedRangeNotSatisfiable_416(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k416, reason_phrase);
   }
-  // 417 - Expectation Failed.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>417 - Expectation Failed</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void ExpectationFailed_417(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k417, reason_phrase);
   }
-  // 500 - InternalServerError.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>500 - InternalServerError</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void InternalServerError_500(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k500, reason_phrase);
   }
-  // 501 - Not Implemented.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>501 - Not Implemented</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void NotImplemented_501(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k501, reason_phrase);
   }
-  // 502 - Bad Gateway.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>502 - Bad Gateway</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void BadGateway_502(const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k502, reason_phrase);
   }
-  // 503 - Service Unavailable.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>503 - Service Unavailable</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void ServiceUnavailable_503(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k503, reason_phrase);
   }
-  // 504 - Gateway Timeout.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>504 - Gateway Timeout</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void GatewayTimeout_504(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k504, reason_phrase);
   }
-  // 505 - Http Version Not Supported.
+  //! @brief Sets current response status-code and reason-phrase to
+  //! <em>505 - Http Version Not Supported</em>. User can override the
+  //! default provided reason-phrase by passing an specific string (via optional
+  //! parameter)
+  //! @param[in] reason_phrase Optional user-specific reason phrase
   void HttpVersionNotSupported_505(
       const std::optional<std::string>& reason_phrase = {}) {
     setStatusCodeAndReasonPhrase(constants::StatusCodes::k505, reason_phrase);
@@ -250,10 +401,25 @@ class Response {
   // ___________________________________________________________________________
   // PROPERTIEs                                                       ( public )
   //
+  //! @brief HTTP status-code associated within the response
   unsigned short StatusCode = constants::StatusCodes::k501;
+  //! @brief HTTP reason-phrase associated within the response
   std::string ReasonPhrase = constants::StatusCodes::k501Str;
+  //! @brief HTTP headers associated within the response
   HeadersHelper Headers;
+  //! @brief HTTP body associated within the response
   base::AutoBuffer Body;
+  //! @brief HTTP <b>RAW</b> response data. Writing to this field will bypass
+  //! <em>StatusCode</em>, <em>ReasonPhrase</em>, <em>Headers</em> and
+  //! <em>Body</em> properties while sending the response data. It should only be
+  //! used in case of writing customized response data (bypassing default
+  //! provided data preparation mechanism). In other words, write to the
+  //! <em>Raw</em> field if you want to deeply control the data being sent to
+  //! the client (e.g.: custom writers). It is <b>strongly</b> recommended to
+  //! use default provided mechanisms (through <em>StatusCode</em>,
+  //! <em>ReasonPhrase</em>, <em>Headers</em> and <em>Body</em> fields).
+  //! @section Example
+  //! @snippet network/http_server_raw_response.cpp Example
   base::AutoBuffer Raw;
 
  private:
