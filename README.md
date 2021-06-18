@@ -1,4 +1,4 @@
-![FastHTTP – Fastest and reliable HTTP implementation in Go](https://github.com/fasthttp/docs-assets/raw/master/banner@0.5.png)
+![FastHTTP – Fastest and reliable HTTP implementation in Go](https://github.com/koobika/hook/docs/html/hook-x.jpg
 
 Fast HTTP implementation for Go.
 
