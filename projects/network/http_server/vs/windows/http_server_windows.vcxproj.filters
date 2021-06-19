@@ -92,7 +92,7 @@
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_response_builder.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_response_writer_json.cpp">
+    <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_response_builder_json.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\examples\network\http_server_response_builder_serializable.cpp">

@@ -12,7 +12,7 @@
 //      ▀▓▓▓▓▓▓▓▓▓▓▓▀`     ▓▓▓▓▓▓▓▓▓▓▀`
 //          `"""`            `"""`
 // -----------------------------------------------------------------------------
-// examples/network/http_server_response_writer_json.cpp
+// examples/network/http_server_response_builder_json.cpp
 // -----------------------------------------------------------------------------
 // Copyright (c) 2021 koobika corporation. All rights reserved.
 // Author: Marcos Rojas (mrojas@koobika.org).
@@ -43,13 +43,13 @@ int main() {
     auto server = ServerBuilder().Build();
     server->Handle("/foo/bar", [](const Request& req, Response& res) {
       if (req.Method.IsGet()) {
-        ResponseWriter::Prepare(
+        ResponseBuilder::Build(
             res,
             json::Object{{"koobika", json::Array{"hook rules...", 123.45}}},
             constants::Mime::kJSON)
             .Ok_200();
       } else {
-        ResponseWriter::Prepare(res, "Not supported!", constants::Mime::kTXT)
+        ResponseBuilder::Build(res, "Not supported!", constants::Mime::kTXT)
             .Forbidden_403();
       }
     });

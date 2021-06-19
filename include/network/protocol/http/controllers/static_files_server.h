@@ -150,7 +150,7 @@ class StaticFilesServer : public RoutesController<AUty> {
         // Let's try to retrieve the required content..
         auto content = get(uri_string);
         if (content.first.has_value()) {
-          ResponseWriter<response_writers::TransferEncoding>::Prepare(
+          ResponseBuilder::Build<response_writers::TransferEncoding>(
               res, content.first.value(), content.second)
               .Ok_200();
         } else {
