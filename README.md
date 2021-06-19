@@ -2,9 +2,7 @@
 
 Header only, and cross-platform, high performance C++ library offering for a wide and complete set of modules (http server/client, json/yaml encoder/decoder, filesystem management/event tracker, multi-process/multi-thread concurrency primitives, console processor, and many more...). Build demanding applications in an easy and modern way!
 
-# Modules
-
-## HttpServer 
+# HttpServer 
 Http server default provided implementation module using socket-based TCP/IP transport, HTTP1.1 request decoder and the default provided router.
 
 Offering for the following functionalities:
@@ -23,10 +21,10 @@ Offering for the following functionalities:
 * Very low memory footprint (currently, lower than in any other available library)
 * Exception safe design
 
-### Usage
+## Usage
 It's a header-only library. Just add the 'include' folder to your compiler's includes-search folder and that's all!
 
-### Examples (Where to start)
+## Examples (Where to start)
 * src/examples/network/http_server_auth_api_key.cpp
 * src/examples/network/http_server_auth_basic.cpp
 * src/examples/network/http_server_auth_basic_controller.cpp
@@ -48,5 +46,5 @@ It's a header-only library. Just add the 'include' folder to your compiler's inc
 * src/examples/network/http_server_response_builder_writer_object.cpp
 * src/examples/network/http_server_static_files_server.cpp
 
-## Json
+# Json
 Full (and modern) Json support library, including value-types, arrays, objects and str-to-json and json-to-str importer/exporters.
