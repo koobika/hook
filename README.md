@@ -25,25 +25,26 @@ Offering for the following functionalities:
 It's a header-only library. Just add the 'include' folder to your compiler's includes-search folder and that's all!
 
 ## Examples (Where to start)
-* src/examples/network/http_server_hello_world.cpp <br>Hello world example introducing a very first (and simple) example. Try it!</br>
+* **src/examples/network/http_server_hello_world.cpp** <br>Hello world example introducing a very first (and simple) example. Try it!</br>
+* **src/examples/network/http_server_builder.cpp** <br>Using the builder to configure your server instance.</br>
+* **src/examples/network/http_server_handler_shortcut.cpp** <br>Customize your end-points using explicit (GET|PUT|...) registration.</br>
+* **src/examples/network/http_server_response_builder.cpp** <br>Build complex payload using the built-in response builder!</br>
+* **src/examples/network/http_server_response_builder_writer_class.cpp** <br>Provide for your own response builder writers (class based).</br>
+* **src/examples/network/http_server_response_builder_writer_object.cpp** <br>Provide for your own response builder writers (object based).</br>
+* **src/examples/network/http_server_response_builder_serializable_class.cpp** <br>Provide for your own serializable content (class based).</br>
+* **src/examples/network/http_server_response_builder_serializable.cpp** <br>Provide for your own serializable content (object based).</br>
+* **src/examples/network/http_server_response_builder_json.cpp** <br>Writing Json stuff to the response using the builder.</br>
+
 * src/examples/network/http_server_auth_api_key.cpp
 * src/examples/network/http_server_auth_basic.cpp
 * src/examples/network/http_server_auth_basic_controller.cpp
 * src/examples/network/http_server_auth_basic_controller_custom_checker.cpp
 * src/examples/network/http_server_auth_basic_custom_checker.cpp
 * src/examples/network/http_server_auth_custom.cpp
-* src/examples/network/http_server_builder.cpp
 * src/examples/network/http_server_controller.cpp
 * src/examples/network/http_server_extended_routing_parameters.cpp
-* src/examples/network/http_server_handler_shortcut.cpp
 * src/examples/network/http_server_raw_response.cpp
-* src/examples/network/http_server_response_builder.cpp
-* src/examples/network/http_server_response_builder_json.cpp
-* src/examples/network/http_server_response_builder_serializable.cpp
-* src/examples/network/http_server_response_builder_serializable_class.cpp
 * src/examples/network/http_server_response_builder_transfer_encoding.cpp
-* src/examples/network/http_server_response_builder_writer_class.cpp
-* src/examples/network/http_server_response_builder_writer_object.cpp
 * src/examples/network/http_server_static_files_server.cpp
 
 # Json
