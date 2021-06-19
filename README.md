@@ -4,7 +4,7 @@ Header only, and cross-platform, high performance C++ library offering for a wid
 
 # Modules
 
-## Http Server 
+## HttpServer 
 Http server default provided implementation module using socket-based TCP/IP transport, HTTP1.1 request decoder and the default provided router.
 
 Offering for the following functionalities:
@@ -23,14 +23,30 @@ Offering for the following functionalities:
 * Very low memory footprint (currently, lower than in any other available library)
 * Exception safe design
 
-## Build
+### Usage
+It's a header-only library. Just add the 'include' folder to your compiler's includes-search folder and that's all!
 
-### Linux pre-requisites
+### Examples (Where to start)
+* src/examples/network/http_server_auth_api_key.cpp
+* src/examples/network/http_server_auth_basic.cpp
+* src/examples/network/http_server_auth_basic_controller.cpp
+* src/examples/network/http_server_auth_basic_controller_custom_checker.cpp
+* src/examples/network/http_server_auth_basic_custom_checker.cpp
+* src/examples/network/http_server_auth_custom.cpp
+* src/examples/network/http_server_builder.cpp
+* src/examples/network/http_server_controller.cpp
+* src/examples/network/http_server_extended_routing_parameters.cpp
+* src/examples/network/http_server_handler_shortcut.cpp
+* src/examples/network/http_server_hello_world.cpp
+* src/examples/network/http_server_raw_response.cpp
+* src/examples/network/http_server_response_builder.cpp
+* src/examples/network/http_server_response_builder_json.cpp
+* src/examples/network/http_server_response_builder_serializable.cpp
+* src/examples/network/http_server_response_builder_serializable_class.cpp
+* src/examples/network/http_server_response_builder_transfer_encoding.cpp
+* src/examples/network/http_server_response_builder_writer_class.cpp
+* src/examples/network/http_server_response_builder_writer_object.cpp
+* src/examples/network/http_server_static_files_server.cpp
 
-In order to build it on linux, you need to meet some pre-requisites:
-
-* Install [microsoft package](https://docs.microsoft.com/en-us/windows-server/administration/linux-package-repository-for-microsoft-software) for your distro
-* Install [Powershell](https://docs.microsoft.com/es-es/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1)
-* Install [.net 5 sdk](https://docs.microsoft.com/es-es/dotnet/core/install/linux)
-
-### Build it!
+## Json
+Full (and modern) Json support library, including value-types, arrays, objects and str-to-json and json-to-str importer/exporters.
