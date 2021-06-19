@@ -25,8 +25,7 @@ Offering for the following functionalities:
 It's a header-only library. Just add the 'include' folder to your compiler's includes-search folder and that's all!
 
 ## Examples (Where to start)
-* src/examples/network/http_server_hello_world.cpp
-  Hello world example introducing a very first (and simple) example. Try it!
+* src/examples/network/http_server_hello_world.cpp <br>Hello world example introducing a very first (and simple) example. Try it!</br>
 * src/examples/network/http_server_auth_api_key.cpp
 * src/examples/network/http_server_auth_basic.cpp
 * src/examples/network/http_server_auth_basic_controller.cpp
