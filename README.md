@@ -25,6 +25,8 @@ Offering for the following functionalities:
 It's a header-only library. Just add the 'include' folder to your compiler's includes-search folder and that's all!
 
 ## Examples (Where to start)
+* src/examples/network/http_server_hello_world.cpp
+  Hello world example introducing a very first (and simple) example. Try it!
 * src/examples/network/http_server_auth_api_key.cpp
 * src/examples/network/http_server_auth_basic.cpp
 * src/examples/network/http_server_auth_basic_controller.cpp
@@ -35,7 +37,6 @@ It's a header-only library. Just add the 'include' folder to your compiler's inc
 * src/examples/network/http_server_controller.cpp
 * src/examples/network/http_server_extended_routing_parameters.cpp
 * src/examples/network/http_server_handler_shortcut.cpp
-* src/examples/network/http_server_hello_world.cpp
 * src/examples/network/http_server_raw_response.cpp
 * src/examples/network/http_server_response_builder.cpp
 * src/examples/network/http_server_response_builder_json.cpp
