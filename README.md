@@ -2,60 +2,73 @@
 
 Header only, and cross-platform, high performance C++ library offering for a wide and complete set of modules (http server/client, json/yaml encoder/decoder, filesystem management/event tracker, multi-process/multi-thread concurrency primitives, console processor, and many more...). Build demanding applications in an easy and modern way!
 
-# HttpServer
-Http server default provided implementation module using socket-based TCP/IP transport, HTTP1.1 request decoder and the default provided router.
+## Official documentation
 
-Offering for the following functionalities:
+You can find official hook api doc under [docs](./docs) folder, and visit it online at [hook documentation site](https://koobika.github.io/hook/).
 
-* Leading in performance, even in highly demanding scenarios (e.g.: thousand of simultaneous clients)
-* Full routing capabilities (both string and regular-expressions based routes)
-* Controllers, allowing to group any set of related end-points within a dedicated class context
-* Authentication (NoAuth, Basic, Api-Token and Bearer-Token currently supported by default). Also, making use of an open design concept that will allow any developer to add new authentication methods in an easy and standardized way
-* Body encoders/decoders, allowing an easy way to read/write from/to body parts using serialized/raw content
-* Static file server provided by default
-* Transfer-encoding support (currently, only 'chunked' mode supported)
-* Multipart/form (content-type) support
-* Stream based (memory/file) data ingestion, avoiding out-of-memory scenarios due to big buffers management scenarios
-* Hyper fast message decoding routines based on asynchronous dispatching
-* Fully configurable via builder (e.g.: concurrency levels, maximum number of connections, etc...)
-* Very low memory footprint (currently, lower than in any other available library)
-* Exception safe design
+Also, we made a talk in [Italian CPP Con 2021](), so you can watch the presentation here:
 
-## Usage
+[![ITCPPCON21](https://img.youtube.com/vi/kVqmbAaMz_4/0.jpg)](https://www.youtube.com/watch?v=kVqmbAaMz_4)
+
+## Ok, i'm conviced, how to use it ?
+
 It's a header-only library. Just add the 'include' folder to your compiler's includes-search folder and that's all!
 
-## Examples (Where to start)
-* **src/examples/network/http_server_hello_world.cpp** <br>*Hello world example introducing a very first (and simple) example. Try it!*</br>
-* **src/examples/network/http_server_builder.cpp** <br>*Using the builder to configure your server instance.*</br>
-* **src/examples/network/http_server_handler_shortcut.cpp** <br>*Customize your end-points using explicit (GET|PUT|...) registration.*</br>
-* **src/examples/network/http_server_response_builder.cpp** <br>*Build complex payload using the built-in response builder!*</br>
-* **src/examples/network/http_server_response_builder_writer_class.cpp** <br>*Provide for your own response builder writers (class based).*</br>
-* **src/examples/network/http_server_response_builder_writer_object.cpp** <br>*Provide for your own response builder writers (object based).*</br>
-* **src/examples/network/http_server_response_builder_serializable_class.cpp** <br>*Provide for your own serializable content (class based).*</br>
-* **src/examples/network/http_server_response_builder_serializable.cpp** <br>*Provide for your own serializable content (object based).*</br>
-* **src/examples/network/http_server_response_builder_json.cpp** <br>*Writing Json stuff to the response using the builder.*</br>
-* **src/examples/network/http_server_response_builder_transfer_encoding.cpp** <br>*Using 'transfer-encoding' while writing data.*</br>
-* **src/examples/network/http_server_raw_response.cpp** <br>*Writing Raw data as response.*</br>
-* **src/examples/network/http_server_extended_routing_parameters.cpp** <br>*Creating/Accessing parameter-driven routes handlers.*</br>
-* **src/examples/network/http_server_controller.cpp** <br>*Create complex REST APIs in a simple way!*</br>
-* **src/examples/network/http_server_auth_basic.cpp** <br>*Add 'basic-authorization' to your server.*</br>
-* **src/examples/network/http_server_auth_api_key.cpp** <br>*Add 'api-token-authorization' to your server.*</br>
-* **src/examples/network/http_server_auth_basic_custom_checker.cpp** <br>*Add 'basic-authorization' to your server using a custom checker.*</br>
-* **src/examples/network/http_server_auth_basic_controller.cpp** <br>*Add 'basic-authorization' to your controller.*</br>
-* **src/examples/network/http_server_auth_basic_controller_custom_checker.cpp** <br>*Add 'basic-authorization' to your controller using a custom checker.*</br>
-* **src/examples/network/http_server_auth_custom.cpp** <br>*Add your own customized authorization mechanism to your server.*</br>
-* **src/examples/network/http_server_static_files_server.cpp** <br>*Use the built-in 'statics-file-server' controller!*</br>
+NOTE: Soon, we will release hook, with which you will be able to manage dependencies using a command line tool.
 
-# Json
-Full (and modern) Json support library, including value-types, arrays, objects and str-to-json and json-to-str importer/exporters.
+## Current Modules
 
-## Usage
-It's a header-only library. Just add the 'include' folder to your compiler's includes-search folder and that's all!
+* [HTTP Server](doc/modules/httpserver.md)
+* [JSON](doc/modules/json.md)
+* [Encoding](doc/modules/encoding.md)
 
-## Examples (Where to start)
-* **src/examples/structured/json_hello_world.cpp** <br>*Hello world example introducing a very first (and simple) example. Try it!*</br>
-* **src/examples/structured/json_basic_types.cpp** <br>*Introducing all the basic value-types available.*</br>
-* **src/examples/structured/json_arrays.cpp** <br>*Introducing array-based value.*</br>
-* **src/examples/structured/json_objects.cpp** <br>*Introducing object-based value.*</br>
-* **src/examples/structured/json_import.cpp** <br>*Import json data from files.*</br>
+## A quick (but powerful) sample
 
+With hook, you have the power of C++ coding like 2021 languages. Take a look to this example, using our [http server](https://koobika.github.io/hook/classkoobika_1_1hook_1_1network_1_1protocol_1_1http_1_1_server.html) to create a REST endpoint with Url parameters that compose a JSON object to get it back to the client caller.
+
+```cpp
+//! [Example]
+#include "network/protocol/http/server_builder.h"
+#include "network/protocol/http/response_builder.h"
+#include "structured/json/value.h"
+
+using namespace koobika::hook::network::protocol::http;
+using namespace koobika::hook::structured;
+
+int main() {
+  try {
+    auto server = ServerBuilder().Build();
+    server->Handle("/{level}/{resource}", [](const Request& req, Response& res,
+                                             const Parameters& parameters) {
+      // Here, we use 'parameters' variable to find needed values!
+      // Since we're only interested on /foo/bar URI, let's check that
+      // the incoming URL is fulfilling the requirements..
+      auto level = parameters.find("level");
+      auto resource = parameters.find("resource");
+      if (level != parameters.end() && resource != parameters.end()) {
+        ResponseBuilder::Build(res,
+                               json::Object{{"{level}", level->second},
+                                            {"{resource}", resource->second}},
+                               constants::Mime::kJSON)
+            .Ok_200();
+      } else {
+        res.Body.Write("Resource Uri not supported!");
+        res.Forbidden_403();
+      }
+    });
+    server->Start("8080");
+    return getchar();
+  } catch (const std::exception& exception) {
+    // ((Error)) -> while performing setup!
+    std::cout << exception.what() << std::endl;
+    return -1;
+  }
+}
+//! [Example]
+
+```
+Take a look to our [samples](./src/examples) folder for more cool stuff.
+
+## @
+
+Koobika Team

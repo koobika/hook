@@ -19,7 +19,7 @@ for folder in */ ; do
     if [[ -f run.bash ]]
     then
         bash run.bash
-        mv result.txt ../../../../../doc/benchmark/current/`basename $folder`.txt
+        mv result.txt ../../../../../benchmark/current/`basename $folder`.txt
     fi
     cd ..
 done
