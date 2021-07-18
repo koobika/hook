@@ -1,0 +1,12 @@
+== WRK 2 Results
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.02m    29.61s    1.89m    57.88%
+    Req/Sec     4.16k   250.23     4.66k    69.39%
+  7975093 requests in 2.00m, 1.19GB read
+  Socket errors: connect 0, read 0, write 0, timeout 275
+Requests/sec:  66415.43
+Transfer/sec:     10.18MB
+
+== Process Profiling
+MEM 254 Kb
+CPU 88-90

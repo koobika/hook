@@ -31,6 +31,9 @@
 *.out
 *.app
 
+# other residuals
+.nfs*
+
 # Koo residual folders and files
 output/
 koo.config

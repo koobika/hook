@@ -2,7 +2,11 @@
 
 if [[ ! -f ./httpserver ]]
 then
-    echo "You need to build the project first with koo."
+    echo "Building app"
+    docker build -t build/cpp-httplib . 2>&1
+    docker create --name cpp-httplib build/cpp-httplib
+    docker cp cpp-httplib:/src/httpserver .
+    docker rm cpp-httplib
 fi
 
 echo "Running app in background"

@@ -2,7 +2,7 @@
 
 Header only, and cross-platform, high performance C++ library offering for a wide and complete set of modules (http server/client, json/yaml encoder/decoder, filesystem management/event tracker, multi-process/multi-thread concurrency primitives, console processor, and many more...). Build demanding applications in an easy and modern way!
 
-# HttpServer 
+# HttpServer
 Http server default provided implementation module using socket-based TCP/IP transport, HTTP1.1 request decoder and the default provided router.
 
 Offering for the following functionalities:
